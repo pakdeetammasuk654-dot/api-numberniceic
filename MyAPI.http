@@ -1,20 +1,28 @@
-### 1. ทดสอบหน้าแรก (HTML)
-# เช็คว่า Server ทำงานและโหลดหน้าเว็บได้หรือไม่
+### 1. ทดสอบหน้าแรก (Home Page)
 GET http://localhost:3000/
 
-### 2. ทดสอบ API วิเคราะห์ชื่อ (JSON)
-# อันนี้สำคัญสุด! ลองเปลี่ยนชื่อหลัง name= เป็นชื่ออื่นได้ครับ
-GET http://localhost:3000/api/analyze?name=อณัญญา
-Accept: application/json
+### 2. ทดสอบหน้าแสดงฟอร์มวิเคราะห์ (Analysis View)
+GET http://localhost:3000/analysis
 
-### 3. ทดสอบการส่ง Form ผ่านหน้าเว็บ (POST)
-# จำลองการกดปุ่ม "วิเคราะห์ทันที" บนหน้าเว็บ
-POST http://localhost:3000/
+### 3. ทดสอบการส่ง Form วิเคราะห์ชื่อ (POST Form)
+# *อัปเดต*: ยิงไปที่ /analysis ตามที่เราตั้งค่าใน Router และ HTML Form
+POST http://localhost:3000/analysis
 Content-Type: application/x-www-form-urlencoded
 
-name=อณัญญา
+name=ใจดี มีสุข
 
-### 4. ทดสอบกรณีไม่ส่งชื่อ (Error Case)
-# ต้องได้ error 400 กลับมา
+### 4. ทดสอบ API แบบ JSON (JSON API)
+# อันนี้สำคัญ! เอาไว้เช็คว่าค่า sat_pairs / sha_pairs ออกมาถูกต้องหรือไม่
+GET http://localhost:3000/api/analyze?name=อณัญญา ภักดีธรรมสุข
+Accept: application/json
+
+### 5. ทดสอบหน้าเมนูอื่นๆ (Dashboard)
+GET http://localhost:3000/dashboard
+
+### 6. ทดสอบหน้าเมนูอื่นๆ (About Us)
+GET http://localhost:3000/about
+
+### 7. ทดสอบกรณีไม่ส่งชื่อ (Error Case)
+# ต้องได้ error 400 Bad Request
 GET http://localhost:3000/api/analyze?name=
 Accept: application/json

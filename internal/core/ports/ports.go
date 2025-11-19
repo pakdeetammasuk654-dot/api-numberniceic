@@ -7,6 +7,9 @@ import "api-numberniceic/internal/core/domain"
 type NumberRepository interface {
 	GetSatValue(char string) (int, error) // เช่น ส่ง "ก" ได้ 1
 	GetShaValue(char string) (int, error) // เช่น ส่ง "ก" ได้ 15
+
+	// เพิ่มฟังก์ชันนี้: ค้นหาความหมายจากตาราง numbers ด้วยเลขคู่ (เช่น "15")
+	GetNumberMeaning(pair string) (*domain.NumberMeaning, error)
 }
 
 // NumberService (Input Port)
