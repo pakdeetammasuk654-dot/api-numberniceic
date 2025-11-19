@@ -31,6 +31,8 @@ func main() {
 		Views: engine,
 	})
 
+	app.Static("/static", "./public")
+
 	// 4. Init Layers (ต่อจิกซอว์เข้าด้วยกัน)
 	// สร้าง Repository (ต่อ DB)
 	repo := repositories.NewPostgresRepository(db)

@@ -1,0 +1,47 @@
+<div class="card">
+    <h1 class="text-center">🔍 วิเคราะห์ชื่อมงคล</h1>
+
+    <form action="/analysis" method="POST">
+        <label><strong>กรอกชื่อ-นามสกุล (ภาษาไทย):</strong></label>
+        <input type="text" name="name" class="form-control" placeholder="เช่น ใจดี มีสุข" required value="{{if .Name}}{{.Name}}{{end}}">
+        <button type="submit" class="btn btn-success">
+            วิเคราะห์ทันที
+        </button>
+    </form>
+</div>
+
+{{if .Error}}
+    <div class="text-center text-danger mt-3">⚠️ {{.Error}}</div>
+{{end}}
+
+{{if .Result}}
+    <div class="card">
+        <h2 class="header-line">ผลลัพธ์: {{.Result.Name}}</h2>
+
+        <div class="result-container">
+            <div class="result-col">
+                <h3>🧮 เลขศาสตร์</h3>
+                <table>
+                    <tr><th>ตัวอักษร</th><th>ค่า</th></tr>
+                    {{range .Result.SatValues}}
+                        {{range $key, $value := .}}
+                            <tr><td>{{$key}}</td><td><span class="badge">{{$value}}</span></td></tr>
+                        {{end}}
+                    {{end}}
+                </table>
+            </div>
+
+            <div class="result-col">
+                <h3>🌑 เลขพลังเงา</h3>
+                <table>
+                    <tr><th>ตัวอักษร</th><th>ค่า</th></tr>
+                    {{range .Result.ShaValues}}
+                        {{range $key, $value := .}}
+                            <tr><td>{{$key}}</td><td><span class="badge badge-sha">{{$value}}</span></td></tr>
+                        {{end}}
+                    {{end}}
+                </table>
+            </div>
+        </div>
+    </div>
+{{end}}
