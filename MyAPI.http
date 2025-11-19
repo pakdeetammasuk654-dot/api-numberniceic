@@ -1,0 +1,20 @@
+### 1. ทดสอบหน้าแรก (HTML)
+# เช็คว่า Server ทำงานและโหลดหน้าเว็บได้หรือไม่
+GET http://localhost:3000/
+
+### 2. ทดสอบ API วิเคราะห์ชื่อ (JSON)
+# อันนี้สำคัญสุด! ลองเปลี่ยนชื่อหลัง name= เป็นชื่ออื่นได้ครับ
+GET http://localhost:3000/api/analyze?name=ใจดี มีสุข
+Accept: application/json
+
+### 3. ทดสอบการส่ง Form ผ่านหน้าเว็บ (POST)
+# จำลองการกดปุ่ม "วิเคราะห์ทันที" บนหน้าเว็บ
+POST http://localhost:3000/
+Content-Type: application/x-www-form-urlencoded
+
+name=ร่ำรวย เงินทอง
+
+### 4. ทดสอบกรณีไม่ส่งชื่อ (Error Case)
+# ต้องได้ error 400 กลับมา
+GET http://localhost:3000/api/analyze?name=
+Accept: application/json
