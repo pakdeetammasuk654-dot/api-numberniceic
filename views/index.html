@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>วิเคราะห์เลขศาสตร์ & พลังเงา</title>
+    <style>
+        body { font-family: 'Sarabun', sans-serif; max-width: 800px; margin: 2rem auto; padding: 1rem; background-color: #f4f4f9; }
+        h1 { text-align: center; color: #333; }
+        .form-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        input { width: 100%; padding: 12px; margin: 10px 0; font-size: 1.1rem; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; background-color: #28a745; color: white; padding: 12px; border: none; font-size: 1.2rem; cursor: pointer; border-radius: 4px; }
+        button:hover { background-color: #218838; }
+
+        .result-card { margin-top: 20px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .table-container { display: flex; gap: 20px; margin-top: 10px; }
+        .col { flex: 1; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border-bottom: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .badge { display: inline-block; padding: 5px 10px; border-radius: 50%; background: #007bff; color: white; font-weight: bold; min-width: 20px; text-align: center; }
+        .badge-sha { background: #6f42c1; }
+    </style>
+</head>
+<body>
+<h1>🔮 โปรแกรมวิเคราะห์ชื่อมงคล</h1>
+
+<div class="form-container">
+    <form action="/" method="POST">
+        <label><strong>กรอกชื่อ-นามสกุล (ภาษาไทย):</strong></label>
+        <input type="text" name="name" placeholder="เช่น ใจดี มีสุข" required value="{{if .Name}}{{.Name}}{{end}}">
+        <button type="submit">วิเคราะห์ทันที</button>
+    </form>
+</div>
+
+{{if .Error}}
+    <div style="color: red; text-align: center; margin-top: 15px;">
+        ⚠️ เกิดข้อผิดพลาด: {{.Error}}
+    </div>
+{{end}}
+
+{{if .Result}}
+    <div class="result-card">
+        <h2>ผลการวิเคราะห์: {{.Result.Name}}</h2>
+
+        <div class="table-container">
+            <div class="col">
+                <h3>🧮 เลขศาสตร์</h3>
+                <table>
+                    <tr><th>ตัวอักษร</th><th>ค่าพลัง</th></tr>
+                    {{range .Result.SatValues}}
+                        {{range $key, $value := .}}
+                            <tr>
+                                <td>{{$key}}</td>
+                                <td><span class="badge">{{$value}}</span></td>
+                            </tr>
+                        {{end}}
+                    {{end}}
+                </table>
+            </div>
+
+            <div class="col">
+                <h3>🌑 เลขพลังเงา</h3>
+                <table>
+                    <tr><th>ตัวอักษร</th><th>ค่าพลัง</th></tr>
+                    {{range .Result.ShaValues}}
+                        {{range $key, $value := .}}
+                            <tr>
+                                <td>{{$key}}</td>
+                                <td><span class="badge badge-sha">{{$value}}</span></td>
+                            </tr>
+                        {{end}}
+                    {{end}}
+                </table>
+            </div>
+        </div>
+    </div>
+{{end}}
+</body>
+</html>

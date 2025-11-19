@@ -16,7 +16,7 @@ import (
 func main() {
 	// 1. ตั้งค่าเชื่อมต่อ Database (PostgreSQL)
 	// **แก้ข้อมูลตรงนี้ให้ตรงกับเครื่องของคุณนะครับ**
-	dsn := "host=localhost user=tayap password=yourpassword dbname=yourdbname port=5432 sslmode=disable TimeZone=Asia/Bangkok"
+	dsn := "host=localhost user=tayap password=IntelliP24.X dbname=tayap port=5432 sslmode=disable TimeZone=Asia/Bangkok"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
