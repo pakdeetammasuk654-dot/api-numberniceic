@@ -12,7 +12,7 @@ Accept: application/json
 POST http://localhost:3000/
 Content-Type: application/x-www-form-urlencoded
 
-name=อณัญญา ภักดีธรรมสุข
+name=อณัญญา
 
 ### 4. ทดสอบกรณีไม่ส่งชื่อ (Error Case)
 # ต้องได้ error 400 กลับมา

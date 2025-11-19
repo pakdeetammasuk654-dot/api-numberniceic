@@ -15,7 +15,6 @@ import (
 
 func main() {
 	// 1. ตั้งค่าเชื่อมต่อ Database (PostgreSQL)
-	// **แก้ข้อมูลตรงนี้ให้ตรงกับเครื่องของคุณนะครับ**
 	dsn := "host=localhost user=tayap password=IntelliP24.X dbname=tayap port=5432 sslmode=disable TimeZone=Asia/Bangkok"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
@@ -23,7 +22,7 @@ func main() {
 	}
 	fmt.Println("✅ Connected to Database successfully")
 
-	// 2. Setup Template Engine (สำหรับหน้าเว็บ)
+	// 2. Setup Template Engine
 	engine := html.New("./views", ".html")
 
 	// 3. Setup Fiber App
@@ -31,22 +30,27 @@ func main() {
 		Views: engine,
 	})
 
+	// บอกให้ /static ชี้ไปที่โฟลเดอร์ public (สำหรับ CSS)
 	app.Static("/static", "./public")
 
-	// 4. Init Layers (ต่อจิกซอว์เข้าด้วยกัน)
-	// สร้าง Repository (ต่อ DB)
+	// 4. Init Layers
 	repo := repositories.NewPostgresRepository(db)
-
-	// สร้าง Service (ต่อ Repository)
 	service := services.NewAnalyzerService(repo)
-
-	// สร้าง Handler (ต่อ Service)
 	handler := handlers.NewFiberHandler(service)
 
-	// 5. Setup Routes
-	// หน้าเว็บ
-	app.Get("/", handler.ViewIndex)
-	app.Post("/", handler.ViewResult)
+	// 5. Setup Routes (เส้นทางใหม่)
+
+	// หน้าแรก (Home)
+	app.Get("/", handler.ViewHome)
+
+	// เมนูอื่นๆ
+	app.Get("/dashboard", handler.ViewDashboard)
+	app.Get("/articles", handler.ViewArticles)
+	app.Get("/about", handler.ViewAbout)
+
+	// หน้าวิเคราะห์ชื่อ (Analysis)
+	app.Get("/analysis", handler.ViewAnalysis)    // แสดงฟอร์ม
+	app.Post("/analysis", handler.HandleAnalysis) // กดส่งฟอร์ม
 
 	// API (JSON)
 	api := app.Group("/api")

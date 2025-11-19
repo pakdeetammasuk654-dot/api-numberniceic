@@ -19,8 +19,8 @@
         <h2 class="header-line">ผลลัพธ์: {{.Result.Name}}</h2>
 
         <div class="result-container">
-            <div class="result-col" style="background-color: #f8f9fa; padding: 15px; border-radius: 8px;">
-                <h3 style="color: #007bff;">🧮 เลขศาสตร์</h3>
+            <div class="result-col" style="background-color: #e3f2fd; padding: 20px; border-radius: 8px; border: 1px solid #bbdefb;">
+                <h3 style="color: #0277bd; margin-top: 0;">🧮 เลขศาสตร์</h3>
                 <table>
                     <tr><th>ตัวอักษร</th><th>ค่า</th></tr>
                     {{range .Result.SatValues}}
@@ -30,11 +30,11 @@
                     {{end}}
                 </table>
 
-                <div style="margin-top: 20px; border-top: 2px dashed #ccc; padding-top: 10px;">
-                    <p style="font-size: 1.2rem;"><strong>ผลรวม:</strong> {{.Result.SatSum}}</p>
+                <div style="margin-top: 20px; border-top: 2px dashed #90caf9; padding-top: 15px;">
+                    <p style="font-size: 1.2rem;"><strong>ผลรวม:</strong> <span style="color: #0277bd; font-weight: bold;">{{.Result.SatSum}}</span></p>
                     <p><strong>คู่เลข:</strong>
                         {{range .Result.SatPairs}}
-                            <span class="badge" style="font-size: 1.1rem; background: #ffc107; color: black;">{{.}}</span>
+                            <span class="badge" style="font-size: 1.1rem; background: #ffc107; color: black; margin-right: 5px;">{{.}}</span>
                         {{else}}
                             -
                         {{end}}
@@ -42,8 +42,8 @@
                 </div>
             </div>
 
-            <div class="result-col" style="background-color: #f3e5f5; padding: 15px; border-radius: 8px;">
-                <h3 style="color: #6f42c1;">🌑 เลขพลังเงา</h3>
+            <div class="result-col" style="background-color: #f3e5f5; padding: 20px; border-radius: 8px; border: 1px solid #e1bee7;">
+                <h3 style="color: #7b1fa2; margin-top: 0;">🌑 เลขพลังเงา</h3>
                 <table>
                     <tr><th>ตัวอักษร</th><th>ค่า</th></tr>
                     {{range .Result.ShaValues}}
@@ -53,11 +53,11 @@
                     {{end}}
                 </table>
 
-                <div style="margin-top: 20px; border-top: 2px dashed #ccc; padding-top: 10px;">
-                    <p style="font-size: 1.2rem;"><strong>ผลรวม:</strong> {{.Result.ShaSum}}</p>
+                <div style="margin-top: 20px; border-top: 2px dashed #ce93d8; padding-top: 15px;">
+                    <p style="font-size: 1.2rem;"><strong>ผลรวม:</strong> <span style="color: #7b1fa2; font-weight: bold;">{{.Result.ShaSum}}</span></p>
                     <p><strong>คู่เลข:</strong>
                         {{range .Result.ShaPairs}}
-                            <span class="badge badge-sha" style="font-size: 1.1rem; background: #9c27b0;">{{.}}</span>
+                            <span class="badge badge-sha" style="font-size: 1.1rem; background: #9c27b0; margin-right: 5px;">{{.}}</span>
                         {{else}}
                             -
                         {{end}}
