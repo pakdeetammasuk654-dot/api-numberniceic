@@ -19,8 +19,8 @@
         <h2 class="header-line">ผลลัพธ์: {{.Result.Name}}</h2>
 
         <div class="result-container">
-            <div class="result-col">
-                <h3>🧮 เลขศาสตร์</h3>
+            <div class="result-col" style="background-color: #f8f9fa; padding: 15px; border-radius: 8px;">
+                <h3 style="color: #007bff;">🧮 เลขศาสตร์</h3>
                 <table>
                     <tr><th>ตัวอักษร</th><th>ค่า</th></tr>
                     {{range .Result.SatValues}}
@@ -29,10 +29,21 @@
                         {{end}}
                     {{end}}
                 </table>
+
+                <div style="margin-top: 20px; border-top: 2px dashed #ccc; padding-top: 10px;">
+                    <p style="font-size: 1.2rem;"><strong>ผลรวม:</strong> {{.Result.SatSum}}</p>
+                    <p><strong>คู่เลข:</strong>
+                        {{range .Result.SatPairs}}
+                            <span class="badge" style="font-size: 1.1rem; background: #ffc107; color: black;">{{.}}</span>
+                        {{else}}
+                            -
+                        {{end}}
+                    </p>
+                </div>
             </div>
 
-            <div class="result-col">
-                <h3>🌑 เลขพลังเงา</h3>
+            <div class="result-col" style="background-color: #f3e5f5; padding: 15px; border-radius: 8px;">
+                <h3 style="color: #6f42c1;">🌑 เลขพลังเงา</h3>
                 <table>
                     <tr><th>ตัวอักษร</th><th>ค่า</th></tr>
                     {{range .Result.ShaValues}}
@@ -41,6 +52,17 @@
                         {{end}}
                     {{end}}
                 </table>
+
+                <div style="margin-top: 20px; border-top: 2px dashed #ccc; padding-top: 10px;">
+                    <p style="font-size: 1.2rem;"><strong>ผลรวม:</strong> {{.Result.ShaSum}}</p>
+                    <p><strong>คู่เลข:</strong>
+                        {{range .Result.ShaPairs}}
+                            <span class="badge badge-sha" style="font-size: 1.1rem; background: #9c27b0;">{{.}}</span>
+                        {{else}}
+                            -
+                        {{end}}
+                    </p>
+                </div>
             </div>
         </div>
     </div>
