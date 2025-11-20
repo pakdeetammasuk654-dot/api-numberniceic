@@ -105,10 +105,10 @@
                     </div>
                 </div>
 
-                <div style="margin-top: -20px; width: 100%; max-width: 350px; text-align: center; position: relative; z-index: 20;">
+                <div style="margin-top: 10px; width: 100%; max-width: 350px; text-align: center; position: relative; z-index: 20;">
                     {{if .Result.HasKakis}}
                         <div style="color: #555; font-size: 0.9rem; background: rgba(255,255,255,0.9); padding: 8px 15px; border-radius: 20px; display: inline-block; border: 1px solid #ef9a9a; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-                            <span style="color: #d32f2f;">●</span> หมายเหตุ: อักษรที่ปรากฏ<span style="color: #d32f2f; font-weight: bold;">สีแดง</span>คือกาลกิณี
+                            <span style="color: #d32f2f;">●</span> อักษร<span style="color: #d32f2f; font-weight: bold;">สีแดง</span>คือกาลกิณี
                         </div>
                     {{else}}
                         <div class="speech-bubble-success">
@@ -118,14 +118,14 @@
                 </div>
 
             </div> <div class="action-frame">
-                <div class="action-title" style="margin-bottom:10px;">ดูคำทำนาย</div>
+
                 <a href="#sat-section" class="btn-action btn-sat">
                     <span style="font-size: 1.2rem;">🧮</span> เลขศาสตร์
                 </a>
                 <a href="#sha-section" class="btn-action btn-lang">
                     <span style="font-size: 1.2rem;">📜</span> ภาษาศาสตร์
                 </a>
-                <div class="action-desc">คลิกเพื่อดูความหมาย</div>
+                <div class="action-desc">💡 กดปุ่มเพื่อดูความหมาย</div>
             </div>
 
         </div>
@@ -226,39 +226,31 @@
             requestAnimationFrame(updateCount);
         });
 
-        // 2. Input Logic: Validation + Clear Button (รวมไว้ที่นี่)
+        // 2. Input Logic & Clear Button
         const nameInput = document.getElementById('nameInput');
         const clearBtn = document.getElementById('clearInputBtn');
 
         if (nameInput && clearBtn) {
-            // ฟังก์ชันเช็คว่าควรแสดงปุ่ม X หรือไม่
             const updateBtnState = () => {
                 clearBtn.style.display = nameInput.value.length > 0 ? 'block' : 'none';
             };
 
-            // เมื่อพิมพ์ข้อความ
             nameInput.addEventListener('input', function() {
-                // Validation: กรองเฉพาะ ไทย/อังกฤษ/วรรค และห้ามวรรคซ้อน
                 let val = this.value;
                 val = val.replace(/[^a-zA-Z\u0E00-\u0E7F\s]/g, '');
                 val = val.replace(/\s{2,}/g, ' ');
-
-                // ถ้าค่าเปลี่ยน (เพราะโดนกรอง) ให้อัปเดตกลับไป
                 if (this.value !== val) {
                     this.value = val;
                 }
-
                 updateBtnState();
             });
 
-            // เมื่อกดปุ่ม X
             clearBtn.addEventListener('click', () => {
-                nameInput.value = '';   // ล้างค่า
-                updateBtnState();       // ซ่อนปุ่ม
-                nameInput.focus();      // โฟกัสกลับไปที่ช่องพิมพ์
+                nameInput.value = '';
+                updateBtnState();
+                nameInput.focus();
             });
 
-            // เรียกทำงานครั้งแรก (กรณีมีค่า default)
             updateBtnState();
         }
 
