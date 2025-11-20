@@ -59,6 +59,7 @@ func main() {
 	app.Post("/analysis", handler.HandleAnalysis)
 	api := app.Group("/api")
 	api.Get("/analyze", handler.ApiAnalyze)
+	api.Get("/linguistics", handler.ApiGetLinguistics)
 
 	// 6. Start Server (ใช้ Port จาก env)
 	port := os.Getenv("PORT")

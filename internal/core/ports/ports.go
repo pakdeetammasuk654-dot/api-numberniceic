@@ -17,4 +17,5 @@ type NumberRepository interface {
 type NumberService interface {
 	// ฟังก์ชันวิเคราะห์ชื่อ (รับชื่อ และ วันเกิด)
 	AnalyzeName(name string, birthDay string) (*domain.NameAnalysis, error)
+	GetNameLinguistics(name string) (string, error)
 }

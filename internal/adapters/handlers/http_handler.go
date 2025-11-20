@@ -96,3 +96,21 @@ func (h *FiberHandler) ApiAnalyze(c *fiber.Ctx) error {
 
 	return c.JSON(result)
 }
+
+func (h *FiberHandler) ApiGetLinguistics(c *fiber.Ctx) error {
+	name := c.Query("name")
+	if name == "" {
+		return c.Status(400).JSON(fiber.Map{"error": "Name is required"})
+	}
+
+	// เรียกใช้ Service
+	meaning, err := h.service.GetNameLinguistics(name)
+	if err != nil {
+		// กรณี AI มีปัญหา หรือไม่ได้ใส่ Key
+		return c.Status(500).JSON(fiber.Map{"error": "AI Service Unavailable: " + err.Error()})
+	}
+
+	return c.JSON(fiber.Map{
+		"text": meaning,
+	})
+}

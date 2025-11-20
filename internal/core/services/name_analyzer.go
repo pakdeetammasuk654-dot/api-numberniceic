@@ -3,8 +3,13 @@ package services
 import (
 	"api-numberniceic/internal/core/domain"
 	"api-numberniceic/internal/core/ports"
+	"context"
+	"fmt"
+	"os"
 	"strconv"
 	"strings"
+
+	"google.golang.org/genai"
 )
 
 type analyzerService struct {
@@ -130,4 +135,37 @@ func (s *analyzerService) generatePairs(sum int) []string {
 		return []string{strSum[0:2], strSum[1:3]}
 	}
 	return []string{}
+}
+
+func (s *analyzerService) GetNameLinguistics(name string) (string, error) {
+	apiKey := os.Getenv("GEMINI_API_KEY")
+	if apiKey == "" {
+		return "", fmt.Errorf("API Key configuration error")
+	}
+
+	ctx := context.Background()
+	// กำหนด Config
+	client, err := genai.NewClient(ctx, &genai.ClientConfig{
+		APIKey:  apiKey,
+		Backend: genai.BackendGeminiAPI,
+	})
+	if err != nil {
+		return "", fmt.Errorf("GenAI Client Error: %v", err)
+	}
+
+	// เรียก AI (ใช้ gemini-1.5-flash เพื่อความไว)
+	prompt := fmt.Sprintf("อธิบายความหมายและรากศัพท์ของชื่อ '%s' แบบสั้นๆ กระชับ เข้าใจง่าย ในเชิงภาษาศาสตร์และสิริมงคล", name)
+
+	result, err := client.Models.GenerateContent(
+		ctx,
+		"gemini-flash-latest",
+		genai.Text(prompt),
+		nil,
+	)
+	if err != nil {
+		return "", fmt.Errorf("GenAI Generate Error: %v", err)
+	}
+
+	// ดึงข้อความตอบกลับ
+	return result.Text(), nil
 }
