@@ -5,7 +5,7 @@
         <div style="display: flex; flex-direction: column; gap: 20px; max-width: 600px; margin: 0 auto;">
             <div class="input-wrapper select-wrapper">
                 <span class="input-icon">📅</span>
-                <select name="birth_day" class="form-control-custom" required onchange="this.form.submit()">
+                <select name="birth_day" id="birthDayInput" class="form-control-custom" required onchange="this.form.submit()">
                     <option value="" disabled>-- เลือกวันเกิด --</option>
                     <option value="sunday" {{if or (eq .BirthDay "sunday") (not .BirthDay)}}selected{{end}}>วันอาทิตย์</option>
                     <option value="monday" {{if eq .BirthDay "monday"}}selected{{end}}>วันจันทร์</option>
@@ -49,110 +49,117 @@
     <div class="text-center text-danger mt-3" style="background: #ffebee; padding: 10px; border-radius: 5px;">⚠️ {{.Error}}</div>
 {{end}}
 
-{{if .Result}}
-    <div id="analysisData"
-         data-name="{{.Result.Name}}"
-         data-kakis="{{if .Result.KakisFound}}{{range $i, $e := .Result.KakisFound}}{{if $i}},{{end}}{{$e}}{{end}}{{end}}"
-         style="display: none;">
-    </div>
+<div id="result-wrapper">
+    {{if .Result}}
+        <div id="analysisData"
+             data-name="{{.Result.Name}}"
+             data-kakis="{{if .Result.KakisFound}}{{range $i, $e := .Result.KakisFound}}{{if $i}},{{end}}{{$e}}{{end}}{{end}}"
+             style="display: none;">
+        </div>
 
-    <div class="summary-box">
-        <button class="btn-save-solar" onclick="alert('บันทึกชื่อเรียบร้อย! (Demo)')">💾 บันทึกชื่อ</button>
-        <div class="summary-row">
-            <div class="score-panel">
-                <div class="score-item"><div class="score-label">คะแนนรวม</div><div class="score-value-big {{if lt .Result.TotalScore 0}}bg-bad{{else}}bg-good{{end}}" id="totalScore" data-target="{{.Result.TotalScore}}">0</div></div>
-                <div class="divider"></div>
-                <div class="score-item"><div class="score-label">คะแนนดี</div><div class="score-value-small val-good">+<span id="goodScore" data-target="{{.Result.GoodScore}}">0</span></div></div>
-                <div class="score-item"><div class="score-label">คะแนนร้าย</div><div class="score-value-small val-bad"><span id="badScore" data-target="{{.Result.BadScore}}">0</span></div></div>
-            </div>
-            <div class="galaxy-wrapper">
-                <div class="solar-system">
-                    <div class="orbit-ring ring-middle">
-                        {{range $i, $el := .Result.ShaPairs}}{{if lt $i 5}}<div class="planet-wrapper pos-mid-{{$i}}"><div class="mini-star {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sha{{end}} c-spin-middle">{{.Pair}}</div></div>{{end}}{{end}}
+        <div class="summary-box">
+            <button class="btn-save-solar" onclick="alert('บันทึกชื่อเรียบร้อย! (Demo)')">💾 บันทึกชื่อ</button>
+            <div class="summary-row">
+                <div class="score-panel">
+                    <div class="score-item"><div class="score-label">คะแนนรวม</div><div class="score-value-big {{if lt .Result.TotalScore 0}}bg-bad{{else}}bg-good{{end}}" id="totalScore" data-target="{{.Result.TotalScore}}">0</div></div>
+                    <div class="divider"></div>
+                    <div class="score-item"><div class="score-label">คะแนนดี</div><div class="score-value-small val-good">+<span id="goodScore" data-target="{{.Result.GoodScore}}">0</span></div></div>
+                    <div class="score-item"><div class="score-label">คะแนนร้าย</div><div class="score-value-small val-bad"><span id="badScore" data-target="{{.Result.BadScore}}">0</span></div></div>
+                </div>
+                <div class="galaxy-wrapper">
+                    <div class="solar-system">
+                        <div class="orbit-ring ring-middle">
+                            {{range $i, $el := .Result.ShaPairs}}{{if lt $i 5}}<div class="planet-wrapper pos-mid-{{$i}}"><div class="mini-star {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sha{{end}} c-spin-middle">{{.Pair}}</div></div>{{end}}{{end}}
+                        </div>
+                        <div class="orbit-ring ring-outer">
+                            {{range $i, $el := .Result.SatPairs}}{{if lt $i 6}}<div class="planet-wrapper pos-out-{{$i}}"><div class="mini-star {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sat{{end}} c-spin-outer">{{.Pair}}</div></div>{{end}}{{end}}
+                        </div>
+                        <div class="score-circle {{if lt .Result.TotalScore 0}}sun-bad{{else}}sun-good{{end}}"><span id="sunNameDisplay"></span></div>
                     </div>
-                    <div class="orbit-ring ring-outer">
-                        {{range $i, $el := .Result.SatPairs}}{{if lt $i 6}}<div class="planet-wrapper pos-out-{{$i}}"><div class="mini-star {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sat{{end}} c-spin-outer">{{.Pair}}</div></div>{{end}}{{end}}
+                </div>
+                <div class="right-column">
+                    <div class="kakis-box">
+                        {{if .Result.HasKakis}}
+                            <div style="color: #555; font-size: 0.9rem; background: rgba(255,255,255,0.9); padding: 8px 15px; border-radius: 20px; display: inline-block; border: 1px solid #ef9a9a; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                                <span style="color: #d32f2f;">●</span> ปรากฏ<span style="color: #d32f2f; font-weight: bold;">สีแดง</span>คือกาลกิณี: {{if eq .Result.BirthDay "sunday"}}วันอาทิตย์{{else if eq .Result.BirthDay "monday"}}วันจันทร์{{else if eq .Result.BirthDay "tuesday"}}วันอังคาร{{else if eq .Result.BirthDay "wednesday1"}}วันพุธ (กลางวัน){{else if eq .Result.BirthDay "wednesday2"}}วันพุธ (กลางคืน){{else if eq .Result.BirthDay "thursday"}}วันพฤหัสบดี{{else if eq .Result.BirthDay "friday"}}วันศุกร์{{else if eq .Result.BirthDay "saturday"}}วันเสาร์{{end}}
+                            </div>
+                        {{else}}
+                            <div class="speech-bubble-success">
+                                🏆 ชื่อนี้ไม่มีกาลกิณี: {{if eq .Result.BirthDay "sunday"}}วันอาทิตย์{{else if eq .Result.BirthDay "monday"}}วันจันทร์{{else if eq .Result.BirthDay "tuesday"}}วันอังคาร{{else if eq .Result.BirthDay "wednesday1"}}วันพุธ (กลางวัน){{else if eq .Result.BirthDay "wednesday2"}}วันพุธ (กลางคืน){{else if eq .Result.BirthDay "thursday"}}วันพฤหัสบดี{{else if eq .Result.BirthDay "friday"}}วันศุกร์{{else if eq .Result.BirthDay "saturday"}}วันเสาร์{{end}}
+                            </div>
+                        {{end}}
                     </div>
-                    <div class="score-circle {{if lt .Result.TotalScore 0}}sun-bad{{else}}sun-good{{end}}"><span id="sunNameDisplay"></span></div>
+                    <div class="action-frame">
+                        <button id="btnShowDetails" class="btn-action btn-sat" style="border:none; font-family:inherit; cursor:pointer;">🧮 เลขศาสตร์</button>
+                        <button id="btnLinguistics" class="btn-action btn-lang" style="border:none; font-family:inherit; cursor:pointer;">📜 ภาษาศาสตร์</button>
+                        <div class="action-desc">💡 กดปุ่มดูความหมาย</div>
+                    </div>
                 </div>
             </div>
-            <div class="right-column">
-                <div class="kakis-box">
-                    {{if .Result.HasKakis}}
-                        <div style="color: #555; font-size: 0.9rem; background: rgba(255,255,255,0.9); padding: 8px 15px; border-radius: 20px; display: inline-block; border: 1px solid #ef9a9a; box-shadow: 0 2px 5px rgba(0,0,0,0.05);"><span style="color: #d32f2f;">●</span> อักษรที่ปรากฏ<span style="color: #d32f2f; font-weight: bold;">สีแดง</span>คือกาลกิณี</div>
-                    {{else}}
-                        <div class="speech-bubble-success">🏆 ชื่อนี้ไม่มีกาลกิณี</div>
+        </div>
+
+        <div id="detailSection" class="card" style="display: none; position: relative;">
+            <button id="btnCloseDetails" title="ปิดรายละเอียด">&times;</button>
+            <h2 class="header-line">รายละเอียดคำทำนาย: {{.Result.Name}}</h2>
+            <div class="result-container">
+                <div class="result-col" id="sat-section">
+                    <h3 style="color: #0277bd;">🧮 เลขศาสตร์</h3>
+                    <p>ผลรวม: <strong>{{.Result.SatSum}}</strong></p>
+                    {{range .Result.SatPairs}}
+                        <div class="pair-card {{if .Meaning}}type-{{.Meaning.PairType}}{{end}}">
+                            <div style="display: flex; align-items: flex-start;">
+                                <div style="margin-right: 15px; text-align: center; min-width: 50px;"><span class="pair-number">{{.Pair}}</span>{{if .Meaning}}<br><span style="font-size: 0.8rem; padding: 2px 6px; background: #eee; border-radius: 4px; color: #666;">{{.Meaning.PairType}}</span>{{end}}</div>
+                                <div>{{if .Meaning}}<div style="font-weight: bold; font-size: 1.1rem; margin-bottom: 5px;">{{.Meaning.MiracleDesc}}</div><small style="color: #666;">{{.Meaning.MiracleDetail}}</small>{{else}}<span style="color: #999;">- ไม่พบข้อมูล -</span>{{end}}</div>
+                            </div>
+                        </div>
                     {{end}}
                 </div>
-                <div class="action-frame">
-                    <button id="btnShowDetails" class="btn-action btn-sat" style="border:none; font-family:inherit; cursor:pointer;">🧮 เลขศาสตร์</button>
-                    <button id="btnLinguistics" class="btn-action btn-lang" style="border:none; font-family:inherit; cursor:pointer;">📜 ภาษาศาสตร์</button>
-                    <div class="action-desc">💡 กดปุ่มดูความหมาย</div>
+                <div class="result-col" id="sha-section">
+                    <h3 style="color: #7b1fa2;">🌑 พลังเงา</h3>
+                    <p>ผลรวม: <strong>{{.Result.ShaSum}}</strong></p>
+                    {{range .Result.ShaPairs}}
+                        <div class="pair-card {{if .Meaning}}type-{{.Meaning.PairType}}{{end}}">
+                            <div style="display: flex; align-items: flex-start;">
+                                <div style="margin-right: 15px; text-align: center; min-width: 50px;"><span class="pair-number">{{.Pair}}</span>{{if .Meaning}}<br><span style="font-size: 0.8rem; padding: 2px 6px; background: #eee; border-radius: 4px; color: #666;">{{.Meaning.PairType}}</span>{{end}}</div>
+                                <div>{{if .Meaning}}<div style="font-weight: bold; font-size: 1.1rem; margin-bottom: 5px;">{{.Meaning.MiracleDesc}}</div><small style="color: #666;">{{.Meaning.MiracleDetail}}</small>{{else}}<span style="color: #999;">- ไม่พบข้อมูล -</span>{{end}}</div>
+                            </div>
+                        </div>
+                    {{end}}
                 </div>
             </div>
         </div>
-    </div>
 
-    <div id="detailSection" class="card" style="display: none; position: relative;">
-        <button id="btnCloseDetails" title="ปิดรายละเอียด">&times;</button>
-        <h2 class="header-line">รายละเอียดคำทำนาย: {{.Result.Name}}</h2>
-        <div class="result-container">
-            <div class="result-col" id="sat-section">
-                <h3 style="color: #0277bd;">🧮 เลขศาสตร์</h3>
-                <p>ผลรวม: <strong>{{.Result.SatSum}}</strong></p>
-                {{range .Result.SatPairs}}
-                    <div class="pair-card {{if .Meaning}}type-{{.Meaning.PairType}}{{end}}">
-                        <div style="display: flex; align-items: flex-start;">
-                            <div style="margin-right: 15px; text-align: center; min-width: 50px;"><span class="pair-number">{{.Pair}}</span>{{if .Meaning}}<br><span style="font-size: 0.8rem; padding: 2px 6px; background: #eee; border-radius: 4px; color: #666;">{{.Meaning.PairType}}</span>{{end}}</div>
-                            <div>{{if .Meaning}}<div style="font-weight: bold; font-size: 1.1rem; margin-bottom: 5px;">{{.Meaning.MiracleDesc}}</div><small style="color: #666;">{{.Meaning.MiracleDetail}}</small>{{else}}<span style="color: #999;">- ไม่พบข้อมูล -</span>{{end}}</div>
-                        </div>
-                    </div>
-                {{end}}
-            </div>
-            <div class="result-col" id="sha-section">
-                <h3 style="color: #7b1fa2;">🌑 พลังเงา</h3>
-                <p>ผลรวม: <strong>{{.Result.ShaSum}}</strong></p>
-                {{range .Result.ShaPairs}}
-                    <div class="pair-card {{if .Meaning}}type-{{.Meaning.PairType}}{{end}}">
-                        <div style="display: flex; align-items: flex-start;">
-                            <div style="margin-right: 15px; text-align: center; min-width: 50px;"><span class="pair-number">{{.Pair}}</span>{{if .Meaning}}<br><span style="font-size: 0.8rem; padding: 2px 6px; background: #eee; border-radius: 4px; color: #666;">{{.Meaning.PairType}}</span>{{end}}</div>
-                            <div>{{if .Meaning}}<div style="font-weight: bold; font-size: 1.1rem; margin-bottom: 5px;">{{.Meaning.MiracleDesc}}</div><small style="color: #666;">{{.Meaning.MiracleDetail}}</small>{{else}}<span style="color: #999;">- ไม่พบข้อมูล -</span>{{end}}</div>
-                        </div>
-                    </div>
+        <div class="card">
+            <h3 class="header-line">
+                🌟 ชื่อคล้าย <span id="similarNameDisplay" style="color: #007bff; margin-left: 5px;"></span>
+                <span style="font-size: 1rem; color: #555; font-weight: normal;">
+                ({{if eq .Result.BirthDay "sunday"}}วันอาทิตย์{{else if eq .Result.BirthDay "monday"}}วันจันทร์{{else if eq .Result.BirthDay "tuesday"}}วันอังคาร{{else if eq .Result.BirthDay "wednesday1"}}วันพุธ (กลางวัน){{else if eq .Result.BirthDay "wednesday2"}}วันพุธ (กลางคืน){{else if eq .Result.BirthDay "thursday"}}วันพฤหัสบดี{{else if eq .Result.BirthDay "friday"}}วันศุกร์{{else if eq .Result.BirthDay "saturday"}}วันเสาร์{{end}})
+            </span>
+            </h3>
+            <div class="table-responsive">
+                {{if .Result.SimilarNames}}
+                    <table class="table table-hover table-striped align-middle" style="margin-bottom: 0; width: 100%; border-collapse: collapse;">
+                        <thead class="table-light">
+                        <tr><th scope="col" style="padding: 12px;">ชื่อ/สกุล</th><th scope="col" class="text-center">เลขศาสตร์</th><th scope="col" class="text-center">พลังเงา</th><th scope="col" class="text-center">คล้าย</th></tr>
+                        </thead>
+                        <tbody>
+                        {{range .Result.SimilarNames}}
+                            <tr onclick="analyzeName('{{.ThName}}')">
+                                <td style="font-size: 1.1rem; font-weight: bold; color: #333; padding: 12px;">{{.ThName}}</td>
+                                <td class="text-center"><div style="display: flex; justify-content: center; gap: 4px; flex-wrap: wrap;">{{range .SatPairs}}<div class="mini-star-table {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sat{{end}}">{{.Pair}}</div>{{end}}</div></td>
+                                <td class="text-center"><div style="display: flex; justify-content: center; gap: 4px; flex-wrap: wrap;">{{range .ShaPairs}}<div class="mini-star-table {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sha{{end}}">{{.Pair}}</div>{{end}}</div></td>
+                                <td class="text-center"><span style="font-size: 0.9rem; color: #666;">{{printf "%.3f" .Distance}}</span></td>
+                            </tr>
+                        {{end}}
+                        </tbody>
+                    </table>
+                {{else}}
+                    <p class="text-center text-muted p-3">ไม่พบชื่อที่ใกล้เคียงในฐานข้อมูล</p>
                 {{end}}
             </div>
         </div>
-    </div>
-
-    <div class="card">
-        <h3 class="header-line">
-            🌟 ชื่อไม่มีกาลกิณีใกล้เคียง <span id="similarNameDisplay" style="color: #007bff; margin-left: 5px;"></span>
-        </h3>
-        <div class="table-responsive">
-            {{if .Result.SimilarNames}}
-                <table class="table table-hover table-striped align-middle" style="margin-bottom: 0; width: 100%; border-collapse: collapse;">
-                    <thead class="table-light">
-                    <tr><th scope="col" style="padding: 12px;">ชื่อมงคล</th><th scope="col" class="text-center">เลขศาสตร์</th><th scope="col" class="text-center">เลขพลังเงา</th><th scope="col" class="text-center">ความห่าง</th></tr>
-                    </thead>
-                    <tbody>
-                    {{range .Result.SimilarNames}}
-                        <tr onclick="window.location.href='/analysis?name={{.ThName}}&birth_day={{$.BirthDay}}'">
-                            <td style="font-size: 1.1rem; font-weight: bold; color: #333; padding: 12px;">{{.ThName}}</td>
-                            <td class="text-center"><div style="display: flex; justify-content: center; gap: 4px; flex-wrap: wrap;">{{range .SatPairs}}<div class="mini-star-table {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sat{{end}}">{{.Pair}}</div>{{end}}</div></td>
-                            <td class="text-center"><div style="display: flex; justify-content: center; gap: 4px; flex-wrap: wrap;">{{range .ShaPairs}}<div class="mini-star-table {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sha{{end}}">{{.Pair}}</div>{{end}}</div></td>
-                            <td class="text-center"><span style="font-size: 0.9rem; color: #666;">{{printf "%.3f" .Distance}}</span></td>
-                        </tr>
-                    {{end}}
-                    </tbody>
-                </table>
-            {{else}}
-                <p class="text-center text-muted p-3">ไม่พบชื่อที่ใกล้เคียงในฐานข้อมูล</p>
-            {{end}}
-        </div>
-    </div>
-{{end}}
-
-<div id="aiModal" class="ai-modal">
+    {{end}}
+</div> <div id="aiModal" class="ai-modal">
     <div class="ai-modal-content">
         <span class="close-modal">&times;</span>
         <h3 style="border-bottom: 2px solid #eee; padding-bottom: 10px; margin-top: 0;">🤖 วิเคราะห์รากศัพท์ (AI)</h3>
