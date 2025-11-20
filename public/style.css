@@ -55,7 +55,8 @@ h1, h2, h3 { color: #333; }
     align-items: center;
     gap: 10px;
     margin: 0 0 30px 0;
-    flex-wrap: wrap;
+    /* แก้ไข: บังคับห้ามปัดบรรทัดใน Desktop */
+    flex-wrap: nowrap;
 }
 
 /* --- Left Score Panel --- */
@@ -64,7 +65,7 @@ h1, h2, h3 { color: #333; }
     border-radius: 15px; padding: 20px; width: 160px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #eee;
     display: flex; flex-direction: column; gap: 15px; text-align: center;
-    order: 1;
+    flex-shrink: 0; /* ห้ามหด */
 }
 .score-item { display: flex; flex-direction: column; align-items: center; }
 .score-label { font-size: 0.9rem; color: #666; margin-bottom: 5px; }
@@ -84,6 +85,27 @@ h1, h2, h3 { color: #333; }
 .val-good { color: #2e7d32; }
 .val-bad  { color: #c62828; }
 .divider { height: 1px; background: #e0e0e0; width: 100%; margin: 5px 0; }
+
+/* --- Right Column --- */
+.right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    min-width: 160px;
+    justify-content: center;
+    flex-shrink: 0; /* ห้ามหด */
+}
+
+/* --- Kakis Box --- */
+.kakis-box {
+    width: 100%;
+    text-align: center;
+    position: relative;
+    z-index: 20;
+    margin-top: 0;
+    white-space: nowrap;
+}
 
 /* --- Speech Bubble --- */
 .speech-bubble-success {
@@ -109,7 +131,6 @@ h1, h2, h3 { color: #333; }
     background-color: #fff; padding: 20px; border-radius: 15px; width: 160px;
     text-align: center; display: flex; flex-direction: column; gap: 15px;
     border: 1px solid #eee; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    order: 3;
 }
 .action-title { font-weight:bold; color:#555; }
 
@@ -124,7 +145,7 @@ h1, h2, h3 { color: #333; }
 .action-desc { font-size: 0.8rem; color: #888; }
 
 /* --- Solar System (Galaxy) --- */
-.galaxy-wrapper { display: flex; flex-direction: column; align-items: center; order: 2; }
+.galaxy-wrapper { display: flex; flex-direction: column; align-items: center; }
 
 .solar-system {
     position: relative;
@@ -213,13 +234,29 @@ h1, h2, h3 { color: #333; }
 .visual-section { display: none; }
 
 /* =========================================
-   Mobile / Responsive Adjustments (UPDATED)
+   Responsive Adjustments
    ========================================= */
+
+/* --- Tablet/Narrow Desktop (851px - 980px) --- */
+/* ปรับย่อ Galaxy เพื่อให้ 3 คอลัมน์อยู่แถวเดียวกันได้ */
+@media (min-width: 851px) and (max-width: 980px) {
+    .solar-system {
+        transform: scale(0.85); /* ย่อ Galaxy */
+    }
+    .summary-row {
+        gap: 5px; /* ลดช่องว่างระหว่างคอลัมน์ */
+    }
+}
+
+/* --- Mobile (850px or less) --- */
 @media (max-width: 850px) {
-    /* ปรับ gap ให้น้อยลงเพื่อดึงเข้าหากัน */
     .summary-row { flex-direction: column; gap: 5px; }
 
-    /* Galaxy Wrapper */
+    .right-column {
+        display: contents; /* ปลดล็อค layout เพื่อเรียงตาม order ในมือถือ */
+    }
+
+    /* 1. Galaxy */
     .galaxy-wrapper {
         order: 1;
         margin-right: 0;
@@ -231,14 +268,22 @@ h1, h2, h3 { color: #333; }
         margin-bottom: -30px;
     }
 
-    /* Score Panel: Compact Version + Pull Up */
+    /* 2. Kakis Box */
+    .kakis-box {
+        order: 2;
+        margin-top: 10px;
+        max-width: 350px;
+        width: 100%;
+        white-space: normal; /* ในมือถืออนุญาตให้ตัดคำได้ถ้าจอกว้างไม่พอ */
+    }
+
+    /* 3. Score Panel */
     .score-panel {
-        order: 2; width: 100%; max-width: 340px;
+        order: 3; width: 100%; max-width: 340px;
         flex-direction: row; justify-content: center; align-items: center;
         padding: 12px 8px;
         gap: 10px;
         min-height: auto;
-        /* ดึงขึ้นไปชิดกับกล่องข้อความ */
         margin-top: -15px;
     }
 
@@ -247,23 +292,14 @@ h1, h2, h3 { color: #333; }
         background: #e0e0e0; margin: 0 5px;
     }
 
-    .score-value-big {
-        width: 70px; height: 70px;
-        font-size: 1.6rem;
-        border-width: 3px;
-    }
-
-    .score-value-small {
-        font-size: 1.1rem;
-        min-width: 35px; min-height: 35px;
-    }
-
+    .score-value-big { width: 70px; height: 70px; font-size: 1.6rem; border-width: 3px; }
+    .score-value-small { font-size: 1.1rem; min-width: 35px; min-height: 35px; }
     .score-label { font-size: 0.75rem; white-space: nowrap; margin-bottom: 2px; }
     .score-item { justify-content: center; }
 
-    /* Action Buttons */
+    /* 4. Action Buttons */
     .action-frame {
-        order: 3; width: 100%; max-width: 350px;
+        order: 4; width: 100%; max-width: 350px;
         flex-direction: row; flex-wrap: wrap; justify-content: center;
         padding: 15px; gap: 10px;
     }
