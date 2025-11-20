@@ -5,15 +5,15 @@ GET http://localhost:3000/
 GET http://localhost:3000/analysis
 
 ### 3. ทดสอบการส่ง Form วิเคราะห์ชื่อ (POST Form)
-# *อัปเดต*: ยิงไปที่ /analysis ตามที่เราตั้งค่าใน Router และ HTML Form
+# *อัปเดต*: ส่งชื่อ "อณัญญา" และวันเกิด "sunday" (วันอาทิตย์)
 POST http://localhost:3000/analysis
 Content-Type: application/x-www-form-urlencoded
 
-name=ใจดี มีสุข
+name=อณัญญา&birth_day=sunday
 
 ### 4. ทดสอบ API แบบ JSON (JSON API)
-# อันนี้สำคัญ! เอาไว้เช็คว่าค่า sat_pairs / sha_pairs ออกมาถูกต้องหรือไม่
-GET http://localhost:3000/api/analyze?name=อณัญญา ภักดีธรรมสุข
+# อันนี้สำคัญ! เอาไว้เช็ค logic กาลกิณีว่าทำงานถูกต้องหรือไม่
+GET http://localhost:3000/api/analyze?name=อณัญญา&birth_day=sunday
 Accept: application/json
 
 ### 5. ทดสอบหน้าเมนูอื่นๆ (Dashboard)

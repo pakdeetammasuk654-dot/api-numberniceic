@@ -4,11 +4,15 @@
         <label><strong>กรอกข้อมูลของคุณ:</strong></label>
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
 
-            <input type="text" name="name" class="form-control" placeholder="ชื่อ-นามสกุล (ภาษาไทย)" required value="{{if .Name}}{{.Name}}{{end}}" style="flex: 2; min-width: 200px; margin: 0;">
+            <input type="text" name="name" class="form-control" placeholder="ชื่อ-นามสกุล (ภาษาไทย)" required
+                   value="{{if .Name}}{{.Name}}{{else}}อณัญญา{{end}}"
+                   style="flex: 2; min-width: 200px; margin: 0;">
 
-            <select name="birth_day" class="form-control" style="flex: 1; min-width: 150px; margin: 0;" required>
-                <option value="" disabled {{if not .BirthDay}}selected{{end}}>-- เลือกวันเกิด --</option>
-                <option value="sunday" {{if eq .BirthDay "sunday"}}selected{{end}}>วันอาทิตย์</option>
+            <select name="birth_day" class="form-control" style="flex: 1; min-width: 150px; margin: 0;" required onchange="this.form.submit()">
+                <option value="" disabled>-- เลือกวันเกิด --</option>
+
+                <option value="sunday" {{if or (eq .BirthDay "sunday") (not .BirthDay)}}selected{{end}}>วันอาทิตย์</option>
+
                 <option value="monday" {{if eq .BirthDay "monday"}}selected{{end}}>วันจันทร์</option>
                 <option value="tuesday" {{if eq .BirthDay "tuesday"}}selected{{end}}>วันอังคาร</option>
                 <option value="wednesday1" {{if eq .BirthDay "wednesday1"}}selected{{end}}>วันพุธ (กลางวัน)</option>
