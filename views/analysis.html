@@ -1,10 +1,9 @@
 <div class="card">
-    <h1 class="text-center">🔍 วิเคราะห์ชื่อมงคล</h1>
-    <form action="/analysis" method="POST">
-        <label><strong>กรอก "ชื่อ/สกุล" และ "วันเกิด" :</strong></label>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+    <form id="analysisForm" action="/analysis" method="POST">
 
-            <div style="position: relative; flex: 2; min-width: 200px; margin: 0;">
+        <div class="analysis-form" style="display: flex; gap: 10px; flex-wrap: wrap;">
+
+            <div class="group-name" style="position: relative; flex: 2; min-width: 200px; margin: 0;">
                 <input type="text" id="nameInput" name="name" class="form-control"
                        placeholder="ชื่อ-นามสกุล (ภาษาไทย/อังกฤษ)" required
                        maxlength="24"
@@ -19,21 +18,82 @@
                 </button>
             </div>
 
-            <select name="birth_day" class="form-control" style="flex: 1; min-width: 150px; margin: 0;" required onchange="this.form.submit()">
-                <option value="" disabled>-- เลือกวันเกิด --</option>
-                <option value="sunday" {{if or (eq .BirthDay "sunday") (not .BirthDay)}}selected{{end}}>วันอาทิตย์</option>
-                <option value="monday" {{if eq .BirthDay "monday"}}selected{{end}}>วันจันทร์</option>
-                <option value="tuesday" {{if eq .BirthDay "tuesday"}}selected{{end}}>วันอังคาร</option>
-                <option value="wednesday1" {{if eq .BirthDay "wednesday1"}}selected{{end}}>วันพุธ (กลางวัน)</option>
-                <option value="wednesday2" {{if eq .BirthDay "wednesday2"}}selected{{end}}>วันพุธ (กลางคืน)</option>
-                <option value="thursday" {{if eq .BirthDay "thursday"}}selected{{end}}>วันพฤหัสบดี</option>
-                <option value="friday" {{if eq .BirthDay "friday"}}selected{{end}}>วันศุกร์</option>
-                <option value="saturday" {{if eq .BirthDay "saturday"}}selected{{end}}>วันเสาร์</option>
-            </select>
+            <div class="group-birth" style="position: relative; flex: 1; min-width: 150px; margin: 0;">
+                <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 1.2rem; pointer-events: none;">
+                    📅
+                </span>
 
-            <button type="submit" class="btn btn-success" style="width: auto; padding: 0 20px;">วิเคราะห์</button>
+                <select id="birthInput" name="birth_day" class="form-control"
+                        style="width: 100%; padding-left: 45px; margin: 0; cursor: pointer;"
+                        required onchange="this.form.submit()">
+                    <option value="" disabled>-- เลือกวันเกิด --</option>
+                    <option value="sunday" {{if or (eq .BirthDay "sunday") (not .BirthDay)}}selected{{end}}>วันอาทิตย์</option>
+                    <option value="monday" {{if eq .BirthDay "monday"}}selected{{end}}>วันจันทร์</option>
+                    <option value="tuesday" {{if eq .BirthDay "tuesday"}}selected{{end}}>วันอังคาร</option>
+                    <option value="wednesday1" {{if eq .BirthDay "wednesday1"}}selected{{end}}>วันพุธ (กลางวัน)</option>
+                    <option value="wednesday2" {{if eq .BirthDay "wednesday2"}}selected{{end}}>วันพุธ (กลางคืน)</option>
+                    <option value="thursday" {{if eq .BirthDay "thursday"}}selected{{end}}>วันพฤหัสบดี</option>
+                    <option value="friday" {{if eq .BirthDay "friday"}}selected{{end}}>วันศุกร์</option>
+                    <option value="saturday" {{if eq .BirthDay "saturday"}}selected{{end}}>วันเสาร์</option>
+                </select>
+            </div>
         </div>
     </form>
+
+    <div class="sample-section">
+        <p class="sample-title" style="text-align: center; margin-top: 0;">เลือกวันเกิด และพิมพ์ชื่อ หรือเลือกบุคคลที่มีชื่อเสียง</p>
+
+        <div class="sample-grid">
+            <div class="sample-item" data-name="มีนา">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Meena" alt="Meena">
+                <span>มีนา</span>
+            </div>
+            <div class="sample-item" data-name="อารี">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Aree" alt="Aree">
+                <span>อารี</span>
+            </div>
+            <div class="sample-item" data-name="ศิลา">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sila" alt="Sila">
+                <span>ศิลา</span>
+            </div>
+            <div class="sample-item" data-name="วารี">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Waree" alt="Waree">
+                <span>วารี</span>
+            </div>
+            <div class="sample-item" data-name="นารา">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Nara" alt="Nara">
+                <span>นารา</span>
+            </div>
+            <div class="sample-item" data-name="ธารา">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Thara" alt="Thara">
+                <span>ธารา</span>
+            </div>
+            <div class="sample-item" data-name="ภูผา">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Phupha" alt="Phupha">
+                <span>ภูผา</span>
+            </div>
+            <div class="sample-item" data-name="นาวา">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Nawa" alt="Nawa">
+                <span>นาวา</span>
+            </div>
+            <div class="sample-item" data-name="ทิวา">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Tiwa" alt="Tiwa">
+                <span>ทิวา</span>
+            </div>
+            <div class="sample-item" data-name="ราตรี">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Ratree" alt="Ratree">
+                <span>ราตรี</span>
+            </div>
+            <div class="sample-item" data-name="มาลี">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Malee" alt="Malee">
+                <span>มาลี</span>
+            </div>
+            <div class="sample-item" data-name="วายุ">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Wayu" alt="Wayu">
+                <span>วายุ</span>
+            </div>
+        </div>
+    </div>
 </div>
 
 {{if .Error}}
@@ -43,18 +103,13 @@
 {{end}}
 
 {{if .Result}}
-
     <div class="summary-box">
-
         <div class="summary-row">
-
             <div class="score-panel">
                 <div class="score-item">
                     <div class="score-label">คะแนนรวม</div>
                     <div class="score-value-big {{if lt .Result.TotalScore 0}}bg-bad{{else}}bg-good{{end}}"
-                         id="totalScore" data-target="{{.Result.TotalScore}}">
-                        0
-                    </div>
+                         id="totalScore" data-target="{{.Result.TotalScore}}">0</div>
                 </div>
                 <div class="divider"></div>
                 <div class="score-item">
@@ -74,27 +129,25 @@
                             {{if lt $i 5}}
                                 <div class="planet-wrapper pos-mid-{{$i}}">
                                     <div class="mini-star {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sha{{end}} c-spin-middle"
-                                         title="พลังเงา: {{.Pair}} {{if .Meaning}}({{.Meaning.PairType}}){{end}}">
+                                         title="พลังเงา: {{.Pair}}">
                                         {{.Pair}}
                                     </div>
                                 </div>
                             {{end}}
                         {{end}}
                     </div>
-
                     <div class="orbit-ring ring-outer">
                         {{range $i, $el := .Result.SatPairs}}
                             {{if lt $i 6}}
                                 <div class="planet-wrapper pos-out-{{$i}}">
                                     <div class="mini-star {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sat{{end}} c-spin-outer"
-                                         title="เลขศาสตร์: {{.Pair}} {{if .Meaning}}({{.Meaning.PairType}}){{end}}">
+                                         title="เลขศาสตร์: {{.Pair}}">
                                         {{.Pair}}
                                     </div>
                                 </div>
                             {{end}}
                         {{end}}
                     </div>
-
                     <div class="score-circle {{if lt .Result.TotalScore 0}}sun-bad{{else}}sun-good{{end}}">
                         <span id="sunNameDisplay">{{.Result.Name}}</span>
                     </div>
@@ -102,11 +155,10 @@
             </div>
 
             <div class="right-column">
-
                 <div class="kakis-box">
                     {{if .Result.HasKakis}}
                         <div style="color: #555; font-size: 0.9rem; background: rgba(255,255,255,0.9); padding: 8px 15px; border-radius: 20px; display: inline-block; border: 1px solid #ef9a9a; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-                            <span style="color: #d32f2f;">●</span> อักษรที่ปรากฏ<span style="color: #d32f2f; font-weight: bold;">สีแดง</span>คือกาลกิณี
+                            <span style="color: #d32f2f;">●</span> หมายเหตุ: อักษรที่ปรากฏ<span style="color: #d32f2f; font-weight: bold;">สีแดง</span>คือกาลกิณี
                         </div>
                     {{else}}
                         <div class="speech-bubble-success">
@@ -114,37 +166,32 @@
                         </div>
                     {{end}}
                 </div>
-
                 <div class="action-frame">
+                    <div class="action-title" style="margin-bottom:10px;">ดูคำทำนาย</div>
                     <a href="#sat-section" class="btn-action btn-sat">
                         <span style="font-size: 1.2rem;">🧮</span> เลขศาสตร์
                     </a>
                     <a href="#sha-section" class="btn-action btn-lang">
                         <span style="font-size: 1.2rem;">📜</span> ภาษาศาสตร์
                     </a>
-                    <div class="action-desc">💡 กดปุ่มดูความหมาย</div>
+                    <div class="action-desc">คลิกเพื่อดูความหมาย</div>
                 </div>
             </div>
-
         </div>
     </div>
 
     <div class="card">
         <h2 class="header-line">รายละเอียดคำทำนาย: {{.Result.Name}}</h2>
-
         <div class="result-container">
             <div class="result-col" id="sat-section">
                 <h3 style="color: #0277bd;">🧮 เลขศาสตร์</h3>
                 <p>ผลรวม: <strong>{{.Result.SatSum}}</strong></p>
-
                 {{range .Result.SatPairs}}
                     <div class="pair-card {{if .Meaning}}type-{{.Meaning.PairType}}{{end}}">
                         <div style="display: flex; align-items: flex-start;">
                             <div style="margin-right: 15px; text-align: center; min-width: 50px;">
                                 <span class="pair-number">{{.Pair}}</span>
-                                {{if .Meaning}}
-                                    <br><span style="font-size: 0.8rem; padding: 2px 6px; background: #eee; border-radius: 4px; color: #666;">{{.Meaning.PairType}}</span>
-                                {{end}}
+                                {{if .Meaning}}<br><span style="font-size: 0.8rem; padding: 2px 6px; background: #eee; border-radius: 4px; color: #666;">{{.Meaning.PairType}}</span>{{end}}
                             </div>
                             <div>
                                 {{if .Meaning}}
@@ -159,19 +206,15 @@
                     </div>
                 {{end}}
             </div>
-
             <div class="result-col" id="sha-section">
                 <h3 style="color: #7b1fa2;">🌑 พลังเงา</h3>
                 <p>ผลรวม: <strong>{{.Result.ShaSum}}</strong></p>
-
                 {{range .Result.ShaPairs}}
                     <div class="pair-card {{if .Meaning}}type-{{.Meaning.PairType}}{{end}}">
                         <div style="display: flex; align-items: flex-start;">
                             <div style="margin-right: 15px; text-align: center; min-width: 50px;">
                                 <span class="pair-number">{{.Pair}}</span>
-                                {{if .Meaning}}
-                                    <br><span style="font-size: 0.8rem; padding: 2px 6px; background: #eee; border-radius: 4px; color: #666;">{{.Meaning.PairType}}</span>
-                                {{end}}
+                                {{if .Meaning}}<br><span style="font-size: 0.8rem; padding: 2px 6px; background: #eee; border-radius: 4px; color: #666;">{{.Meaning.PairType}}</span>{{end}}
                             </div>
                             <div>
                                 {{if .Meaning}}
@@ -211,30 +254,42 @@
                 const easeProgress = (progress === 1) ? 1 : 1 - Math.pow(2, -10 * progress);
                 const current = Math.floor(easeProgress * (target - start) + start);
                 counter.innerText = current;
-                if (progress < 1) {
-                    requestAnimationFrame(updateCount);
-                } else {
-                    counter.innerText = target;
-                }
+                if (progress < 1) requestAnimationFrame(updateCount);
+                else counter.innerText = target;
             }
             requestAnimationFrame(updateCount);
         });
 
         const nameInput = document.getElementById('nameInput');
         const clearBtn = document.getElementById('clearInputBtn');
+        const analysisForm = document.getElementById('analysisForm');
+        let debounceTimer;
+
+        function triggerSubmit() {
+            if (nameInput.value.trim().length > 0) {
+                analysisForm.submit();
+            }
+        }
+
         if (nameInput && clearBtn) {
             const updateBtnState = () => {
                 clearBtn.style.display = nameInput.value.length > 0 ? 'block' : 'none';
             };
-            nameInput.addEventListener('input', function() {
+
+            nameInput.addEventListener('keyup', function() {
                 let val = this.value;
                 val = val.replace(/[^a-zA-Z\u0E00-\u0E7F\s]/g, '');
                 val = val.replace(/\s{2,}/g, ' ');
-                if (this.value !== val) {
-                    this.value = val;
-                }
+                if (this.value !== val) this.value = val;
+
                 updateBtnState();
+
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    triggerSubmit();
+                }, 500);
             });
+
             clearBtn.addEventListener('click', () => {
                 nameInput.value = '';
                 updateBtnState();
@@ -242,6 +297,17 @@
             });
             updateBtnState();
         }
+
+        const avatars = document.querySelectorAll('.sample-item');
+        avatars.forEach(item => {
+            item.addEventListener('click', () => {
+                const name = item.getAttribute('data-name');
+                if(nameInput) {
+                    nameInput.value = name;
+                    triggerSubmit();
+                }
+            });
+        });
 
         const fullName = "{{.Result.Name}}";
         const badChars = [{{range .Result.KakisFound}}"{{.}}",{{end}}];

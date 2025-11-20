@@ -55,7 +55,6 @@ h1, h2, h3 { color: #333; }
     align-items: center;
     gap: 10px;
     margin: 0 0 30px 0;
-    /* แก้ไข: บังคับห้ามปัดบรรทัดใน Desktop */
     flex-wrap: nowrap;
 }
 
@@ -65,7 +64,7 @@ h1, h2, h3 { color: #333; }
     border-radius: 15px; padding: 20px; width: 160px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #eee;
     display: flex; flex-direction: column; gap: 15px; text-align: center;
-    flex-shrink: 0; /* ห้ามหด */
+    flex-shrink: 0;
 }
 .score-item { display: flex; flex-direction: column; align-items: center; }
 .score-label { font-size: 0.9rem; color: #666; margin-bottom: 5px; }
@@ -94,7 +93,7 @@ h1, h2, h3 { color: #333; }
     align-items: center;
     min-width: 160px;
     justify-content: center;
-    flex-shrink: 0; /* ห้ามหด */
+    flex-shrink: 0;
 }
 
 /* --- Kakis Box --- */
@@ -238,13 +237,12 @@ h1, h2, h3 { color: #333; }
    ========================================= */
 
 /* --- Tablet/Narrow Desktop (851px - 980px) --- */
-/* ปรับย่อ Galaxy เพื่อให้ 3 คอลัมน์อยู่แถวเดียวกันได้ */
 @media (min-width: 851px) and (max-width: 980px) {
     .solar-system {
-        transform: scale(0.85); /* ย่อ Galaxy */
+        transform: scale(0.85);
     }
     .summary-row {
-        gap: 5px; /* ลดช่องว่างระหว่างคอลัมน์ */
+        gap: 5px;
     }
 }
 
@@ -253,10 +251,10 @@ h1, h2, h3 { color: #333; }
     .summary-row { flex-direction: column; gap: 5px; }
 
     .right-column {
-        display: contents; /* ปลดล็อค layout เพื่อเรียงตาม order ในมือถือ */
+        display: contents;
     }
 
-    /* 1. Galaxy */
+    /* Galaxy */
     .galaxy-wrapper {
         order: 1;
         margin-right: 0;
@@ -268,16 +266,16 @@ h1, h2, h3 { color: #333; }
         margin-bottom: -30px;
     }
 
-    /* 2. Kakis Box */
+    /* Kakis Box */
     .kakis-box {
         order: 2;
         margin-top: 10px;
         max-width: 350px;
         width: 100%;
-        white-space: normal; /* ในมือถืออนุญาตให้ตัดคำได้ถ้าจอกว้างไม่พอ */
+        white-space: normal;
     }
 
-    /* 3. Score Panel */
+    /* Score Panel */
     .score-panel {
         order: 3; width: 100%; max-width: 340px;
         flex-direction: row; justify-content: center; align-items: center;
@@ -297,7 +295,7 @@ h1, h2, h3 { color: #333; }
     .score-label { font-size: 0.75rem; white-space: nowrap; margin-bottom: 2px; }
     .score-item { justify-content: center; }
 
-    /* 4. Action Buttons */
+    /* Action Buttons */
     .action-frame {
         order: 4; width: 100%; max-width: 350px;
         flex-direction: row; flex-wrap: wrap; justify-content: center;
@@ -306,9 +304,93 @@ h1, h2, h3 { color: #333; }
     .action-title { display: none; }
     .btn-action { flex: 1; min-width: 120px; font-size: 0.9rem; padding: 8px 5px; }
     .action-desc { width: 100%; margin-top: 5px; }
+
+    /* --- Analysis Form (New) --- */
+    .analysis-form {
+        flex-direction: column; /* เรียงแนวตั้ง */
+    }
+    /* สลับลำดับ: วันเกิด (1) -> ชื่อ (2) -> ปุ่ม (3) */
+    .group-birth {
+        order: 1;
+        width: 100% !important;
+        flex: none !important;
+    }
+    .group-name {
+        order: 2;
+        width: 100% !important;
+        flex: none !important;
+    }
+    .btn-submit {
+        order: 3;
+        width: 100% !important;
+    }
 }
 
 @media (max-width: 380px) {
     .solar-system { transform: scale(0.75); margin-bottom: -50px; }
     .score-value-big { width: 60px; height: 60px; font-size: 1.4rem; }
+}
+
+/* --- Sample Avatars Section (NEW) --- */
+.sample-section {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px dashed #eee;
+}
+.sample-title {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 15px;
+    text-align: left;
+    font-weight: bold;
+}
+.sample-grid {
+    display: grid;
+    /* บังคับ 6 คอลัมน์ ตั้งแต่จอมือถือ */
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px; /* ช่องว่างระหว่างรูป */
+}
+.sample-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.sample-item:hover {
+    transform: translateY(-5px); /* ขยับขึ้นเมื่อเอาเมาส์ชี้ */
+}
+.sample-item img {
+    width: 100%;       /* ขยายเต็มคอลัมน์ */
+    max-width: 50px;   /* แต่ไม่เกิน 50px */
+    aspect-ratio: 1/1; /* สี่เหลี่ยมจัตุรัส */
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    margin-bottom: 5px;
+    border: 2px solid transparent;
+    transition: border-color 0.2s;
+}
+.sample-item:hover img {
+    border-color: #28a745; /* กรอบสีเขียวเมื่อ hover */
+}
+.sample-item span {
+    font-size: 0.8rem; /* ตัวหนังสือเล็กหน่อย */
+    color: #555;
+    word-break: break-word; /* กันชื่อยาวล้น */
+    text-align: center;
+}
+
+/* ... (ส่วนอื่นๆ เหมือนเดิม) ... */
+
+/* Mobile Adjustment for Samples */
+@media (max-width: 850px) {
+    /* ... (โค้ดเดิมของ mobile) ... */
+
+    /* ปรับแต่ง Grid ในมือถือให้แน่นขึ้น */
+    .sample-grid {
+        gap: 5px; /* ลดช่องว่างในมือถือ */
+    }
+    .sample-item span {
+        font-size: 0.7rem; /* ลดขนาดฟอนต์ชื่อในมือถือ */
+    }
 }
