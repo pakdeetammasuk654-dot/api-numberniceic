@@ -1,60 +1,142 @@
-<div class="card">
-    <h1 class="text-center">🔍 วิเคราะห์ชื่อมงคล</h1>
+<style>
+    /* --- 1. ปรับแต่งตาราง (Zebra & Clickable) --- */
+    .table-striped tbody tr:nth-of-type(odd) { background-color: #f9f9f9; }
+    .table-striped tbody tr:nth-of-type(even) { background-color: #ffffff; }
+
+    /* ทำให้แถวตารางคลิกได้และมี Effect */
+    .table-hover tbody tr {
+        cursor: pointer;
+        transition: background-color 0.2s, transform 0.1s;
+    }
+    .table-hover tbody tr:hover {
+        background-color: #e3f2fd !important;
+        transform: scale(1.005); /* ขยายเล็กน้อยเมื่อชี้ */
+    }
+
+    /* --- 2. ปรับแต่งวงกลมตัวเลขในตาราง --- */
+    .mini-star-table {
+        width: 32px; height: 32px; font-size: 0.85rem;
+        display: flex; justify-content: center; align-items: center;
+        border-radius: 50%; color: white; font-weight: bold;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.15); cursor: default;
+        text-shadow: 0 1px 1px rgba(0,0,0,0.2);
+    }
+
+    /* --- 3. เฉดสีวงกลม (D/R Logic) --- */
+    .mini-star-table.type-D10, .mini-star-table.type-d10 { background: linear-gradient(135deg, #1b5e20, #2e7d32); box-shadow: 0 0 5px rgba(27, 94, 32, 0.5); }
+    .mini-star-table.type-D8, .mini-star-table.type-d8   { background: linear-gradient(135deg, #2e7d32, #43a047); }
+    .mini-star-table.type-D5, .mini-star-table.type-d5   { background: linear-gradient(135deg, #43a047, #66bb6a); }
+    .mini-star-table[class*="type-D"]                    { background: linear-gradient(135deg, #4caf50, #81c784); }
+    .mini-star-table.type-R10, .mini-star-table.type-r10 { background: linear-gradient(135deg, #b71c1c, #c62828); box-shadow: 0 0 5px rgba(183, 28, 28, 0.5); }
+    .mini-star-table.type-R7, .mini-star-table.type-r7   { background: linear-gradient(135deg, #c62828, #d32f2f); }
+    .mini-star-table.type-R5, .mini-star-table.type-r5   { background: linear-gradient(135deg, #d32f2f, #ef5350); }
+    .mini-star-table[class*="type-R"]                    { background: linear-gradient(135deg, #ef5350, #e57373); }
+    .mini-star-table.star-sat { background: linear-gradient(135deg, #42a5f5, #1976d2); }
+    .mini-star-table.star-sha { background: linear-gradient(135deg, #ab47bc, #7b1fa2); }
+
+    /* --- 4. Input Style (Custom with Icon) --- */
+    .input-wrapper {
+        position: relative;
+        width: 100%;
+    }
+    .input-icon {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.2rem;
+        color: #888;
+        pointer-events: none; /* เพื่อให้คลิกทะลุไปที่ input ได้ */
+        z-index: 5;
+    }
+    .form-control-custom {
+        width: 100%;
+        padding: 12px 15px 12px 45px; /* เว้นที่ด้านซ้ายให้ไอคอน */
+        font-size: 1.1rem;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        box-sizing: border-box;
+        transition: all 0.3s;
+        background-color: #fff;
+        appearance: none; /* ลบ style default ของ select */
+    }
+    .form-control-custom:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 4px rgba(0,123,255,0.1);
+        outline: none;
+    }
+    /* ลูกศรสำหรับ Select (เพราะ appearance:none จะลบลูกศรออก) */
+    .select-wrapper::after {
+        content: "▼";
+        font-size: 0.8rem;
+        color: #888;
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+    }
+</style>
+
+<div class="card" style="padding-top: 30px; padding-bottom: 30px;">
     <form action="/analysis" method="POST" class="analysis-form">
-        <label><strong>กรอก "ชื่อ/สกุล" และ "วันเกิด" :</strong></label>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <div style="display: flex; flex-direction: column; gap: 20px; max-width: 600px; margin: 0 auto;">
 
-            <div style="position: relative; flex: 2; min-width: 200px; margin: 0;">
-                <input type="text" id="nameInput" name="name" class="form-control"
-                       placeholder="ชื่อ-นามสกุล (ภาษาไทย/อังกฤษ)" required
-                       maxlength="24"
-                       value="{{if .Name}}{{.Name}}{{else}}อณัญญา{{end}}"
-                       style="width: 100%; padding-right: 40px; margin: 0;">
+            <div class="input-wrapper select-wrapper">
+                <span class="input-icon">📅</span>
+                <select name="birth_day" class="form-control-custom" required onchange="this.form.submit()">
+                    <option value="" disabled>-- เลือกวันเกิด --</option>
+                    <option value="sunday" {{if or (eq .BirthDay "sunday") (not .BirthDay)}}selected{{end}}>วันอาทิตย์</option>
+                    <option value="monday" {{if eq .BirthDay "monday"}}selected{{end}}>วันจันทร์</option>
+                    <option value="tuesday" {{if eq .BirthDay "tuesday"}}selected{{end}}>วันอังคาร</option>
+                    <option value="wednesday1" {{if eq .BirthDay "wednesday1"}}selected{{end}}>วันพุธ (กลางวัน)</option>
+                    <option value="wednesday2" {{if eq .BirthDay "wednesday2"}}selected{{end}}>วันพุธ (กลางคืน)</option>
+                    <option value="thursday" {{if eq .BirthDay "thursday"}}selected{{end}}>วันพฤหัสบดี</option>
+                    <option value="friday" {{if eq .BirthDay "friday"}}selected{{end}}>วันศุกร์</option>
+                    <option value="saturday" {{if eq .BirthDay "saturday"}}selected{{end}}>วันเสาร์</option>
+                </select>
+            </div>
 
-                <button type="button" id="clearInputBtn"
-                        style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+            <div class="input-wrapper">
+                <span class="input-icon">👤</span>
+                <input type="text" id="nameInput" name="name" class="form-control-custom"
+                       placeholder="พิมพ์ชื่อ-นามสกุล (ระบบวิเคราะห์อัตโนมัติ...)" required
+                       maxlength="24" autocomplete="off"
+                       value="{{if .Name}}{{.Name}}{{else}}ณเดชณ์{{end}}"
+                       style="padding-right: 40px;"> <button type="button" id="clearInputBtn"
+                                                             style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
                                border: none; background: none; color: #aaa; font-size: 1.2rem;
                                cursor: pointer; padding: 0; line-height: 1; display: none;">
                     &times;
                 </button>
             </div>
 
-            <select name="birth_day" class="form-control" style="flex: 1; min-width: 150px; margin: 0;" required onchange="this.form.submit()">
-                <option value="" disabled>-- เลือกวันเกิด --</option>
-                <option value="sunday" {{if or (eq .BirthDay "sunday") (not .BirthDay)}}selected{{end}}>วันอาทิตย์</option>
-                <option value="monday" {{if eq .BirthDay "monday"}}selected{{end}}>วันจันทร์</option>
-                <option value="tuesday" {{if eq .BirthDay "tuesday"}}selected{{end}}>วันอังคาร</option>
-                <option value="wednesday1" {{if eq .BirthDay "wednesday1"}}selected{{end}}>วันพุธ (กลางวัน)</option>
-                <option value="wednesday2" {{if eq .BirthDay "wednesday2"}}selected{{end}}>วันพุธ (กลางคืน)</option>
-                <option value="thursday" {{if eq .BirthDay "thursday"}}selected{{end}}>วันพฤหัสบดี</option>
-                <option value="friday" {{if eq .BirthDay "friday"}}selected{{end}}>วันศุกร์</option>
-                <option value="saturday" {{if eq .BirthDay "saturday"}}selected{{end}}>วันเสาร์</option>
-            </select>
-
-            <button type="submit" class="btn btn-success" style="width: auto; padding: 0 20px;">วิเคราะห์</button>
+            <div id="typingStatus" style="text-align: center; color: #888; font-size: 0.9rem; display: none; margin-top: -10px;">
+                ⏳ กำลังรอพิมพ์เสร็จ...
+            </div>
         </div>
     </form>
 </div>
 
 <div class="sample-section" style="margin-bottom: 30px;">
     <p class="sample-title" style="text-align: center; margin-top: 0;">
-        💡 ไอเดียชื่อน่าสนใจ (คลิกเพื่อลองวิเคราะห์)
+        💡 ไอเดียชื่อน่าสนใจ
     </p>
 
     <div class="sample-grid">
-        <div class="sample-item" data-name="มีนา"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Meena"><span>มีนา</span></div>
-        <div class="sample-item" data-name="อารี"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Aree"><span>อารี</span></div>
-        <div class="sample-item" data-name="ศิลา"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sila"><span>ศิลา</span></div>
-        <div class="sample-item" data-name="วารี"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Waree"><span>วารี</span></div>
-        <div class="sample-item" data-name="นารา"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Nara"><span>นารา</span></div>
-        <div class="sample-item" data-name="ธารา"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Thara"><span>ธารา</span></div>
+        <div class="sample-item" data-name="ณเดชน์"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Nadech"><span>ณเดชน์</span></div>
+        <div class="sample-item" data-name="ภูดิท"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Phudit"><span>ภูดิท</span></div>
+        <div class="sample-item" data-name="จิรายุ"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Jirayu"><span>จิรายุ</span></div>
+        <div class="sample-item" data-name="ปัญญา"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Panya"><span>ปัญญา</span></div>
+        <div class="sample-item" data-name="มนัสสิยา"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Manassiya"><span>มนัสสิยา</span></div>
+        <div class="sample-item" data-name="ใบเตย"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Baitoey"><span>ใบเตย</span></div>
 
-        <div class="sample-item" data-name="ภูผา"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Phupha"><span>ภูผา</span></div>
-        <div class="sample-item" data-name="นาวา"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Nawa"><span>นาวา</span></div>
-        <div class="sample-item" data-name="ทิวา"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Tiwa"><span>ทิวา</span></div>
-        <div class="sample-item" data-name="ราตรี"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Ratree"><span>ราตรี</span></div>
-        <div class="sample-item" data-name="เมษา"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mesa"><span>เมษา</span></div>
-        <div class="sample-item" data-name="วายุ"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Wayu"><span>วายุ</span></div>
+        <div class="sample-item" data-name="เวฬา"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Vela"><span>เวฬา</span></div>
+        <div class="sample-item" data-name="วิกรม"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Vikrom"><span>วิกรม</span></div>
+        <div class="sample-item" data-name="อัศวโภคิน"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Assavaphokin"><span>อัศวโภคิน</span></div>
+        <div class="sample-item" data-name="ลำไย"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Lamyai"><span>ลำไย</span></div>
+        <div class="sample-item" data-name="เสกโลโซ"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=SekLoso"><span>เสกโลโซ</span></div>
+        <div class="sample-item" data-name="นิวเคลียร์"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Newclear"><span>นิวเคลียร์</span></div>
     </div>
 </div>
 
@@ -71,9 +153,7 @@
                 <div class="score-item">
                     <div class="score-label">คะแนนรวม</div>
                     <div class="score-value-big {{if lt .Result.TotalScore 0}}bg-bad{{else}}bg-good{{end}}"
-                         id="totalScore" data-target="{{.Result.TotalScore}}">
-                        0
-                    </div>
+                         id="totalScore" data-target="{{.Result.TotalScore}}">0</div>
                 </div>
                 <div class="divider"></div>
                 <div class="score-item">
@@ -93,27 +173,25 @@
                             {{if lt $i 5}}
                                 <div class="planet-wrapper pos-mid-{{$i}}">
                                     <div class="mini-star {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sha{{end}} c-spin-middle"
-                                         title="พลังเงา: {{.Pair}} {{if .Meaning}}({{.Meaning.PairType}}){{end}}">
+                                         title="พลังเงา: {{.Pair}}">
                                         {{.Pair}}
                                     </div>
                                 </div>
                             {{end}}
                         {{end}}
                     </div>
-
                     <div class="orbit-ring ring-outer">
                         {{range $i, $el := .Result.SatPairs}}
                             {{if lt $i 6}}
                                 <div class="planet-wrapper pos-out-{{$i}}">
                                     <div class="mini-star {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sat{{end}} c-spin-outer"
-                                         title="เลขศาสตร์: {{.Pair}} {{if .Meaning}}({{.Meaning.PairType}}){{end}}">
+                                         title="เลขศาสตร์: {{.Pair}}">
                                         {{.Pair}}
                                     </div>
                                 </div>
                             {{end}}
                         {{end}}
                     </div>
-
                     <div class="score-circle {{if lt .Result.TotalScore 0}}sun-bad{{else}}sun-good{{end}}">
                         <span id="sunNameDisplay">{{.Result.Name}}</span>
                     </div>
@@ -127,19 +205,12 @@
                             <span style="color: #d32f2f;">●</span> อักษรที่ปรากฏ<span style="color: #d32f2f; font-weight: bold;">สีแดง</span>คือกาลกิณี
                         </div>
                     {{else}}
-                        <div class="speech-bubble-success">
-                            🏆 ชื่อนี้ไม่มีกาลกิณี
-                        </div>
+                        <div class="speech-bubble-success">🏆 ชื่อนี้ไม่มีกาลกิณี</div>
                     {{end}}
                 </div>
-
                 <div class="action-frame">
-                    <a href="#sat-section" class="btn-action btn-sat">
-                        <span style="font-size: 1.2rem;">🧮</span> เลขศาสตร์
-                    </a>
-                    <a href="#sha-section" class="btn-action btn-lang">
-                        <span style="font-size: 1.2rem;">📜</span> ภาษาศาสตร์
-                    </a>
+                    <a href="#sat-section" class="btn-action btn-sat">🧮 เลขศาสตร์</a>
+                    <a href="#sha-section" class="btn-action btn-lang">📜 ภาษาศาสตร์</a>
                     <div class="action-desc">💡 กดปุ่มดูความหมาย</div>
                 </div>
             </div>
@@ -157,9 +228,7 @@
                         <div style="display: flex; align-items: flex-start;">
                             <div style="margin-right: 15px; text-align: center; min-width: 50px;">
                                 <span class="pair-number">{{.Pair}}</span>
-                                {{if .Meaning}}
-                                    <br><span style="font-size: 0.8rem; padding: 2px 6px; background: #eee; border-radius: 4px; color: #666;">{{.Meaning.PairType}}</span>
-                                {{end}}
+                                {{if .Meaning}}<br><span style="font-size: 0.8rem; padding: 2px 6px; background: #eee; border-radius: 4px; color: #666;">{{.Meaning.PairType}}</span>{{end}}
                             </div>
                             <div>
                                 {{if .Meaning}}
@@ -174,7 +243,6 @@
                     </div>
                 {{end}}
             </div>
-
             <div class="result-col" id="sha-section">
                 <h3 style="color: #7b1fa2;">🌑 พลังเงา</h3>
                 <p>ผลรวม: <strong>{{.Result.ShaSum}}</strong></p>
@@ -183,9 +251,7 @@
                         <div style="display: flex; align-items: flex-start;">
                             <div style="margin-right: 15px; text-align: center; min-width: 50px;">
                                 <span class="pair-number">{{.Pair}}</span>
-                                {{if .Meaning}}
-                                    <br><span style="font-size: 0.8rem; padding: 2px 6px; background: #eee; border-radius: 4px; color: #666;">{{.Meaning.PairType}}</span>
-                                {{end}}
+                                {{if .Meaning}}<br><span style="font-size: 0.8rem; padding: 2px 6px; background: #eee; border-radius: 4px; color: #666;">{{.Meaning.PairType}}</span>{{end}}
                             </div>
                             <div>
                                 {{if .Meaning}}
@@ -207,27 +273,26 @@
         <h3 class="header-line">🌟 แนะนำชื่อมงคลที่ใกล้เคียง</h3>
         <div class="table-responsive">
             {{if .Result.SimilarNames}}
-                <table class="table table-hover table-striped align-middle" style="margin-bottom: 0;">
+                <table class="table table-hover table-striped align-middle" style="margin-bottom: 0; width: 100%; border-collapse: collapse;">
                     <thead class="table-light">
                     <tr>
-                        <th scope="col">ชื่อมงคล</th>
+                        <th scope="col" style="padding: 12px;">ชื่อมงคล</th>
                         <th scope="col" class="text-center">เลขศาสตร์</th>
                         <th scope="col" class="text-center">เลขพลังเงา</th>
                         <th scope="col" class="text-center">ความห่าง</th>
-                        <th scope="col" class="text-center">ดำเนินการ</th>
                     </tr>
                     </thead>
                     <tbody>
                     {{range .Result.SimilarNames}}
-                        <tr>
-                            <td style="font-size: 1.1rem; font-weight: bold; color: #333;">{{.ThName}}</td>
+                        <tr onclick="window.location.href='/analysis?name={{.ThName}}&birth_day={{$.BirthDay}}'">
+
+                            <td style="font-size: 1.1rem; font-weight: bold; color: #333; padding: 12px;">{{.ThName}}</td>
 
                             <td class="text-center">
                                 <div style="display: flex; justify-content: center; gap: 4px; flex-wrap: wrap;">
                                     {{range .SatPairs}}
-                                        <div class="mini-star {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sat{{end}}"
-                                             title="{{.Pair}} {{if .Meaning}}({{.Meaning.PairType}}){{end}}"
-                                             style="width: 32px; height: 32px; font-size: 0.85rem; cursor: default;">
+                                        <div class="mini-star-table {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sat{{end}}"
+                                             title="{{.Pair}} {{if .Meaning}}({{.Meaning.PairType}}){{end}}">
                                             {{.Pair}}
                                         </div>
                                     {{end}}
@@ -237,9 +302,8 @@
                             <td class="text-center">
                                 <div style="display: flex; justify-content: center; gap: 4px; flex-wrap: wrap;">
                                     {{range .ShaPairs}}
-                                        <div class="mini-star {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sha{{end}}"
-                                             title="{{.Pair}} {{if .Meaning}}({{.Meaning.PairType}}){{end}}"
-                                             style="width: 32px; height: 32px; font-size: 0.85rem; cursor: default;">
+                                        <div class="mini-star-table {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sha{{end}}"
+                                             title="{{.Pair}} {{if .Meaning}}({{.Meaning.PairType}}){{end}}">
                                             {{.Pair}}
                                         </div>
                                     {{end}}
@@ -250,14 +314,6 @@
                                 <span style="font-size: 0.9rem; color: #666;">
                                     {{printf "%.3f" .Distance}}
                                 </span>
-                            </td>
-
-                            <td class="text-center">
-                                <a href="/analysis?name={{.ThName}}&birth_day={{$.BirthDay}}"
-                                   class="btn btn-sm btn-outline-primary"
-                                   style="border-radius: 20px; padding: 5px 15px; white-space: nowrap;">
-                                    🔮 วิเคราะห์
-                                </a>
                             </td>
                         </tr>
                     {{end}}
@@ -299,28 +355,61 @@
             requestAnimationFrame(updateCount);
         });
 
-        // --- Form Input: Validation & Clear Button ---
+        // --- Form Logic: Debounce Auto Submit & Clear Button ---
         const nameInput = document.getElementById('nameInput');
         const clearBtn = document.getElementById('clearInputBtn');
+        const typingStatus = document.getElementById('typingStatus');
+
+        let typingTimer;                // ตัวเก็บ Timer
+        const doneTypingInterval = 1500; // เวลาหน่วง 1.5 วินาที (1500ms)
+
         if (nameInput && clearBtn) {
             const updateBtnState = () => {
                 clearBtn.style.display = nameInput.value.length > 0 ? 'block' : 'none';
             };
+
+            // เมื่อมีการปล่อยปุ่มคีย์บอร์ด (User พิมพ์เสร็จ 1 ตัวอักษร)
+            nameInput.addEventListener('keyup', function() {
+                clearTimeout(typingTimer); // ล้าง Timer เก่าทิ้ง
+                if (nameInput.value.trim()) {
+                    typingStatus.style.display = 'block'; // แสดงสถานะ "กำลังรอ..."
+                    typingTimer = setTimeout(doneTyping, doneTypingInterval); // เริ่มนับใหม่
+                } else {
+                    typingStatus.style.display = 'none';
+                }
+            });
+
+            // เมื่อกดปุ่มคีย์ลงไป (Reset Timer เพื่อไม่ให้ส่งถ้ายังพิมพ์ต่อเนื่อง)
+            nameInput.addEventListener('keydown', function() {
+                clearTimeout(typingTimer);
+                typingStatus.style.display = 'none';
+            });
+
+            // Logic เดิม (Clean text & Clear button)
             nameInput.addEventListener('input', function() {
                 let val = this.value;
-                val = val.replace(/[^a-zA-Z\u0E00-\u0E7F\s]/g, ''); // ให้พิมพ์ได้แค่ไทย/อังกฤษ/ช่องว่าง
+                val = val.replace(/[^a-zA-Z\u0E00-\u0E7F\s]/g, '');
                 val = val.replace(/\s{2,}/g, ' ');
                 if (this.value !== val) {
                     this.value = val;
                 }
                 updateBtnState();
             });
+
             clearBtn.addEventListener('click', () => {
                 nameInput.value = '';
                 updateBtnState();
                 nameInput.focus();
+                typingStatus.style.display = 'none';
+                clearTimeout(typingTimer);
             });
             updateBtnState();
+        }
+
+        // ฟังก์ชันเรียก API (Submit Form) เมื่อเวลาหมด
+        function doneTyping() {
+            typingStatus.innerText = '🚀 กำลังวิเคราะห์...';
+            document.querySelector('.analysis-form').submit();
         }
 
         // --- Highlight Kakis Characters ---
@@ -341,15 +430,19 @@
         }
         highlightText('sunNameDisplay');
 
-        // --- Sample Click Handler (สำหรับ Mock Data) ---
+        // --- Sample Click Handler ---
         document.querySelectorAll('.sample-item').forEach(item => {
             item.addEventListener('click', function(e) {
                 if(this.tagName === 'A' || this.closest('a')) return;
                 const name = this.getAttribute('data-name');
                 if(nameInput && name) {
                     nameInput.value = name;
+                    // Scroll ไปที่ฟอร์ม
                     document.querySelector('.card').scrollIntoView({behavior: 'smooth'});
-                    nameInput.dispatchEvent(new Event('input'));
+                    // Trigger event เพื่อให้ระบบ Auto Submit ทำงาน (หรือจะ Submit เลยก็ได้)
+                    // nameInput.dispatchEvent(new Event('keyup')); // ถ้าอยากให้หน่วง
+                    // หรือ Submit เลยทันที:
+                    document.querySelector('.analysis-form').submit();
                 }
             });
         });
