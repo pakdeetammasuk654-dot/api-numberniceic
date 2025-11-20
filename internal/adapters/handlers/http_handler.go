@@ -16,58 +16,59 @@ func NewFiberHandler(service ports.NumberService) *FiberHandler {
 	}
 }
 
-// --- หน้า Home (Landing Page) ---
+// --- View Handlers ---
+
 func (h *FiberHandler) ViewHome(c *fiber.Ctx) error {
-	// ใช้ layout "layouts/main"
 	return c.Render("home", fiber.Map{}, "layouts/main")
 }
 
-// --- หน้า Dashboard (ยังไม่มีเนื้อหา ใส่ placeholder ไว้ก่อน) ---
 func (h *FiberHandler) ViewDashboard(c *fiber.Ctx) error {
 	return c.Render("dashboard", fiber.Map{}, "layouts/main")
 }
 
-// --- หน้า บทความ ---
 func (h *FiberHandler) ViewArticles(c *fiber.Ctx) error {
 	return c.Render("articles", fiber.Map{}, "layouts/main")
 }
 
-// --- หน้า เกี่ยวกับเรา ---
 func (h *FiberHandler) ViewAbout(c *fiber.Ctx) error {
 	return c.Render("about", fiber.Map{}, "layouts/main")
 }
 
-// --- หน้า วิเคราะห์ชื่อ (Analysis) ---
 func (h *FiberHandler) ViewAnalysis(c *fiber.Ctx) error {
 	return c.Render("analysis", fiber.Map{}, "layouts/main")
 }
 
-// HandleAnalysis รับค่าจาก Form และแสดงผล
+// HandleAnalysis (POST Form)
 func (h *FiberHandler) HandleAnalysis(c *fiber.Ctx) error {
-	name := c.FormValue("name") // รับค่าชื่อจาก input html
+	name := c.FormValue("name")
+	birthDay := c.FormValue("birth_day") // รับค่าวันเกิด
 
-	result, err := h.service.AnalyzeName(name)
+	result, err := h.service.AnalyzeName(name, birthDay)
 	if err != nil {
 		return c.Render("analysis", fiber.Map{
 			"Error": err.Error(),
 			"Name":  name,
-		}, "layouts/main") // อย่าลืมใส่ layout
+		}, "layouts/main")
 	}
 
 	return c.Render("analysis", fiber.Map{
-		"Result": result,
-		"Name":   name,
-	}, "layouts/main") // อย่าลืมใส่ layout
+		"Result":   result,
+		"Name":     name,
+		"BirthDay": birthDay, // ส่งกลับไปให้ UI แสดงค่าที่เลือกไว้
+	}, "layouts/main")
 }
 
-// --- API (JSON) ---
+// --- API Handlers ---
+
 func (h *FiberHandler) ApiAnalyze(c *fiber.Ctx) error {
 	name := c.Query("name")
+	birthDay := c.Query("birth_day") // รับค่าทาง query params
+
 	if name == "" {
 		return c.Status(400).JSON(fiber.Map{"error": "Name is required"})
 	}
 
-	result, err := h.service.AnalyzeName(name)
+	result, err := h.service.AnalyzeName(name, birthDay)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}

@@ -1,10 +1,24 @@
 <div class="card">
     <h1 class="text-center">🔍 วิเคราะห์ชื่อมงคล</h1>
     <form action="/analysis" method="POST">
-        <label><strong>กรอกชื่อ-นามสกุล (ภาษาไทย):</strong></label>
-        <div style="display: flex; gap: 10px;">
-            <input type="text" name="name" class="form-control" placeholder="เช่น ใจดี มีสุข" required value="{{if .Name}}{{.Name}}{{end}}" style="margin: 0;">
-            <button type="submit" class="btn btn-success" style="width: auto; padding: 0 30px;">วิเคราะห์</button>
+        <label><strong>กรอกข้อมูลของคุณ:</strong></label>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+
+            <input type="text" name="name" class="form-control" placeholder="ชื่อ-นามสกุล (ภาษาไทย)" required value="{{if .Name}}{{.Name}}{{end}}" style="flex: 2; min-width: 200px; margin: 0;">
+
+            <select name="birth_day" class="form-control" style="flex: 1; min-width: 150px; margin: 0;" required>
+                <option value="" disabled {{if not .BirthDay}}selected{{end}}>-- เลือกวันเกิด --</option>
+                <option value="sunday" {{if eq .BirthDay "sunday"}}selected{{end}}>วันอาทิตย์</option>
+                <option value="monday" {{if eq .BirthDay "monday"}}selected{{end}}>วันจันทร์</option>
+                <option value="tuesday" {{if eq .BirthDay "tuesday"}}selected{{end}}>วันอังคาร</option>
+                <option value="wednesday1" {{if eq .BirthDay "wednesday1"}}selected{{end}}>วันพุธ (กลางวัน)</option>
+                <option value="wednesday2" {{if eq .BirthDay "wednesday2"}}selected{{end}}>วันพุธ (กลางคืน)</option>
+                <option value="thursday" {{if eq .BirthDay "thursday"}}selected{{end}}>วันพฤหัสบดี</option>
+                <option value="friday" {{if eq .BirthDay "friday"}}selected{{end}}>วันศุกร์</option>
+                <option value="saturday" {{if eq .BirthDay "saturday"}}selected{{end}}>วันเสาร์</option>
+            </select>
+
+            <button type="submit" class="btn btn-success" style="width: auto; padding: 0 20px;">วิเคราะห์</button>
         </div>
     </form>
 </div>
@@ -16,6 +30,27 @@
 {{end}}
 
 {{if .Result}}
+
+    {{if .Result.HasKakis}}
+        <div style="background-color: #ffebee; color: #c62828; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ef9a9a; display: flex; align-items: flex-start; gap: 15px;">
+            <div style="font-size: 2rem;">⚠️</div>
+            <div>
+                <h3 style="margin: 0; color: #b71c1c;">พบอักษรกาลกิณี!</h3>
+                <p style="margin: 5px 0 0 0;">
+                    ชื่อนี้มีอักษรที่เป็นกาลกิณีสำหรับวันเกิดของคุณ:
+                    {{range .Result.KakisFound}}
+                        <span class="badge" style="background: #c62828; color: white; font-size: 1rem; margin: 0 2px;">{{.}}</span>
+                    {{end}}
+                    <br><small style="color: #d32f2f;">(อักษรกาลกิณีอาจส่งผลให้เกิดอุปสรรคในการดำเนินชีวิต ควรพิจารณาหลีกเลี่ยง)</small>
+                </p>
+            </div>
+        </div>
+    {{else}}
+        <div style="background-color: #e8f5e9; color: #2e7d32; padding: 12px; border-radius: 8px; margin-bottom: 20px; text-align: center; border: 1px solid #a5d6a7;">
+            ✅ <strong>ชื่อนี้ปลอดภัย!</strong> ไม่พบอักษรกาลกิณีสำหรับวันเกิดของคุณ
+        </div>
+    {{end}}
+
     <div class="visual-section">
         <h3 style="margin-top: 0; color: #333; border-bottom: 1px solid #eee; padding-bottom: 10px;">
             🔮 ขุมพลังตัวเลขของคุณ

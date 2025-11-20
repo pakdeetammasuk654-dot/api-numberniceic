@@ -16,8 +16,13 @@ type NameAnalysis struct {
 	ShaSum   int        `json:"sha_sum"`
 	ShaPairs []PairData `json:"sha_pairs"`
 
-	// --- เพิ่มส่วนสรุปคะแนน (Summary) ---
+	// --- ส่วนสรุปคะแนน (Summary) ---
 	TotalScore int `json:"total_score"` // คะแนนรวมสุทธิ
 	GoodScore  int `json:"good_score"`  // ผลรวมคะแนนดี (D)
 	BadScore   int `json:"bad_score"`   // ผลรวมคะแนนร้าย (R)
+
+	// --- ส่วนกาลกิณี (New) ---
+	BirthDay   string   `json:"birth_day"`   // วันเกิดที่เลือก
+	KakisFound []string `json:"kakis_found"` // รายการอักษรกาลกิณีที่เจอในชื่อ
+	HasKakis   bool     `json:"has_kakis"`   // เจอหรือไม่ (true/false)
 }

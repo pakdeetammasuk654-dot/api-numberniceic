@@ -40,17 +40,27 @@ func (r *postgresRepository) GetShaValue(char string) (int, error) {
 	return shaNum.ShaValue, nil
 }
 
-// เพิ่มฟังก์ชันดึงความหมายคู่เลข
 func (r *postgresRepository) GetNumberMeaning(pair string) (*domain.NumberMeaning, error) {
 	var meaning domain.NumberMeaning
-	// ค้นหาจากตาราง numbers โดยใช้ field pairnumber
 	result := r.db.Table("numbers").Where("pairnumber = ?", pair).First(&meaning)
 
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return nil, nil // ถ้าไม่เจอ ก็คืนค่าว่างไป
+			return nil, nil
 		}
 		return nil, result.Error
 	}
 	return &meaning, nil
+}
+
+// ฟังก์ชันใหม่: ดึงอักษรกาลกิณี
+func (r *postgresRepository) GetKakisByDay(day string) ([]string, error) {
+	var kakisList []string
+	// เลือกเฉพาะ column 'kakis' จากตาราง kakis_day โดย filter ตาม day
+	result := r.db.Table("kakis_day").Where("day = ?", day).Pluck("kakis", &kakisList)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return kakisList, nil
 }
