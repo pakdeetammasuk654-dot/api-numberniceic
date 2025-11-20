@@ -6,7 +6,7 @@ h1, h2, h3 { color: #333; }
 /* --- Layout --- */
 .container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; min-height: 60vh; }
 
-/* --- Navbar & Footer (คงเดิม) --- */
+/* --- Navbar & Footer --- */
 .navbar { background: #333; color: white; padding: 1rem; }
 .navbar-container { max-width: 900px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
 .brand { font-size: 1.5rem; font-weight: bold; color: white; }
@@ -51,40 +51,20 @@ h1, h2, h3 { color: #333; }
 .score-item { display: flex; flex-direction: column; align-items: center; }
 .score-label { font-size: 0.9rem; color: #666; margin-bottom: 5px; }
 
-/* Score Value Big (วงกลมคะแนนรวม) */
 .score-value-big {
     font-size: 2.5rem; font-weight: 800; line-height: 1;
     border-radius: 50%; width: 120px; height: 120px;
     display: flex; justify-content: center; align-items: center;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 5px; box-sizing: border-box;
-    color: #333; /* Default text color */
-    background: #f0f0f0; /* Default bg */
+    color: #333; background: #f0f0f0;
 }
+.bg-good { background: linear-gradient(135deg, #43a047, #2e7d32); color: white; box-shadow: 0 4px 15px rgba(46, 125, 50, 0.4); border: 3px solid #a5d6a7; }
+.bg-bad { background: linear-gradient(135deg, #e53935, #c62828); color: white; box-shadow: 0 4px 15px rgba(198, 40, 40, 0.4); border: 3px solid #ffcdd2; }
 
-/* New Background Classes for Total Score */
-.bg-good {
-    background: linear-gradient(135deg, #43a047, #2e7d32); /* เขียว */
-    color: white;
-    box-shadow: 0 4px 15px rgba(46, 125, 50, 0.4);
-    border: 3px solid #a5d6a7;
-}
-.bg-bad {
-    background: linear-gradient(135deg, #e53935, #c62828); /* แดง */
-    color: white;
-    box-shadow: 0 4px 15px rgba(198, 40, 40, 0.4);
-    border: 3px solid #ffcdd2;
-}
-
-/* Small Scores */
-.score-value-small {
-    font-size: 1.4rem; font-weight: bold; border: none; background-color: transparent;
-    border-radius: 50%; display: inline-flex; justify-content: center; align-items: center;
-    min-width: 50px; min-height: 50px;
-}
+.score-value-small { font-size: 1.4rem; font-weight: bold; border: none; background-color: transparent; border-radius: 50%; display: inline-flex; justify-content: center; align-items: center; min-width: 50px; min-height: 50px; }
 .val-good { color: #2e7d32; }
 .val-bad  { color: #c62828; }
 .divider { height: 1px; background: #e0e0e0; width: 100%; margin: 5px 0; }
-
 
 /* --- Right Action Buttons --- */
 .action-frame {
@@ -93,8 +73,7 @@ h1, h2, h3 { color: #333; }
     border: 1px solid #eee; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     order: 3;
 }
-.action-title { font-weight:bold; color:#555; } /* เพิ่มคลาสเพื่อซ่อนในมือถือ */
-
+.action-title { font-weight:bold; color:#555; }
 .btn-action {
     display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; border-radius: 10px;
     color: white; font-weight: bold; text-decoration: none; transition: all 0.2s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
@@ -106,11 +85,8 @@ h1, h2, h3 { color: #333; }
 .action-desc { font-size: 0.8rem; color: #888; }
 
 /* --- Solar System (Galaxy) --- */
-.solar-system {
-    position: relative; width: 380px; height: 380px;
-    display: flex; justify-content: center; align-items: center;
-    order: 2;
-}
+.galaxy-wrapper { display: flex; flex-direction: column; align-items: center; order: 2; }
+.solar-system { position: relative; width: 380px; height: 380px; display: flex; justify-content: center; align-items: center; }
 .solar-system .score-circle {
     width: 120px; height: 120px; border-radius: 50%;
     display: flex; justify-content: center; align-items: center; text-align: center; padding: 5px;
@@ -118,26 +94,30 @@ h1, h2, h3 { color: #333; }
     z-index: 10; transition: all 0.5s ease;
 }
 
-/* Sun Styles (Center) */
-.sun-good {
-    background: radial-gradient(circle at 30% 30%, #fff176, #fbc02d);
-    border: 4px solid #fff9c4; color: #3e2723; text-shadow: 0 1px 0px rgba(255,255,255,0.5);
-    box-shadow: 0 0 40px rgba(255, 193, 7, 0.6); animation: sun-pulse 3s infinite alternate;
-}
-.sun-bad {
-    border: 4px solid #616161; color: #bdbdbd;
-    background: radial-gradient(circle at 30% 30%, #757575, #424242);
-    box-shadow: inset 0 0 20px rgba(0,0,0,0.5); text-shadow: 0 -1px 0 rgba(0,0,0,0.5);
-}
-@keyframes sun-pulse {
-    from { box-shadow: 0 0 20px rgba(255, 193, 7, 0.4); transform: scale(1); }
-    to   { box-shadow: 0 0 50px rgba(255, 193, 7, 0.8); transform: scale(1.02); }
+.sun-good { background: radial-gradient(circle at 30% 30%, #fff176, #fbc02d); border: 4px solid #fff9c4; color: #3e2723; text-shadow: 0 1px 0px rgba(255,255,255,0.5); box-shadow: 0 0 40px rgba(255, 193, 7, 0.6); animation: sun-pulse 3s infinite alternate; }
+.sun-bad { border: 4px solid #616161; color: #bdbdbd; background: radial-gradient(circle at 30% 30%, #757575, #424242); box-shadow: inset 0 0 20px rgba(0,0,0,0.5); text-shadow: 0 -1px 0 rgba(0,0,0,0.5); }
+@keyframes sun-pulse { from { box-shadow: 0 0 20px rgba(255, 193, 7, 0.4); transform: scale(1); } to { box-shadow: 0 0 50px rgba(255, 193, 7, 0.8); transform: scale(1.02); } }
+
+/* --- Orbits & Planets --- */
+.orbit-ring { position: absolute; border-radius: 50%; border: 1px dashed rgba(0, 0, 0, 0.08); top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; }
+
+/* Middle Ring: Sat (เลขศาสตร์) อยู่ด้านใน - คงขนาดเดิมไว้ */
+.ring-middle {
+    width: 220px; height: 220px;
+    border-color: rgba(33, 150, 243, 0.15); /* สีฟ้าจางๆ (Sat) */
+    animation: orbit-spin 40s linear infinite;
+    z-index: 2;
 }
 
-/* Orbits & Planets (คงเดิม) */
-.orbit-ring { position: absolute; border-radius: 50%; border: 1px dashed rgba(0, 0, 0, 0.08); top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; }
-.ring-middle { width: 220px; height: 220px; border-color: rgba(111, 66, 193, 0.15); animation: orbit-spin-ccw 40s linear infinite; z-index: 2; }
-.ring-outer { width: 340px; height: 340px; border-color: rgba(33, 150, 243, 0.15); animation: orbit-spin 60s linear infinite; z-index: 1; }
+/* Outer Ring: Sha (พลังเงา) อยู่ด้านนอก - *ปรับขนาดให้เล็กลงและชิดขึ้น* */
+.ring-outer {
+    width: 310px; height: 310px; /* ลดจาก 340px เป็น 310px */
+    border-color: rgba(111, 66, 193, 0.15); /* สีม่วงจางๆ (Sha) */
+    animation: orbit-spin 60s linear infinite;
+    z-index: 1;
+}
+
+@keyframes orbit-spin { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
 
 .planet-wrapper { position: absolute; width: 40px; height: 40px; top: 50%; left: 50%; margin-top: -20px; margin-left: -20px; }
 .mini-star { width: 100%; height: 100%; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 0.9rem; font-weight: bold; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
@@ -146,7 +126,6 @@ h1, h2, h3 { color: #333; }
 .mini-star.type-D8, .mini-star.type-d8 { background: linear-gradient(135deg, #2e7d32, #43a047); box-shadow: 0 0 8px rgba(46, 125, 50, 0.5); }
 .mini-star.type-D5, .mini-star.type-d5 { background: linear-gradient(135deg, #43a047, #66bb6a); box-shadow: 0 0 5px rgba(67, 160, 71, 0.4); }
 .mini-star[class*="type-D"] { background: linear-gradient(135deg, #4caf50, #81c784); }
-
 .mini-star.type-R10, .mini-star.type-r10 { background: linear-gradient(135deg, #b71c1c, #c62828); box-shadow: 0 0 10px rgba(183, 28, 28, 0.6); }
 .mini-star.type-R7, .mini-star.type-r7 { background: linear-gradient(135deg, #c62828, #d32f2f); box-shadow: 0 0 8px rgba(198, 40, 40, 0.5); }
 .mini-star.type-R5, .mini-star.type-r5 { background: linear-gradient(135deg, #d32f2f, #ef5350); box-shadow: 0 0 5px rgba(211, 47, 47, 0.4); }
@@ -165,92 +144,42 @@ h1, h2, h3 { color: #333; }
 .type-D8 { border-left-color: #43a047 !important; background-color: #f1f8e9; }
 .type-D5 { border-left-color: #81c784 !important; background-color: #f9fbe7; }
 
-.c-spin-middle { animation: counter-spin-ccw 40s linear infinite; }
+.c-spin-middle { animation: counter-spin 40s linear infinite; }
 .c-spin-outer { animation: counter-spin 60s linear infinite; }
 @keyframes counter-spin { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
-@keyframes counter-spin-ccw { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
+/* Positioning Middle (Radius ~110px) */
 .pos-mid-0 { transform: rotate(0deg) translate(110px) rotate(0deg); }
 .pos-mid-1 { transform: rotate(72deg) translate(110px) rotate(-72deg); }
 .pos-mid-2 { transform: rotate(144deg) translate(110px) rotate(-144deg); }
 .pos-mid-3 { transform: rotate(216deg) translate(110px) rotate(-216deg); }
 .pos-mid-4 { transform: rotate(288deg) translate(110px) rotate(-288deg); }
-.pos-out-0 { transform: rotate(30deg) translate(170px) rotate(-30deg); }
-.pos-out-1 { transform: rotate(90deg) translate(170px) rotate(-90deg); }
-.pos-out-2 { transform: rotate(150deg) translate(170px) rotate(-150deg); }
-.pos-out-3 { transform: rotate(210deg) translate(170px) rotate(-210deg); }
-.pos-out-4 { transform: rotate(270deg) translate(170px) rotate(-270deg); }
-.pos-out-5 { transform: rotate(330deg) translate(170px) rotate(-330deg); }
+
+/* Positioning Outer (Radius ~155px) - ปรับลดระยะจาก 170px เหลือ 155px */
+.pos-out-0 { transform: rotate(30deg) translate(155px) rotate(-30deg); }
+.pos-out-1 { transform: rotate(90deg) translate(155px) rotate(-90deg); }
+.pos-out-2 { transform: rotate(150deg) translate(155px) rotate(-150deg); }
+.pos-out-3 { transform: rotate(210deg) translate(155px) rotate(-210deg); }
+.pos-out-4 { transform: rotate(270deg) translate(155px) rotate(-270deg); }
+.pos-out-5 { transform: rotate(330deg) translate(155px) rotate(-330deg); }
 .visual-section { display: none; }
 
-/* =========================================
-   Mobile / Responsive Adjustments (Updated)
-   ========================================= */
+/* Mobile Adjustments */
 @media (max-width: 850px) {
-    .summary-row {
-        flex-direction: column; /* เรียงแนวตั้ง */
-        gap: 25px;
-    }
-
-    /* 1. จักรวาลพลังตัวเลข (วงโคจร) - อยู่บนสุด */
-    .solar-system {
-        order: 1;
-        margin-right: 0;
-        transform: scale(0.85);
-        transform-origin: center center;
-        margin-bottom: -30px;
-        margin-top: -20px;
-    }
-
-    /* 2. แผงคะแนน - ย้ายมาอยู่ตรงกลาง (ใต้วงโคจร) */
-    .score-panel {
-        order: 2; /* ย้ายมาอันดับ 2 */
-        width: 100%;
-        max-width: 400px;
-        flex-direction: row; /* เรียงแนวนอน */
-        justify-content: space-around;
-        align-items: center;
-        padding: 15px 10px;
-        gap: 5px;
-    }
+    .summary-row { flex-direction: column; gap: 25px; }
+    .galaxy-wrapper { order: 1; margin-right: 0; }
+    .solar-system { transform: scale(0.85); transform-origin: center center; margin-bottom: -30px; margin-top: -20px; }
+    .score-panel { order: 2; width: 100%; max-width: 400px; flex-direction: row; justify-content: space-around; align-items: center; padding: 15px 10px; gap: 5px; }
     .score-panel .divider { width: 1px; height: 40px; background: #e0e0e0; margin: 0 5px; }
-
-    /* ปรับวงกลมคะแนนรวมในมือถือให้เล็กลงนิดนึง */
     .score-value-big { width: 80px; height: 80px; font-size: 1.8rem; border-width: 3px; }
     .score-value-small { font-size: 1.2rem; min-width: 30px; min-height: 30px; }
     .score-label { font-size: 0.8rem; white-space: nowrap; }
     .score-item { justify-content: center; }
-
-    /* 3. ปุ่มดูคำทำนาย - อยู่ล่างสุด */
-    .action-frame {
-        order: 3; /* ย้ายไปอันดับ 3 */
-        width: 100%;
-        max-width: 350px;
-        flex-direction: row; /* ปุ่มเรียงแนวนอน */
-        flex-wrap: wrap; /* ให้ส่วนอธิบายตกบรรทัด */
-        justify-content: center;
-        padding: 15px;
-        gap: 10px;
-    }
-
-    /* ซ่อนหัวข้อ "ดูคำทำนาย" */
+    .action-frame { order: 3; width: 100%; max-width: 350px; flex-direction: row; flex-wrap: wrap; justify-content: center; padding: 15px; gap: 10px; }
     .action-title { display: none; }
-
-    /* ปรับปุ่มให้เล็กลง */
-    .btn-action {
-        flex: 1; /* ยืดเต็ม */
-        min-width: 120px; /* กันเล็กเกิน */
-        font-size: 0.9rem; /* ตัวหนังสือเล็ก */
-        padding: 8px 5px;
-    }
-
-    /* ให้คำอธิบายอยู่บรรทัดใหม่ (ล่างสุด) */
-    .action-desc {
-        width: 100%; /* กินเต็มบรรทัด */
-        margin-top: 5px;
-    }
+    .btn-action { flex: 1; min-width: 120px; font-size: 0.9rem; padding: 8px 5px; }
+    .action-desc { width: 100%; margin-top: 5px; }
 }
-
 @media (max-width: 380px) {
     .solar-system { transform: scale(0.75); margin-bottom: -50px; }
     .score-panel { flex-wrap: wrap; }

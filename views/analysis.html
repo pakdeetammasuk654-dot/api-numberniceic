@@ -1,7 +1,7 @@
 <div class="card">
     <h1 class="text-center">🔍 วิเคราะห์ชื่อมงคล</h1>
     <form action="/analysis" method="POST">
-        <label><strong>กรอกข้อมูลของคุณ:</strong></label>
+        <label><strong>กรอก "ชื่อ/สกุล" และ "วันเกิด" :</strong></label>
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
 
             <input type="text" name="name" class="form-control" placeholder="ชื่อ-นามสกุล (ภาษาไทย)" required
@@ -33,27 +33,7 @@
 
 {{if .Result}}
 
-    {{if .Result.HasKakis}}
-        <div style="background-color: #ffebee; color: #c62828; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ef9a9a; display: flex; align-items: flex-start; gap: 15px;">
-            <div style="font-size: 2rem;">⚠️</div>
-            <div>
-                <h3 style="margin: 0; color: #b71c1c;">พบอักษรกาลกิณี!</h3>
-                <p style="margin: 5px 0 0 0;">
-                    ชื่อนี้มีอักษรที่เป็นกาลกิณีสำหรับวันเกิดของคุณ:
-                    {{range .Result.KakisFound}}
-                        <span class="badge" style="background: #c62828; color: white; font-size: 1rem; margin: 0 2px;">{{.}}</span>
-                    {{end}}
-                </p>
-            </div>
-        </div>
-    {{else}}
-        <div style="background-color: #e8f5e9; color: #2e7d32; padding: 12px; border-radius: 8px; margin-bottom: 20px; text-align: center; border: 1px solid #a5d6a7;">
-            ✅ <strong>ชื่อนี้ปลอดภัย!</strong> ไม่พบอักษรกาลกิณีสำหรับวันเกิดของคุณ
-        </div>
-    {{end}}
-
     <div class="summary-box">
-        <h3 style="color: #555; margin: 0 0 10px 0;">จักรวาลพลังตัวเลข</h3>
 
         <div class="summary-row">
 
@@ -79,42 +59,57 @@
                 </div>
             </div>
 
-            <div class="solar-system">
+            <div class="galaxy-wrapper">
 
-                <div class="orbit-ring ring-middle">
-                    {{range $i, $el := .Result.ShaPairs}}
-                        {{if lt $i 5}}
-                            <div class="planet-wrapper pos-mid-{{$i}}">
-                                <div class="mini-star {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sha{{end}} c-spin-middle"
-                                     title="พลังเงา: {{.Pair}} {{if .Meaning}}({{.Meaning.PairType}}){{end}}">
-                                    {{.Pair}}
+                <div class="solar-system">
+                    <div class="orbit-ring ring-middle">
+                        {{range $i, $el := .Result.ShaPairs}}
+                            {{if lt $i 5}}
+                                <div class="planet-wrapper pos-mid-{{$i}}">
+                                    <div class="mini-star {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sha{{end}} c-spin-middle"
+                                         title="พลังเงา: {{.Pair}} {{if .Meaning}}({{.Meaning.PairType}}){{end}}">
+                                        {{.Pair}}
+                                    </div>
                                 </div>
-                            </div>
+                            {{end}}
                         {{end}}
+                    </div>
+
+                    <div class="orbit-ring ring-outer">
+                        {{range $i, $el := .Result.SatPairs}}
+                            {{if lt $i 6}}
+                                <div class="planet-wrapper pos-out-{{$i}}">
+                                    <div class="mini-star {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sat{{end}} c-spin-outer"
+                                         title="เลขศาสตร์: {{.Pair}} {{if .Meaning}}({{.Meaning.PairType}}){{end}}">
+                                        {{.Pair}}
+                                    </div>
+                                </div>
+                            {{end}}
+                        {{end}}
+                    </div>
+
+                    <div class="score-circle {{if lt .Result.TotalScore 0}}sun-bad{{else}}sun-good{{end}}">
+                        {{.Result.Name}}
+                    </div>
+                </div>
+
+                <div style="margin-top: 10px; width: 100%; max-width: 350px;">
+                    {{if .Result.HasKakis}}
+                        <div style="background-color: #ffebee; color: #c62828; padding: 12px; border-radius: 8px; border: 1px solid #ef9a9a; text-align: center;">
+                            <strong>⚠️ พบอักษรกาลกิณี:</strong>
+                            {{range .Result.KakisFound}}
+                                <span class="badge" style="background: #c62828; color: white; font-size: 1rem; margin: 0 2px;">{{.}}</span>
+                            {{end}}
+                        </div>
+                    {{else}}
+                        <div style="background-color: #e8f5e9; color: #2e7d32; padding: 12px; border-radius: 8px; border: 1px solid #a5d6a7; text-align: center;">
+                            🏆 ชื่อ <strong>{{.Result.Name}}</strong> ไม่พบกาลกิณี
+                        </div>
                     {{end}}
                 </div>
 
-                <div class="orbit-ring ring-outer">
-                    {{range $i, $el := .Result.SatPairs}}
-                        {{if lt $i 6}}
-                            <div class="planet-wrapper pos-out-{{$i}}">
-                                <div class="mini-star {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sat{{end}} c-spin-outer"
-                                     title="เลขศาสตร์: {{.Pair}} {{if .Meaning}}({{.Meaning.PairType}}){{end}}">
-                                    {{.Pair}}
-                                </div>
-                            </div>
-                        {{end}}
-                    {{end}}
-                </div>
-
-                <div class="score-circle {{if lt .Result.TotalScore 0}}sun-bad{{else}}sun-good{{end}}">
-                    {{.Result.Name}}
-                </div>
-            </div>
-
-            <div class="action-frame">
+            </div> <div class="action-frame">
                 <div class="action-title" style="margin-bottom:10px;">ดูคำทำนาย</div>
-
                 <a href="#sat-section" class="btn-action btn-sat">
                     <span style="font-size: 1.2rem;">🧮</span> เลขศาสตร์
                 </a>
