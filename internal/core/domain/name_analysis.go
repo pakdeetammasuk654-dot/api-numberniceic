@@ -25,4 +25,7 @@ type NameAnalysis struct {
 	BirthDay   string   `json:"birth_day"`   // วันเกิดที่เลือก
 	KakisFound []string `json:"kakis_found"` // รายการอักษรกาลกิณีที่เจอในชื่อ
 	HasKakis   bool     `json:"has_kakis"`   // เจอหรือไม่ (true/false)
+
+	// --- NEW: ชื่อมงคลแนะนำ (12 ชื่อ) ---
+	SimilarNames []NamesMiracle `json:"similar_names"`
 }
