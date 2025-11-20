@@ -8,7 +8,7 @@ type NamesMiracle struct {
 	SatNum pq.StringArray `gorm:"column:satnum;type:text[]" json:"sat_num"`
 	ShaNum pq.StringArray `gorm:"column:shanum;type:text[]" json:"sha_num"`
 
-	// Flag กาลกิณี (true = เป็นกาลกิณี/ห้ามใช้)
+	// Flag กาลกิณี
 	KSunday     bool `gorm:"column:k_sunday"`
 	KMonday     bool `gorm:"column:k_monday"`
 	KTuesday    bool `gorm:"column:k_tuesday"`
@@ -18,8 +18,11 @@ type NamesMiracle struct {
 	KFriday     bool `gorm:"column:k_friday"`
 	KSaturday   bool `gorm:"column:k_saturday"`
 
-	// Field พิเศษสำหรับเก็บค่าความห่างของชื่อ (Distance) ที่คำนวณได้จาก SQL
 	Distance float64 `gorm:"column:distance" json:"distance"`
+
+	// --- NEW: ฟิลด์สำหรับเก็บข้อมูลคู่เลขพร้อมความหมาย (ใช้แสดงผลหน้าเว็บ) ---
+	SatPairs []PairData `gorm:"-" json:"sat_pairs"`
+	ShaPairs []PairData `gorm:"-" json:"sha_pairs"`
 }
 
 func (NamesMiracle) TableName() string {

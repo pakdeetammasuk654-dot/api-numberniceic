@@ -48,7 +48,7 @@ func (s *analyzerService) AnalyzeName(name string, birthDay string) (*domain.Nam
 		shaSum += shaVal
 	}
 
-	// 3. สร้างคู่เลข & ดึงความหมาย
+	// 3. สร้างคู่เลข & ดึงความหมาย (สำหรับชื่อหลัก)
 	rawSatPairs := s.generatePairs(satSum)
 	rawShaPairs := s.generatePairs(shaSum)
 	satPairData := s.enrichPairs(rawSatPairs)
@@ -75,9 +75,15 @@ func (s *analyzerService) AnalyzeName(name string, birthDay string) (*domain.Nam
 	calculatePoints(satPairData)
 	calculatePoints(shaPairData)
 
-	// --- 5. (NEW) ค้นหาชื่อที่คล้ายกันจาก Database ---
-	// ดึงมา 12 ชื่อ ตามโจทย์ โดยใช้ชื่อที่ User พิมพ์เข้ามาเป็นตัวตั้งต้นค้นหา
+	// --- 5. (UPDATED) ค้นหาชื่อที่คล้ายกัน & เติมข้อมูลความหมายคู่เลข ---
 	similarNames, _ := s.repo.SearchSimilarNames(cleanName, birthDay, 12)
+
+	// 🔥 วนลูปรายชื่อที่แนะนำ เพื่อหาความหมายคู่เลข (เอาไปใช้แสดงสีในตารางหน้าเว็บ)
+	for i := range similarNames {
+		// แปลง SatNum/ShaNum (ที่เป็น array string) ให้กลายเป็น []PairData ที่มีความหมาย (Meaning)
+		similarNames[i].SatPairs = s.enrichPairs(similarNames[i].SatNum)
+		similarNames[i].ShaPairs = s.enrichPairs(similarNames[i].ShaNum)
+	}
 
 	return &domain.NameAnalysis{
 		Name:         cleanName,
@@ -93,11 +99,11 @@ func (s *analyzerService) AnalyzeName(name string, birthDay string) (*domain.Nam
 		TotalScore:   totalScore,
 		GoodScore:    goodScore,
 		BadScore:     badScore,
-		SimilarNames: similarNames, // ส่งรายชื่อกลับไปที่ View
+		SimilarNames: similarNames, // ส่งรายชื่อพร้อมข้อมูลคู่เลขกลับไป
 	}, nil
 }
 
-// ... (func enrichPairs, generatePairs คงเดิม) ...
+// ฟังก์ชันช่วย: ดึงความหมายของคู่เลขจาก Repository
 func (s *analyzerService) enrichPairs(pairs []string) []domain.PairData {
 	var result []domain.PairData
 	for _, p := range pairs {
@@ -110,6 +116,7 @@ func (s *analyzerService) enrichPairs(pairs []string) []domain.PairData {
 	return result
 }
 
+// ฟังก์ชันช่วย: แยกผลรวมเป็นคู่เลข (เช่น 159 -> 15, 59)
 func (s *analyzerService) generatePairs(sum int) []string {
 	strSum := strconv.Itoa(sum)
 	length := len(strSum)

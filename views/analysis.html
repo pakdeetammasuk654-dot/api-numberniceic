@@ -1,6 +1,6 @@
 <div class="card">
     <h1 class="text-center">🔍 วิเคราะห์ชื่อมงคล</h1>
-    <form action="/analysis" method="POST">
+    <form action="/analysis" method="POST" class="analysis-form">
         <label><strong>กรอก "ชื่อ/สกุล" และ "วันเกิด" :</strong></label>
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
 
@@ -36,6 +36,28 @@
     </form>
 </div>
 
+<div class="sample-section" style="margin-bottom: 30px;">
+    <p class="sample-title" style="text-align: center; margin-top: 0;">
+        💡 ไอเดียชื่อน่าสนใจ (คลิกเพื่อลองวิเคราะห์)
+    </p>
+
+    <div class="sample-grid">
+        <div class="sample-item" data-name="มีนา"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Meena"><span>มีนา</span></div>
+        <div class="sample-item" data-name="อารี"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Aree"><span>อารี</span></div>
+        <div class="sample-item" data-name="ศิลา"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sila"><span>ศิลา</span></div>
+        <div class="sample-item" data-name="วารี"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Waree"><span>วารี</span></div>
+        <div class="sample-item" data-name="นารา"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Nara"><span>นารา</span></div>
+        <div class="sample-item" data-name="ธารา"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Thara"><span>ธารา</span></div>
+
+        <div class="sample-item" data-name="ภูผา"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Phupha"><span>ภูผา</span></div>
+        <div class="sample-item" data-name="นาวา"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Nawa"><span>นาวา</span></div>
+        <div class="sample-item" data-name="ทิวา"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Tiwa"><span>ทิวา</span></div>
+        <div class="sample-item" data-name="ราตรี"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Ratree"><span>ราตรี</span></div>
+        <div class="sample-item" data-name="เมษา"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mesa"><span>เมษา</span></div>
+        <div class="sample-item" data-name="วายุ"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Wayu"><span>วายุ</span></div>
+    </div>
+</div>
+
 {{if .Error}}
     <div class="text-center text-danger mt-3" style="background: #ffebee; padding: 10px; border-radius: 5px;">
         ⚠️ {{.Error}}
@@ -43,11 +65,8 @@
 {{end}}
 
 {{if .Result}}
-
     <div class="summary-box">
-
         <div class="summary-row">
-
             <div class="score-panel">
                 <div class="score-item">
                     <div class="score-label">คะแนนรวม</div>
@@ -102,7 +121,6 @@
             </div>
 
             <div class="right-column">
-
                 <div class="kakis-box">
                     {{if .Result.HasKakis}}
                         <div style="color: #555; font-size: 0.9rem; background: rgba(255,255,255,0.9); padding: 8px 15px; border-radius: 20px; display: inline-block; border: 1px solid #ef9a9a; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
@@ -125,18 +143,15 @@
                     <div class="action-desc">💡 กดปุ่มดูความหมาย</div>
                 </div>
             </div>
-
         </div>
     </div>
 
     <div class="card">
         <h2 class="header-line">รายละเอียดคำทำนาย: {{.Result.Name}}</h2>
-
         <div class="result-container">
             <div class="result-col" id="sat-section">
                 <h3 style="color: #0277bd;">🧮 เลขศาสตร์</h3>
                 <p>ผลรวม: <strong>{{.Result.SatSum}}</strong></p>
-
                 {{range .Result.SatPairs}}
                     <div class="pair-card {{if .Meaning}}type-{{.Meaning.PairType}}{{end}}">
                         <div style="display: flex; align-items: flex-start;">
@@ -163,7 +178,6 @@
             <div class="result-col" id="sha-section">
                 <h3 style="color: #7b1fa2;">🌑 พลังเงา</h3>
                 <p>ผลรวม: <strong>{{.Result.ShaSum}}</strong></p>
-
                 {{range .Result.ShaPairs}}
                     <div class="pair-card {{if .Meaning}}type-{{.Meaning.PairType}}{{end}}">
                         <div style="display: flex; align-items: flex-start;">
@@ -188,23 +202,88 @@
             </div>
         </div>
     </div>
+
+    <div class="card">
+        <h3 class="header-line">🌟 แนะนำชื่อมงคลที่ใกล้เคียง</h3>
+        <div class="table-responsive">
+            {{if .Result.SimilarNames}}
+                <table class="table table-hover table-striped align-middle" style="margin-bottom: 0;">
+                    <thead class="table-light">
+                    <tr>
+                        <th scope="col">ชื่อมงคล</th>
+                        <th scope="col" class="text-center">เลขศาสตร์</th>
+                        <th scope="col" class="text-center">เลขพลังเงา</th>
+                        <th scope="col" class="text-center">ความห่าง</th>
+                        <th scope="col" class="text-center">ดำเนินการ</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{range .Result.SimilarNames}}
+                        <tr>
+                            <td style="font-size: 1.1rem; font-weight: bold; color: #333;">{{.ThName}}</td>
+
+                            <td class="text-center">
+                                <div style="display: flex; justify-content: center; gap: 4px; flex-wrap: wrap;">
+                                    {{range .SatPairs}}
+                                        <div class="mini-star {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sat{{end}}"
+                                             title="{{.Pair}} {{if .Meaning}}({{.Meaning.PairType}}){{end}}"
+                                             style="width: 32px; height: 32px; font-size: 0.85rem; cursor: default;">
+                                            {{.Pair}}
+                                        </div>
+                                    {{end}}
+                                </div>
+                            </td>
+
+                            <td class="text-center">
+                                <div style="display: flex; justify-content: center; gap: 4px; flex-wrap: wrap;">
+                                    {{range .ShaPairs}}
+                                        <div class="mini-star {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sha{{end}}"
+                                             title="{{.Pair}} {{if .Meaning}}({{.Meaning.PairType}}){{end}}"
+                                             style="width: 32px; height: 32px; font-size: 0.85rem; cursor: default;">
+                                            {{.Pair}}
+                                        </div>
+                                    {{end}}
+                                </div>
+                            </td>
+
+                            <td class="text-center">
+                                <span style="font-size: 0.9rem; color: #666;">
+                                    {{printf "%.3f" .Distance}}
+                                </span>
+                            </td>
+
+                            <td class="text-center">
+                                <a href="/analysis?name={{.ThName}}&birth_day={{$.BirthDay}}"
+                                   class="btn btn-sm btn-outline-primary"
+                                   style="border-radius: 20px; padding: 5px 15px; white-space: nowrap;">
+                                    🔮 วิเคราะห์
+                                </a>
+                            </td>
+                        </tr>
+                    {{end}}
+                    </tbody>
+                </table>
+            {{else}}
+                <p class="text-center text-muted p-3">ไม่พบชื่อที่ใกล้เคียงในฐานข้อมูล</p>
+            {{end}}
+        </div>
+    </div>
 {{end}}
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
+        // --- Animation: Counters ---
         const counters = [
             document.getElementById('totalScore'),
             document.getElementById('goodScore'),
             document.getElementById('badScore')
         ];
-
         counters.forEach(counter => {
             if (!counter) return;
             const target = parseInt(counter.getAttribute('data-target'), 10) || 0;
             const duration = 2000;
             const start = 0;
             const startTime = performance.now();
-
             function updateCount(currentTime) {
                 const elapsedTime = currentTime - startTime;
                 const progress = Math.min(elapsedTime / duration, 1);
@@ -220,6 +299,7 @@
             requestAnimationFrame(updateCount);
         });
 
+        // --- Form Input: Validation & Clear Button ---
         const nameInput = document.getElementById('nameInput');
         const clearBtn = document.getElementById('clearInputBtn');
         if (nameInput && clearBtn) {
@@ -228,7 +308,7 @@
             };
             nameInput.addEventListener('input', function() {
                 let val = this.value;
-                val = val.replace(/[^a-zA-Z\u0E00-\u0E7F\s]/g, '');
+                val = val.replace(/[^a-zA-Z\u0E00-\u0E7F\s]/g, ''); // ให้พิมพ์ได้แค่ไทย/อังกฤษ/ช่องว่าง
                 val = val.replace(/\s{2,}/g, ' ');
                 if (this.value !== val) {
                     this.value = val;
@@ -243,8 +323,9 @@
             updateBtnState();
         }
 
-        const fullName = "{{.Result.Name}}";
-        const badChars = [{{range .Result.KakisFound}}"{{.}}",{{end}}];
+        // --- Highlight Kakis Characters ---
+        const fullName = "{{if .Result}}{{.Result.Name}}{{end}}";
+        const badChars = [{{if .Result}}{{range .Result.KakisFound}}"{{.}}",{{end}}{{end}}];
         function highlightText(elementId) {
             const el = document.getElementById(elementId);
             if (!el) return;
@@ -259,5 +340,18 @@
             el.innerHTML = styledName;
         }
         highlightText('sunNameDisplay');
+
+        // --- Sample Click Handler (สำหรับ Mock Data) ---
+        document.querySelectorAll('.sample-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                if(this.tagName === 'A' || this.closest('a')) return;
+                const name = this.getAttribute('data-name');
+                if(nameInput && name) {
+                    nameInput.value = name;
+                    document.querySelector('.card').scrollIntoView({behavior: 'smooth'});
+                    nameInput.dispatchEvent(new Event('input'));
+                }
+            });
+        });
     });
 </script>
