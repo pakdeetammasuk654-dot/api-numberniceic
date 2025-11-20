@@ -1,28 +1,40 @@
-### 1. ทดสอบหน้าแรก (Home Page)
+### 1. หน้าแรก (Home Page)
 GET http://localhost:3000/
 
-### 2. ทดสอบหน้าแสดงฟอร์มวิเคราะห์ (Analysis View)
+### 2. หน้าวิเคราะห์ชื่อ (Analysis Page)
+# *อัปเดต*: เมื่อเรียกหน้านี้ ระบบจะวิเคราะห์ชื่อ Default ("มีนา", วันอาทิตย์) ให้ทันที
 GET http://localhost:3000/analysis
 
-### 3. ทดสอบการส่ง Form วิเคราะห์ชื่อ (POST Form)
-# *อัปเดต*: ส่งชื่อ "อณัญญา" และวันเกิด "sunday" (วันอาทิตย์)
+### 3. ส่งฟอร์มวิเคราะห์ชื่อ (POST Form)
+# จำลองการที่ User กรอกชื่อ "อณัญญา" วันเกิด "วันอาทิตย์" แล้วกดปุ่มวิเคราะห์
 POST http://localhost:3000/analysis
 Content-Type: application/x-www-form-urlencoded
 
 name=อณัญญา&birth_day=sunday
 
-### 4. ทดสอบ API แบบ JSON (JSON API)
-# อันนี้สำคัญ! เอาไว้เช็ค logic กาลกิณีว่าทำงานถูกต้องหรือไม่
+### 4. API: วิเคราะห์ชื่อแบบ JSON (Main API)
+# อันนี้สำคัญ! ใช้เช็คผลลัพธ์ทั้งหมด รวมถึง:
+# - คะแนนรวม (TotalScore)
+# - กาลกิณี (KakisFound)
+# - ชื่อมงคลที่ใกล้เคียง (SimilarNames)
 GET http://localhost:3000/api/analyze?name=อณัญญา&birth_day=sunday
 Accept: application/json
 
-### 5. ทดสอบหน้าเมนูอื่นๆ (Dashboard)
+### 5. API: ทดสอบเปลี่ยนวันเกิด (เช็คกาลกิณี)
+# ลองเปลี่ยนเป็นวันจันทร์ (monday) เพื่อดูว่ากาลกิณีเปลี่ยนไหม
+GET http://localhost:3000/api/analyze?name=อณัญญา&birth_day=monday
+Accept: application/json
+
+### 6. หน้า Dashboard
 GET http://localhost:3000/dashboard
 
-### 6. ทดสอบหน้าเมนูอื่นๆ (About Us)
+### 7. หน้าบทความ (Articles)
+GET http://localhost:3000/articles
+
+### 8. หน้าเกี่ยวกับเรา (About Us)
 GET http://localhost:3000/about
 
-### 7. ทดสอบกรณีไม่ส่งชื่อ (Error Case)
-# ต้องได้ error 400 Bad Request
+### 9. Error Case: กรณีไม่ส่งชื่อมา
+# ต้องได้ Error 400 Bad Request
 GET http://localhost:3000/api/analyze?name=
 Accept: application/json

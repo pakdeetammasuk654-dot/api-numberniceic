@@ -34,11 +34,33 @@ func (h *FiberHandler) ViewAbout(c *fiber.Ctx) error {
 	return c.Render("about", fiber.Map{}, "layouts/main")
 }
 
+// ViewAnalysis: แก้ไขให้วิเคราะห์ค่า Default ทันทีที่เปิดหน้า
 func (h *FiberHandler) ViewAnalysis(c *fiber.Ctx) error {
-	return c.Render("analysis", fiber.Map{}, "layouts/main")
+	// 1. กำหนดค่าเริ่มต้น (Default Values)
+	defaultName := "มีนา"
+	defaultDay := "sunday"
+
+	// 2. สั่ง Service ให้วิเคราะห์ทันที
+	result, err := h.service.AnalyzeName(defaultName, defaultDay)
+
+	// 3. เตรียมข้อมูลสำหรับส่งไปแสดงผล
+	data := fiber.Map{
+		"Name":     defaultName,
+		"BirthDay": defaultDay,
+	}
+
+	// ถ้าไม่มี Error ให้ส่งผลลัพธ์ (Result) ไปด้วย
+	// หน้า HTML จะแสดงผลกราฟิกทันทีเพราะมีตัวแปร .Result
+	if err == nil {
+		data["Result"] = result
+	} else {
+		data["Error"] = "ไม่สามารถโหลดข้อมูลเริ่มต้นได้: " + err.Error()
+	}
+
+	return c.Render("analysis", data, "layouts/main")
 }
 
-// HandleAnalysis (POST Form)
+// HandleAnalysis (POST Form): สำหรับกรณีที่ User กดปุ่มวิเคราะห์เอง
 func (h *FiberHandler) HandleAnalysis(c *fiber.Ctx) error {
 	name := c.FormValue("name")
 	birthDay := c.FormValue("birth_day") // รับค่าวันเกิด
