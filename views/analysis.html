@@ -10,9 +10,7 @@
 
             <select name="birth_day" class="form-control" style="flex: 1; min-width: 150px; margin: 0;" required onchange="this.form.submit()">
                 <option value="" disabled>-- เลือกวันเกิด --</option>
-
                 <option value="sunday" {{if or (eq .BirthDay "sunday") (not .BirthDay)}}selected{{end}}>วันอาทิตย์</option>
-
                 <option value="monday" {{if eq .BirthDay "monday"}}selected{{end}}>วันจันทร์</option>
                 <option value="tuesday" {{if eq .BirthDay "tuesday"}}selected{{end}}>วันอังคาร</option>
                 <option value="wednesday1" {{if eq .BirthDay "wednesday1"}}selected{{end}}>วันพุธ (กลางวัน)</option>
@@ -45,7 +43,6 @@
                     {{range .Result.KakisFound}}
                         <span class="badge" style="background: #c62828; color: white; font-size: 1rem; margin: 0 2px;">{{.}}</span>
                     {{end}}
-                    <br><small style="color: #d32f2f;">(อักษรกาลกิณีอาจส่งผลให้เกิดอุปสรรคในการดำเนินชีวิต ควรพิจารณาหลีกเลี่ยง)</small>
                 </p>
             </div>
         </div>
@@ -55,48 +52,78 @@
         </div>
     {{end}}
 
-    <div class="visual-section">
-        <h3 style="margin-top: 0; color: #333; border-bottom: 1px solid #eee; padding-bottom: 10px;">
-            🔮 ขุมพลังตัวเลขของคุณ
-        </h3>
-
-        <div class="pair-row" style="justify-content: center; gap: 15px; padding-top: 10px;">
-
-            {{range .Result.SatPairs}}
-                <div class="pair-circle {{if .Meaning}}type-{{.Meaning.PairType}}{{end}}"
-                     title="เลขศาสตร์: {{if .Meaning}}{{.Meaning.MiracleDesc}} ({{.Meaning.PairPoint}}){{end}}">
-                    {{.Pair}}
-                </div>
-            {{end}}
-
-            {{range .Result.ShaPairs}}
-                <div class="pair-circle {{if .Meaning}}type-{{.Meaning.PairType}}{{end}}"
-                     title="พลังเงา: {{if .Meaning}}{{.Meaning.MiracleDesc}} ({{.Meaning.PairPoint}}){{end}}">
-                    {{.Pair}}
-                </div>
-            {{end}}
-
-        </div>
-
-        <p style="text-align: center; margin-top: 15px; font-size: 0.9rem; color: #777;">
-            <span style="display: inline-block; width: 10px; height: 10px; background: #2e7d32; border-radius: 50%;"></span> เกรดดี
-            &nbsp;&nbsp;
-            <span style="display: inline-block; width: 10px; height: 10px; background: #c62828; border-radius: 50%;"></span> เกรดระวัง
-        </p>
-    </div>
-
     <div class="summary-box">
-        <h3 style="color: #555; margin: 0;">คะแนนพยากรณ์รวม</h3>
+        <h3 style="color: #555; margin: 0 0 10px 0;">จักรวาลพลังตัวเลข</h3>
 
-        <div id="totalScore" class="total-score-big" data-target="{{.Result.TotalScore}}">0</div>
+        <div class="summary-row">
 
-        <div class="sub-score-container">
-            <div class="score-badge score-good">
-                คะแนนดี: +<span id="goodScore" data-target="{{.Result.GoodScore}}">0</span>
+            <div class="score-panel">
+                <div class="score-item">
+                    <div class="score-label">คะแนนรวม</div>
+                    <div class="score-value-big {{if lt .Result.TotalScore 0}}bg-bad{{else}}bg-good{{end}}"
+                         id="totalScore" data-target="{{.Result.TotalScore}}">
+                        0
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="score-item">
+                    <div class="score-label">คะแนนดี</div>
+                    <div class="score-value-small val-good">+<span id="goodScore" data-target="{{.Result.GoodScore}}">0</span></div>
+                </div>
+
+                <div class="score-item">
+                    <div class="score-label">คะแนนร้าย</div>
+                    <div class="score-value-small val-bad"><span id="badScore" data-target="{{.Result.BadScore}}">0</span></div>
+                </div>
             </div>
-            <div class="score-badge score-bad">
-                คะแนนร้าย: <span id="badScore" data-target="{{.Result.BadScore}}">0</span>
+
+            <div class="solar-system">
+
+                <div class="orbit-ring ring-middle">
+                    {{range $i, $el := .Result.ShaPairs}}
+                        {{if lt $i 5}}
+                            <div class="planet-wrapper pos-mid-{{$i}}">
+                                <div class="mini-star {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sha{{end}} c-spin-middle"
+                                     title="พลังเงา: {{.Pair}} {{if .Meaning}}({{.Meaning.PairType}}){{end}}">
+                                    {{.Pair}}
+                                </div>
+                            </div>
+                        {{end}}
+                    {{end}}
+                </div>
+
+                <div class="orbit-ring ring-outer">
+                    {{range $i, $el := .Result.SatPairs}}
+                        {{if lt $i 6}}
+                            <div class="planet-wrapper pos-out-{{$i}}">
+                                <div class="mini-star {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sat{{end}} c-spin-outer"
+                                     title="เลขศาสตร์: {{.Pair}} {{if .Meaning}}({{.Meaning.PairType}}){{end}}">
+                                    {{.Pair}}
+                                </div>
+                            </div>
+                        {{end}}
+                    {{end}}
+                </div>
+
+                <div class="score-circle {{if lt .Result.TotalScore 0}}sun-bad{{else}}sun-good{{end}}">
+                    {{.Result.Name}}
+                </div>
             </div>
+
+            <div class="action-frame">
+                <div class="action-title" style="margin-bottom:10px;">ดูคำทำนาย</div>
+
+                <a href="#sat-section" class="btn-action btn-sat">
+                    <span style="font-size: 1.2rem;">🧮</span> เลขศาสตร์
+                </a>
+                <a href="#sha-section" class="btn-action btn-lang">
+                    <span style="font-size: 1.2rem;">📜</span> ภาษาศาสตร์
+                </a>
+                <div class="action-desc">คลิกเพื่อดูความหมาย</div>
+            </div>
+
         </div>
     </div>
 
@@ -104,15 +131,15 @@
         <h2 class="header-line">รายละเอียดคำทำนาย: {{.Result.Name}}</h2>
 
         <div class="result-container">
-            <div class="result-col">
+            <div class="result-col" id="sat-section">
                 <h3 style="color: #0277bd;">🧮 เลขศาสตร์</h3>
                 <p>ผลรวม: <strong>{{.Result.SatSum}}</strong></p>
 
                 {{range .Result.SatPairs}}
-                    <div class="pair-card {{if .Meaning}}type-{{.Meaning.PairType}}{{end}}" style="padding: 15px; margin-bottom: 15px; border-radius: 4px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                    <div class="pair-card {{if .Meaning}}type-{{.Meaning.PairType}}{{end}}">
                         <div style="display: flex; align-items: flex-start;">
                             <div style="margin-right: 15px; text-align: center; min-width: 50px;">
-                                <span class="pair-number" style="font-size: 1.8rem; font-weight: bold; color: #333;">{{.Pair}}</span>
+                                <span class="pair-number">{{.Pair}}</span>
                                 {{if .Meaning}}
                                     <br><span style="font-size: 0.8rem; padding: 2px 6px; background: #eee; border-radius: 4px; color: #666;">{{.Meaning.PairType}}</span>
                                 {{end}}
@@ -131,15 +158,15 @@
                 {{end}}
             </div>
 
-            <div class="result-col">
+            <div class="result-col" id="sha-section">
                 <h3 style="color: #7b1fa2;">🌑 พลังเงา</h3>
                 <p>ผลรวม: <strong>{{.Result.ShaSum}}</strong></p>
 
                 {{range .Result.ShaPairs}}
-                    <div class="pair-card {{if .Meaning}}type-{{.Meaning.PairType}}{{end}}" style="padding: 15px; margin-bottom: 15px; border-radius: 4px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                    <div class="pair-card {{if .Meaning}}type-{{.Meaning.PairType}}{{end}}">
                         <div style="display: flex; align-items: flex-start;">
                             <div style="margin-right: 15px; text-align: center; min-width: 50px;">
-                                <span class="pair-number" style="font-size: 1.8rem; font-weight: bold; color: #333;">{{.Pair}}</span>
+                                <span class="pair-number">{{.Pair}}</span>
                                 {{if .Meaning}}
                                     <br><span style="font-size: 0.8rem; padding: 2px 6px; background: #eee; border-radius: 4px; color: #666;">{{.Meaning.PairType}}</span>
                                 {{end}}
