@@ -34,32 +34,41 @@ func (h *FiberHandler) ViewAbout(c *fiber.Ctx) error {
 	return c.Render("about", fiber.Map{}, "layouts/main")
 }
 
-// ViewAnalysis: แก้ไขให้วิเคราะห์ค่า Default ทันทีที่เปิดหน้า
+// ViewAnalysis: แก้ไขให้รับค่าจาก Query Params (สำหรับการคลิกจากตาราง)
 func (h *FiberHandler) ViewAnalysis(c *fiber.Ctx) error {
-	// 1. กำหนดค่าเริ่มต้น (Default Values) -> แก้เป็น "ณเดชณ์"
-	defaultName := "ณเดชน์"
-	defaultDay := "sunday"
+	// 1. รับค่าจาก Link (Query Params) ก่อน
+	// เช่น /analysis?name=สมชาย&birth_day=monday
+	name := c.Query("name")
+	birthDay := c.Query("birth_day")
 
-	// 2. สั่ง Service ให้วิเคราะห์ทันที
-	result, err := h.service.AnalyzeName(defaultName, defaultDay)
+	// 2. ถ้าไม่มีค่าส่งมา (เปิดหน้าเว็บครั้งแรก) ให้ใช้ค่า Default "ณเดชน์"
+	if name == "" {
+		name = "ณเดชน์"
+	}
+	if birthDay == "" {
+		birthDay = "sunday"
+	}
 
-	// 3. เตรียมข้อมูลสำหรับส่งไปแสดงผล
+	// 3. สั่ง Service ให้วิเคราะห์
+	result, err := h.service.AnalyzeName(name, birthDay)
+
+	// 4. เตรียมข้อมูลสำหรับส่งไปแสดงผล
 	data := fiber.Map{
-		"Name":     defaultName,
-		"BirthDay": defaultDay,
+		"Name":     name,
+		"BirthDay": birthDay,
 	}
 
 	// ถ้าไม่มี Error ให้ส่งผลลัพธ์ (Result) ไปด้วย
 	if err == nil {
 		data["Result"] = result
 	} else {
-		data["Error"] = "ไม่สามารถโหลดข้อมูลเริ่มต้นได้: " + err.Error()
+		data["Error"] = "ไม่สามารถโหลดข้อมูลได้: " + err.Error()
 	}
 
 	return c.Render("analysis", data, "layouts/main")
 }
 
-// HandleAnalysis (POST Form): สำหรับกรณีที่ User กดปุ่มวิเคราะห์เอง
+// HandleAnalysis (POST Form): สำหรับกรณีที่ User พิมพ์ชื่อแล้วกด Enter (ระบบ Auto Submit)
 func (h *FiberHandler) HandleAnalysis(c *fiber.Ctx) error {
 	name := c.FormValue("name")
 	birthDay := c.FormValue("birth_day") // รับค่าวันเกิด

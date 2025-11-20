@@ -1,12 +1,27 @@
 <style>
-    /* ... (Style ตารางและ Input เดิมของคุณ คงไว้เหมือนเดิม) ... */
+    /* --- 1. ปรับแต่งตาราง (Zebra & Clickable) --- */
     .table-striped tbody tr:nth-of-type(odd) { background-color: #f9f9f9; }
     .table-striped tbody tr:nth-of-type(even) { background-color: #ffffff; }
-    .table-hover tbody tr { cursor: pointer; transition: background-color 0.2s, transform 0.1s; }
-    .table-hover tbody tr:hover { background-color: #e3f2fd !important; transform: scale(1.005); }
-    .mini-star-table { width: 32px; height: 32px; font-size: 0.85rem; display: flex; justify-content: center; align-items: center; border-radius: 50%; color: white; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.15); cursor: default; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
 
-    /* Star Colors */
+    .table-hover tbody tr {
+        cursor: pointer;
+        transition: background-color 0.2s, transform 0.1s;
+    }
+    .table-hover tbody tr:hover {
+        background-color: #e3f2fd !important;
+        transform: scale(1.005);
+    }
+
+    /* --- 2. ปรับแต่งวงกลมตัวเลขในตาราง --- */
+    .mini-star-table {
+        width: 32px; height: 32px; font-size: 0.85rem;
+        display: flex; justify-content: center; align-items: center;
+        border-radius: 50%; color: white; font-weight: bold;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.15); cursor: default;
+        text-shadow: 0 1px 1px rgba(0,0,0,0.2);
+    }
+
+    /* --- 3. เฉดสีวงกลม (D/R Logic) --- */
     .mini-star-table.type-D10, .mini-star-table.type-d10 { background: linear-gradient(135deg, #1b5e20, #2e7d32); box-shadow: 0 0 5px rgba(27, 94, 32, 0.5); }
     .mini-star-table.type-D8, .mini-star-table.type-d8   { background: linear-gradient(135deg, #2e7d32, #43a047); }
     .mini-star-table.type-D5, .mini-star-table.type-d5   { background: linear-gradient(135deg, #43a047, #66bb6a); }
@@ -18,18 +33,55 @@
     .mini-star-table.star-sat { background: linear-gradient(135deg, #42a5f5, #1976d2); }
     .mini-star-table.star-sha { background: linear-gradient(135deg, #ab47bc, #7b1fa2); }
 
-    /* Input & Button Styles */
+    /* --- 4. Input Style (Custom with Icon) --- */
     .input-wrapper { position: relative; width: 100%; }
-    .input-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); font-size: 1.2rem; color: #888; pointer-events: none; z-index: 5; }
-    .form-control-custom { width: 100%; padding: 12px 15px 12px 45px; font-size: 1.1rem; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; transition: all 0.3s; background-color: #fff; appearance: none; }
-    .form-control-custom:focus { border-color: #007bff; box-shadow: 0 0 0 4px rgba(0,123,255,0.1); outline: none; }
-    .select-wrapper::after { content: "▼"; font-size: 0.8rem; color: #888; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); pointer-events: none; }
+    .input-icon {
+        position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
+        font-size: 1.2rem; color: #888; pointer-events: none; z-index: 5;
+    }
+    .form-control-custom {
+        width: 100%; padding: 12px 15px 12px 45px; font-size: 1.1rem;
+        border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box;
+        transition: all 0.3s; background-color: #fff; appearance: none;
+    }
+    .form-control-custom:focus {
+        border-color: #007bff; box-shadow: 0 0 0 4px rgba(0,123,255,0.1); outline: none;
+    }
+    .select-wrapper::after {
+        content: "▼"; font-size: 0.8rem; color: #888;
+        position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
+        pointer-events: none;
+    }
 
+    /* --- 5. ปุ่มบันทึกชื่อ --- */
     .summary-box { position: relative; }
-    .btn-save-solar { position: absolute; top: 15px; right: 15px; z-index: 50; background: white; border: 1px solid #ddd; border-radius: 20px; padding: 6px 15px; font-size: 0.85rem; color: #555; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: all 0.2s; display: flex; align-items: center; gap: 5px; font-weight: bold; }
-    .btn-save-solar:hover { background: #f8f9fa; color: #007bff; border-color: #007bff; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
+    .btn-save-solar {
+        position: absolute; top: 15px; right: 15px; z-index: 50;
+        background: white; border: 1px solid #ddd; border-radius: 20px;
+        padding: 6px 15px; font-size: 0.85rem; color: #555; cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: all 0.2s;
+        display: flex; align-items: center; gap: 5px; font-weight: bold;
+    }
+    .btn-save-solar:hover {
+        background: #f8f9fa; color: #007bff; border-color: #007bff;
+        transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
 
-    /* Modal Style (Simple) */
+    /* --- 6. ปุ่มปิดรายละเอียด --- */
+    #btnCloseDetails {
+        position: absolute; top: 10px; right: 15px;
+        border: none; background: none;
+        font-size: 2rem; line-height: 1;
+        color: #aaa; cursor: pointer;
+        transition: color 0.2s;
+    }
+    #btnCloseDetails:hover { color: #d32f2f; }
+
+    /* --- 7. Fix Vowel Color --- */
+    .bad-char { color: #d32f2f; font-weight: 800; }
+    .good-char { color: inherit; font-weight: normal; }
+
+    /* Modal Style */
     .ai-modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
     .ai-modal-content { background-color: #fff; margin: 15% auto; padding: 25px; border-radius: 15px; width: 90%; max-width: 500px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); position: relative; animation: slideDown 0.3s ease-out; }
     @keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -105,7 +157,7 @@
                     <div class="orbit-ring ring-outer">
                         {{range $i, $el := .Result.SatPairs}}{{if lt $i 6}}<div class="planet-wrapper pos-out-{{$i}}"><div class="mini-star {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sat{{end}} c-spin-outer">{{.Pair}}</div></div>{{end}}{{end}}
                     </div>
-                    <div class="score-circle {{if lt .Result.TotalScore 0}}sun-bad{{else}}sun-good{{end}}"><span id="sunNameDisplay">{{.Result.Name}}</span></div>
+                    <div class="score-circle {{if lt .Result.TotalScore 0}}sun-bad{{else}}sun-good{{end}}"><span id="sunNameDisplay"></span></div>
                 </div>
             </div>
             <div class="right-column">
@@ -117,7 +169,7 @@
                     {{end}}
                 </div>
                 <div class="action-frame">
-                    <a href="#sat-section" class="btn-action btn-sat">🧮 เลขศาสตร์</a>
+                    <button id="btnShowDetails" class="btn-action btn-sat" style="border:none; font-family:inherit; cursor:pointer;">🧮 เลขศาสตร์</button>
                     <button id="btnLinguistics" class="btn-action btn-lang" style="border:none; font-family:inherit; cursor:pointer;">📜 ภาษาศาสตร์</button>
                     <div class="action-desc">💡 กดปุ่มดูความหมาย</div>
                 </div>
@@ -125,7 +177,8 @@
         </div>
     </div>
 
-    <div class="card">
+    <div id="detailSection" class="card" style="display: none; position: relative;">
+        <button id="btnCloseDetails" title="ปิดรายละเอียด">&times;</button>
         <h2 class="header-line">รายละเอียดคำทำนาย: {{.Result.Name}}</h2>
         <div class="result-container">
             <div class="result-col" id="sat-section">
@@ -156,7 +209,9 @@
     </div>
 
     <div class="card">
-        <h3 class="header-line">🌟 แนะนำชื่อมงคลที่ใกล้เคียง</h3>
+        <h3 class="header-line">
+            🌟 แนะนำชื่อมงคลที่ใกล้เคียง <span id="similarNameDisplay" style="color: #007bff; margin-left: 5px;"></span>
+        </h3>
         <div class="table-responsive">
             {{if .Result.SimilarNames}}
                 <table class="table table-hover table-striped align-middle" style="margin-bottom: 0; width: 100%; border-collapse: collapse;">
@@ -209,14 +264,32 @@
             updateBtn();
         }
 
-        // Kakis Highlight
+        // Function to generate colored name HTML
+        function renderColoredName(name, badChars) {
+            if (!name) return "";
+            let html = "";
+            for(let c of name) {
+                if (badChars.includes(c)) {
+                    // อักษรกาลกิณี: สีแดง + ตัวหนา
+                    html += `<span class="bad-char">${c}</span>`;
+                } else {
+                    // อักษรปกติ: บังคับสี inherit เพื่อแก้ปัญหาสระลอยสีแดง
+                    html += `<span class="good-char">${c}</span>`;
+                }
+            }
+            return html;
+        }
+
+        // Apply Highlight to Elements
         const fullName = "{{if .Result}}{{.Result.Name}}{{end}}";
         const badChars = [{{if .Result}}{{range .Result.KakisFound}}"{{.}}",{{end}}{{end}}];
         const sunEl = document.getElementById('sunNameDisplay');
-        if (sunEl && fullName) {
-            let html = "";
-            for(let c of fullName) html += badChars.includes(c) ? `<span style="color:#d32f2f;font-weight:800;text-shadow:0 1px 2px rgba(0,0,0,0.1);">${c}</span>` : `<span>${c}</span>`;
-            sunEl.innerHTML = html;
+        const similarEl = document.getElementById('similarNameDisplay');
+
+        if (fullName) {
+            const coloredHtml = renderColoredName(fullName, badChars);
+            if (sunEl) sunEl.innerHTML = coloredHtml;
+            if (similarEl) similarEl.innerHTML = coloredHtml;
         }
 
         // Sample Click
@@ -227,38 +300,44 @@
             });
         });
 
-        // --- AI Linguistics Button Logic ---
+        // AI Logic
         const btnLang = document.getElementById('btnLinguistics');
         const modal = document.getElementById('aiModal');
         const closeModal = document.querySelector('.close-modal');
         const aiContent = document.getElementById('aiContent');
-
         if(btnLang) {
             btnLang.addEventListener('click', async () => {
                 const currentName = "{{if .Result}}{{.Result.Name}}{{end}}";
                 if(!currentName) return;
-
-                // Open Modal & Show Loading
                 modal.style.display = "block";
                 aiContent.innerHTML = '<div class="ai-loading">⏳ กำลังสอบถาม Gemini AI...<br><small>โปรดรอสักครู่</small></div>';
-
                 try {
                     const response = await fetch(`/api/linguistics?name=${encodeURIComponent(currentName)}`);
                     const data = await response.json();
-
-                    if (response.ok) {
-                        // จัดรูปแบบข้อความให้อ่านง่าย (แปลง Newline เป็น <br>)
-                        aiContent.innerHTML = data.text.replace(/\n/g, '<br>');
-                    } else {
-                        aiContent.innerHTML = `<div style="color:red;">⚠️ เกิดข้อผิดพลาด: ${data.error || 'Unknown error'}</div>`;
-                    }
+                    if (response.ok) aiContent.innerHTML = data.text.replace(/\n/g, '<br>');
+                    else aiContent.innerHTML = `<div style="color:red;">⚠️ เกิดข้อผิดพลาด: ${data.error || 'Unknown error'}</div>`;
                 } catch (error) {
                     aiContent.innerHTML = `<div style="color:red;">⚠️ ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้</div>`;
                 }
             });
         }
-
         if(closeModal) closeModal.onclick = () => modal.style.display = "none";
         window.onclick = (event) => { if (event.target == modal) modal.style.display = "none"; }
+
+        // Detail Section Logic
+        const btnShowDetails = document.getElementById('btnShowDetails');
+        const detailSection = document.getElementById('detailSection');
+        const btnCloseDetails = document.getElementById('btnCloseDetails');
+        if(btnShowDetails && detailSection) {
+            btnShowDetails.addEventListener('click', () => {
+                detailSection.style.display = 'block';
+                detailSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        }
+        if(btnCloseDetails && detailSection) {
+            btnCloseDetails.addEventListener('click', () => {
+                detailSection.style.display = 'none';
+            });
+        }
     });
 </script>
