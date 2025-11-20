@@ -17,7 +17,8 @@ func NewPostgresRepository(db *gorm.DB) ports.NumberRepository {
 	return &postgresRepository{db: db}
 }
 
-// ... (ฟังก์ชันเดิม GetSatValue, GetShaValue, GetNumberMeaning, GetKakisByDay คงเดิม) ...
+// ... (ฟังก์ชัน GetSatValue, GetShaValue, GetNumberMeaning, GetKakisByDay คงเดิม ไม่ต้องแก้) ...
+
 func (r *postgresRepository) GetSatValue(char string) (int, error) {
 	var satNum domain.SatNum
 	result := r.db.Table("sat_nums").Where("char_key = ?", char).First(&satNum)
@@ -29,6 +30,7 @@ func (r *postgresRepository) GetSatValue(char string) (int, error) {
 	}
 	return satNum.SatValue, nil
 }
+
 func (r *postgresRepository) GetShaValue(char string) (int, error) {
 	var shaNum domain.ShaNum
 	result := r.db.Table("sha_nums").Where("char_key = ?", char).First(&shaNum)
@@ -40,6 +42,7 @@ func (r *postgresRepository) GetShaValue(char string) (int, error) {
 	}
 	return shaNum.ShaValue, nil
 }
+
 func (r *postgresRepository) GetNumberMeaning(pair string) (*domain.NumberMeaning, error) {
 	var meaning domain.NumberMeaning
 	result := r.db.Table("numbers").Where("pairnumber = ?", pair).First(&meaning)
@@ -51,6 +54,7 @@ func (r *postgresRepository) GetNumberMeaning(pair string) (*domain.NumberMeanin
 	}
 	return &meaning, nil
 }
+
 func (r *postgresRepository) GetKakisByDay(day string) ([]string, error) {
 	var kakisList []string
 	result := r.db.Table("kakis_day").Where("day = ?", day).Pluck("kakis", &kakisList)
@@ -60,11 +64,13 @@ func (r *postgresRepository) GetKakisByDay(day string) ([]string, error) {
 	return kakisList, nil
 }
 
-// --- NEW: Implement SearchSimilarNames ---
+// ---------------------------------------------------------
+// 🔥 ส่วนที่อัปเดตตาม Logic LevenshteinNormal ที่คุณให้มา 🔥
+// ---------------------------------------------------------
 func (r *postgresRepository) SearchSimilarNames(name string, day string, limit int) ([]domain.NamesMiracle, error) {
 	var results []domain.NamesMiracle
 
-	// Map วันเกิด -> ชื่อคอลัมน์ใน DB
+	// 1. แปลงวันเกิดเป็นชื่อคอลัมน์ (เหมือน switch case ในโค้ดต้นฉบับ)
 	columnMap := map[string]string{
 		"sunday":     "k_sunday",
 		"monday":     "k_monday",
@@ -76,15 +82,16 @@ func (r *postgresRepository) SearchSimilarNames(name string, day string, limit i
 		"saturday":   "k_saturday",
 	}
 
-	// เลือกคอลัมน์กาลกิณีให้ตรงกับวัน (Default เป็นวันอาทิตย์ถ้าหาไม่เจอ)
+	// ตรวจสอบความถูกต้องของ key ถ้าไม่เจอให้ Default เป็นวันอาทิตย์
 	targetCol, ok := columnMap[day]
 	if !ok {
 		targetCol = "k_sunday"
 	}
 
-	// SQL Query (ดัดแปลงจากโค้ดเดิมของคุณเพื่อให้เข้ากับ Gorm)
-	// ใช้ levenshtein(...) / greatest(...) เพื่อหา % ความเหมือน
-	// และกรองเฉพาะชื่อที่ไม่เป็นกาลกิณี (column = false)
+	// 2. สร้าง SQL Query (ใช้ Logic เดียวกับที่คุณให้มา)
+	// - ใช้ levenshtein($1, thname) / greatest(...) เพื่อหา distance ratio
+	// - WHERE <column_day> = false (กรองกาลกิณีออก)
+	// - ORDER BY distance
 	query := fmt.Sprintf(`
 		SELECT 
 			name_id, thname, satnum, shanum, 
@@ -96,8 +103,8 @@ func (r *postgresRepository) SearchSimilarNames(name string, day string, limit i
 		LIMIT ?
 	`, targetCol)
 
-	// Execute Raw Query
-	// params: name (สำหรับ $1 ใน levenshtein), name (สำหรับ $1 ใน greatest), limit
+	// 3. Execute Query
+	// GORM จะทำการ Map ผลลัพธ์เข้า struct NamesMiracle ให้อัตโนมัติ รวมถึง Array pq
 	err := r.db.Raw(query, name, name, limit).Scan(&results).Error
 	if err != nil {
 		return nil, err
