@@ -126,3 +126,165 @@ th { background-color: #f2f2f2; }
 .text-center { text-align: center; }
 .text-danger { color: red; }
 .mt-3 { margin-top: 1rem; }
+
+/* --- Analysis Result Enhancements --- */
+.score-card {
+    background: linear-gradient(135deg, #6e8efb, #a777e3);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(110, 142, 251, 0.4);
+}
+.score-title { font-size: 1.1rem; opacity: 0.9; }
+.score-value { font-size: 3rem; font-weight: bold; margin: 10px 0; }
+
+.pair-card {
+    background: white;
+    border-left: 5px solid #ddd;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: transform 0.2s;
+}
+.pair-card:hover { transform: translateX(5px); }
+.pair-good { border-left-color: #28a745; }
+.pair-neutral { border-left-color: #ffc107; }
+.pair-bad { border-left-color: #dc3545; }
+
+.pair-number {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    margin-right: 10px;
+}
+
+/* --- Score Summary Box --- */
+.summary-box {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+    text-align: center;
+    border: 1px solid #eee;
+}
+.total-score-big {
+    font-size: 4rem;
+    font-weight: 800;
+    line-height: 1;
+    margin: 10px 0;
+    background: linear-gradient(45deg, #2196f3, #9c27b0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.sub-score-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 15px;
+}
+.score-badge {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+.score-good { background-color: #e8f5e9; color: #2e7d32; }
+.score-bad { background-color: #ffebee; color: #c62828; }
+
+/* --- Pair Type Coloring (Dynamic Classes) --- */
+/* Default Card Style */
+.pair-card {
+    border-left: 6px solid #ccc; /* Default gray */
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* R-Series (ร้าย) - Shades of Red */
+.type-R10 { border-left-color: #b71c1c !important; background-color: #ffebee; } /* แดงเข้มสุด */
+.type-R7  { border-left-color: #d32f2f !important; background-color: #ffcdd2; } /* แดงกลาง */
+.type-R5  { border-left-color: #ef5350 !important; background-color: #ffebee; } /* แดงอ่อน */
+/* เผื่อ R อื่นๆ */
+.type-R { border-left-color: #e57373 !important; background-color: #ffebee; }
+
+/* D-Series (ดี) - Shades of Green/Gold */
+.type-D10 { border-left-color: #1b5e20 !important; background-color: #e8f5e9; } /* เขียวเข้มสุด */
+.type-D8  { border-left-color: #43a047 !important; background-color: #f1f8e9; } /* เขียวกลาง */
+.type-D5  { border-left-color: #81c784 !important; background-color: #f9fbe7; } /* เขียวอ่อน */
+/* เผื่อ D อื่นๆ */
+.type-D { border-left-color: #66bb6a !important; background-color: #f1f8e9; }
+
+/* --- Visual Number Circles --- */
+.visual-section {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    text-align: center;
+}
+
+.pair-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin: 15px 0;
+}
+
+.pair-label {
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.pair-circle {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.3rem;
+    color: white; /* ตัวเลขสีขาว */
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    transition: transform 0.2s;
+    background-color: #9e9e9e; /* สีเทา default กรณีไม่มีข้อมูล */
+    cursor: default;
+    position: relative;
+}
+
+.pair-circle:hover {
+    transform: scale(1.15);
+    z-index: 10;
+}
+
+/* Tooltip อย่างง่ายเมื่อเอาเมาส์ชี้ */
+.pair-circle:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+/* Override สีพื้นหลังสำหรับลูกแก้ว (เข้มกว่าแบบ Card) */
+.pair-circle.type-R10 { background-color: #b71c1c !important; } /* แดงเข้ม */
+.pair-circle.type-R7  { background-color: #d32f2f !important; }
+.pair-circle.type-R5  { background-color: #ef5350 !important; }
+
+.pair-circle.type-D10 { background-color: #1b5e20 !important; } /* เขียวเข้ม */
+.pair-circle.type-D8  { background-color: #2e7d32 !important; }
+.pair-circle.type-D5  { background-color: #4caf50 !important; }

@@ -2,82 +2,158 @@
     <h1 class="text-center">🔍 วิเคราะห์ชื่อมงคล</h1>
     <form action="/analysis" method="POST">
         <label><strong>กรอกชื่อ-นามสกุล (ภาษาไทย):</strong></label>
-        <input type="text" name="name" class="form-control" placeholder="เช่น ใจดี มีสุข" required value="{{if .Name}}{{.Name}}{{end}}">
-        <button type="submit" class="btn btn-success">วิเคราะห์ทันที</button>
+        <div style="display: flex; gap: 10px;">
+            <input type="text" name="name" class="form-control" placeholder="เช่น ใจดี มีสุข" required value="{{if .Name}}{{.Name}}{{end}}" style="margin: 0;">
+            <button type="submit" class="btn btn-success" style="width: auto; padding: 0 30px;">วิเคราะห์</button>
+        </div>
     </form>
 </div>
 
 {{if .Error}}
-    <div class="text-center text-danger mt-3">⚠️ {{.Error}}</div>
+    <div class="text-center text-danger mt-3" style="background: #ffebee; padding: 10px; border-radius: 5px;">
+        ⚠️ {{.Error}}
+    </div>
 {{end}}
 
 {{if .Result}}
+    <div class="visual-section">
+        <h3 style="margin-top: 0; color: #333; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+            🔮 ขุมพลังตัวเลขของคุณ
+        </h3>
+
+        <div class="pair-row" style="justify-content: center; gap: 15px; padding-top: 10px;">
+
+            {{range .Result.SatPairs}}
+                <div class="pair-circle {{if .Meaning}}type-{{.Meaning.PairType}}{{end}}"
+                     title="เลขศาสตร์: {{if .Meaning}}{{.Meaning.MiracleDesc}} ({{.Meaning.PairPoint}}){{end}}">
+                    {{.Pair}}
+                </div>
+            {{end}}
+
+            {{range .Result.ShaPairs}}
+                <div class="pair-circle {{if .Meaning}}type-{{.Meaning.PairType}}{{end}}"
+                     title="พลังเงา: {{if .Meaning}}{{.Meaning.MiracleDesc}} ({{.Meaning.PairPoint}}){{end}}">
+                    {{.Pair}}
+                </div>
+            {{end}}
+
+        </div>
+
+        <p style="text-align: center; margin-top: 15px; font-size: 0.9rem; color: #777;">
+            <span style="display: inline-block; width: 10px; height: 10px; background: #2e7d32; border-radius: 50%;"></span> เกรดดี
+            &nbsp;&nbsp;
+            <span style="display: inline-block; width: 10px; height: 10px; background: #c62828; border-radius: 50%;"></span> เกรดระวัง
+        </p>
+    </div>
+
+    <div class="summary-box">
+        <h3 style="color: #555; margin: 0;">คะแนนพยากรณ์รวม</h3>
+
+        <div id="totalScore" class="total-score-big" data-target="{{.Result.TotalScore}}">0</div>
+
+        <div class="sub-score-container">
+            <div class="score-badge score-good">
+                คะแนนดี: +<span id="goodScore" data-target="{{.Result.GoodScore}}">0</span>
+            </div>
+            <div class="score-badge score-bad">
+                คะแนนร้าย: <span id="badScore" data-target="{{.Result.BadScore}}">0</span>
+            </div>
+        </div>
+    </div>
+
     <div class="card">
-        <h2 class="header-line">ผลลัพธ์: {{.Result.Name}}</h2>
+        <h2 class="header-line">รายละเอียดคำทำนาย: {{.Result.Name}}</h2>
+
         <div class="result-container">
+            <div class="result-col">
+                <h3 style="color: #0277bd;">🧮 เลขศาสตร์</h3>
+                <p>ผลรวม: <strong>{{.Result.SatSum}}</strong></p>
 
-            <div class="result-col" style="background-color: #e3f2fd; padding: 20px; border-radius: 8px; border: 1px solid #bbdefb;">
-                <h3 style="color: #0277bd; margin-top: 0;">🧮 เลขศาสตร์</h3>
-                <table>
-                    <tr><th>ตัวอักษร</th><th>ค่า</th></tr>
-                    {{range .Result.SatValues}}
-                        {{range $key, $value := .}}
-                            <tr><td>{{$key}}</td><td><span class="badge">{{$value}}</span></td></tr>
-                        {{end}}
-                    {{end}}
-                </table>
-                <div style="margin-top: 20px; border-top: 2px dashed #90caf9; padding-top: 15px;">
-                    <p style="font-size: 1.2rem;"><strong>ผลรวม:</strong> <span style="color: #0277bd; font-weight: bold;">{{.Result.SatSum}}</span></p>
-
-                    <p><strong>คู่เลขมงคล:</strong></p>
-                    {{range .Result.SatPairs}}
-                        <div style="background: white; padding: 10px; margin-bottom: 10px; border-radius: 5px; border-left: 5px solid #ffc107;">
-                            <span class="badge" style="font-size: 1.2rem; background: #ffc107; color: black;">{{.Pair}}</span>
-                            {{if .Meaning}}
-                                <div style="margin-top: 5px; font-size: 0.95rem; color: #555;">
-                                    <strong>คำทำนาย:</strong> {{.Meaning.MiracleDesc}}
-                                    <br>
-                                    <small style="color: #888;">(คะแนน: {{.Meaning.PairPoint}})</small>
-                                </div>
-                            {{else}}
-                                <div style="color: #999; font-size: 0.9rem;">- ไม่พบข้อมูล -</div>
-                            {{end}}
+                {{range .Result.SatPairs}}
+                    <div class="pair-card {{if .Meaning}}type-{{.Meaning.PairType}}{{end}}" style="padding: 15px; margin-bottom: 15px; border-radius: 4px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                        <div style="display: flex; align-items: flex-start;">
+                            <div style="margin-right: 15px; text-align: center; min-width: 50px;">
+                                <span class="pair-number" style="font-size: 1.8rem; font-weight: bold; color: #333;">{{.Pair}}</span>
+                                {{if .Meaning}}
+                                    <br><span style="font-size: 0.8rem; padding: 2px 6px; background: #eee; border-radius: 4px; color: #666;">{{.Meaning.PairType}}</span>
+                                {{end}}
+                            </div>
+                            <div>
+                                {{if .Meaning}}
+                                    <div style="font-weight: bold; font-size: 1.1rem; margin-bottom: 5px;">{{.Meaning.MiracleDesc}}</div>
+                                    <small style="color: #666; display: block; margin-bottom: 8px;">{{.Meaning.MiracleDetail}}</small>
+                                    <span class="badge" style="background: rgba(0,0,0,0.05); color: #333; font-weight: bold;">คะแนน: {{.Meaning.PairPoint}}</span>
+                                {{else}}
+                                    <span style="color: #999;">- ไม่พบข้อมูลคำทำนาย -</span>
+                                {{end}}
+                            </div>
                         </div>
-                    {{end}}
-                </div>
+                    </div>
+                {{end}}
             </div>
 
-            <div class="result-col" style="background-color: #f3e5f5; padding: 20px; border-radius: 8px; border: 1px solid #e1bee7;">
-                <h3 style="color: #7b1fa2; margin-top: 0;">🌑 เลขพลังเงา</h3>
-                <table>
-                    <tr><th>ตัวอักษร</th><th>ค่า</th></tr>
-                    {{range .Result.ShaValues}}
-                        {{range $key, $value := .}}
-                            <tr><td>{{$key}}</td><td><span class="badge badge-sha">{{$value}}</span></td></tr>
-                        {{end}}
-                    {{end}}
-                </table>
-                <div style="margin-top: 20px; border-top: 2px dashed #ce93d8; padding-top: 15px;">
-                    <p style="font-size: 1.2rem;"><strong>ผลรวม:</strong> <span style="color: #7b1fa2; font-weight: bold;">{{.Result.ShaSum}}</span></p>
+            <div class="result-col">
+                <h3 style="color: #7b1fa2;">🌑 พลังเงา</h3>
+                <p>ผลรวม: <strong>{{.Result.ShaSum}}</strong></p>
 
-                    <p><strong>คู่เลขมงคล:</strong></p>
-                    {{range .Result.ShaPairs}}
-                        <div style="background: white; padding: 10px; margin-bottom: 10px; border-radius: 5px; border-left: 5px solid #9c27b0;">
-                            <span class="badge badge-sha" style="font-size: 1.2rem; background: #9c27b0;">{{.Pair}}</span>
-                            {{if .Meaning}}
-                                <div style="margin-top: 5px; font-size: 0.95rem; color: #555;">
-                                    <strong>คำทำนาย:</strong> {{.Meaning.MiracleDesc}}
-                                    <br>
-                                    <small style="color: #888;">(คะแนน: {{.Meaning.PairPoint}})</small>
-                                </div>
-                            {{else}}
-                                <div style="color: #999; font-size: 0.9rem;">- ไม่พบข้อมูล -</div>
-                            {{end}}
+                {{range .Result.ShaPairs}}
+                    <div class="pair-card {{if .Meaning}}type-{{.Meaning.PairType}}{{end}}" style="padding: 15px; margin-bottom: 15px; border-radius: 4px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                        <div style="display: flex; align-items: flex-start;">
+                            <div style="margin-right: 15px; text-align: center; min-width: 50px;">
+                                <span class="pair-number" style="font-size: 1.8rem; font-weight: bold; color: #333;">{{.Pair}}</span>
+                                {{if .Meaning}}
+                                    <br><span style="font-size: 0.8rem; padding: 2px 6px; background: #eee; border-radius: 4px; color: #666;">{{.Meaning.PairType}}</span>
+                                {{end}}
+                            </div>
+                            <div>
+                                {{if .Meaning}}
+                                    <div style="font-weight: bold; font-size: 1.1rem; margin-bottom: 5px;">{{.Meaning.MiracleDesc}}</div>
+                                    <small style="color: #666; display: block; margin-bottom: 8px;">{{.Meaning.MiracleDetail}}</small>
+                                    <span class="badge" style="background: rgba(0,0,0,0.05); color: #333; font-weight: bold;">คะแนน: {{.Meaning.PairPoint}}</span>
+                                {{else}}
+                                    <span style="color: #999;">- ไม่พบข้อมูลคำทำนาย -</span>
+                                {{end}}
+                            </div>
                         </div>
-                    {{end}}
-                </div>
+                    </div>
+                {{end}}
             </div>
-
         </div>
     </div>
 {{end}}
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const counters = [
+            document.getElementById('totalScore'),
+            document.getElementById('goodScore'),
+            document.getElementById('badScore')
+        ];
+
+        counters.forEach(counter => {
+            if (!counter) return;
+
+            const target = parseInt(counter.getAttribute('data-target'), 10) || 0;
+            const duration = 2000;
+            const start = 0;
+            const startTime = performance.now();
+
+            function updateCount(currentTime) {
+                const elapsedTime = currentTime - startTime;
+                const progress = Math.min(elapsedTime / duration, 1);
+                const easeProgress = (progress === 1) ? 1 : 1 - Math.pow(2, -10 * progress);
+                const current = Math.floor(easeProgress * (target - start) + start);
+
+                counter.innerText = current;
+
+                if (progress < 1) {
+                    requestAnimationFrame(updateCount);
+                } else {
+                    counter.innerText = target;
+                }
+            }
+
+            requestAnimationFrame(updateCount);
+        });
+    });
+</script>

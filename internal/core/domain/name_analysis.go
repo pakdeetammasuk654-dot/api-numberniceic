@@ -1,9 +1,8 @@
 package domain
 
-// PairData โครงสร้างใหม่สำหรับเก็บคู่เลขพร้อมความหมาย
 type PairData struct {
 	Pair    string         `json:"pair"`
-	Meaning *NumberMeaning `json:"meaning"` // เก็บความหมายที่ดึงจาก DB
+	Meaning *NumberMeaning `json:"meaning"`
 }
 
 type NameAnalysis struct {
@@ -11,11 +10,14 @@ type NameAnalysis struct {
 	SatValues []map[string]int `json:"sat_values"`
 	ShaValues []map[string]int `json:"sha_values"`
 
-	// --- เลขศาสตร์ (Sat) ---
 	SatSum   int        `json:"sat_sum"`
-	SatPairs []PairData `json:"sat_pairs"` // เปลี่ยนเป็น []PairData
+	SatPairs []PairData `json:"sat_pairs"`
 
-	// --- เลขพลังเงา (Sha) ---
 	ShaSum   int        `json:"sha_sum"`
-	ShaPairs []PairData `json:"sha_pairs"` // เปลี่ยนเป็น []PairData
+	ShaPairs []PairData `json:"sha_pairs"`
+
+	// --- เพิ่มส่วนสรุปคะแนน (Summary) ---
+	TotalScore int `json:"total_score"` // คะแนนรวมสุทธิ
+	GoodScore  int `json:"good_score"`  // ผลรวมคะแนนดี (D)
+	BadScore   int `json:"bad_score"`   // ผลรวมคะแนนร้าย (R)
 }

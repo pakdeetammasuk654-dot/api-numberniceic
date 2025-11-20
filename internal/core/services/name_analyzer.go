@@ -38,30 +38,59 @@ func (s *analyzerService) AnalyzeName(name string) (*domain.NameAnalysis, error)
 		shaSum += shaVal
 	}
 
-	// 2. สร้างคู่เลข (Strings)
+	// 2. สร้างคู่เลข
 	rawSatPairs := s.generatePairs(satSum)
 	rawShaPairs := s.generatePairs(shaSum)
 
-	// 3. ดึงความหมายของคู่เลข (Enrich Data)
+	// 3. ดึงความหมาย
 	satPairData := s.enrichPairs(rawSatPairs)
 	shaPairData := s.enrichPairs(rawShaPairs)
+
+	// 4. คำนวณคะแนนรวม (Logic ใหม่)
+	totalScore := 0
+	goodScore := 0
+	badScore := 0
+
+	// ฟังก์ชันช่วยนับคะแนน
+	calculatePoints := func(pairs []domain.PairData) {
+		for _, p := range pairs {
+			if p.Meaning != nil {
+				score := p.Meaning.PairPoint
+				totalScore += score
+
+				// เช็คประเภทว่าเป็น D หรือ R
+				pType := strings.ToUpper(p.Meaning.PairType)
+				if strings.HasPrefix(pType, "D") {
+					goodScore += score
+				} else if strings.HasPrefix(pType, "R") {
+					badScore += score
+				}
+			}
+		}
+	}
+
+	calculatePoints(satPairData)
+	calculatePoints(shaPairData)
 
 	return &domain.NameAnalysis{
 		Name:      cleanName,
 		SatValues: satValues,
 		ShaValues: shaValues,
 		SatSum:    satSum,
-		SatPairs:  satPairData, // ส่งกลับแบบมีข้อมูลครบ
+		SatPairs:  satPairData,
 		ShaSum:    shaSum,
-		ShaPairs:  shaPairData, // ส่งกลับแบบมีข้อมูลครบ
+		ShaPairs:  shaPairData,
+		// ส่งค่าคะแนนกลับไป
+		TotalScore: totalScore,
+		GoodScore:  goodScore,
+		BadScore:   badScore,
 	}, nil
 }
 
-// ฟังก์ชันช่วย: วนลูปคู่เลขและดึงความหมายจาก DB
 func (s *analyzerService) enrichPairs(pairs []string) []domain.PairData {
 	var result []domain.PairData
 	for _, p := range pairs {
-		meaning, _ := s.repo.GetNumberMeaning(p) // ไปดึงจาก DB
+		meaning, _ := s.repo.GetNumberMeaning(p)
 		result = append(result, domain.PairData{
 			Pair:    p,
 			Meaning: meaning,

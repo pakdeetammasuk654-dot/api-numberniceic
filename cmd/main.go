@@ -1,3 +1,4 @@
+// cmd/main.go
 package main
 
 import (
@@ -6,57 +7,64 @@ import (
 	"api-numberniceic/internal/core/services"
 	"fmt"
 	"log"
+	"os" // เพิ่ม package os
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
+	"github.com/joho/godotenv" // เพิ่ม godotenv
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 func main() {
-	// 1. ตั้งค่าเชื่อมต่อ Database (PostgreSQL)
-	dsn := "host=localhost user=tayap password=IntelliP24.X dbname=tayap port=5432 sslmode=disable TimeZone=Asia/Bangkok"
+	// 1. โหลด Environment Variables
+	if err := godotenv.Load(); err != nil {
+		log.Println("⚠️  Warning: No .env file found")
+	}
+
+	// 2. ตั้งค่าเชื่อมต่อ Database (อ่านจาก env)
+	dsn := fmt.Sprintf(
+		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Bangkok",
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_NAME"),
+		os.Getenv("DB_PORT"),
+	)
+
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
 	}
 	fmt.Println("✅ Connected to Database successfully")
 
-	// 2. Setup Template Engine
+	// 3. Setup Template Engine & Fiber (เหมือนเดิม)
 	engine := html.New("./views", ".html")
-
-	// 3. Setup Fiber App
 	app := fiber.New(fiber.Config{
 		Views: engine,
 	})
-
-	// บอกให้ /static ชี้ไปที่โฟลเดอร์ public (สำหรับ CSS)
 	app.Static("/static", "./public")
 
-	// 4. Init Layers
+	// 4. Init Layers (เหมือนเดิม)
 	repo := repositories.NewPostgresRepository(db)
 	service := services.NewAnalyzerService(repo)
 	handler := handlers.NewFiberHandler(service)
 
-	// 5. Setup Routes (เส้นทางใหม่)
-
-	// หน้าแรก (Home)
+	// 5. Setup Routes (เหมือนเดิม)
 	app.Get("/", handler.ViewHome)
-
-	// เมนูอื่นๆ
 	app.Get("/dashboard", handler.ViewDashboard)
 	app.Get("/articles", handler.ViewArticles)
 	app.Get("/about", handler.ViewAbout)
-
-	// หน้าวิเคราะห์ชื่อ (Analysis)
-	app.Get("/analysis", handler.ViewAnalysis)    // แสดงฟอร์ม
-	app.Post("/analysis", handler.HandleAnalysis) // กดส่งฟอร์ม
-
-	// API (JSON)
+	app.Get("/analysis", handler.ViewAnalysis)
+	app.Post("/analysis", handler.HandleAnalysis)
 	api := app.Group("/api")
 	api.Get("/analyze", handler.ApiAnalyze)
 
-	// 6. Start Server
-	fmt.Println("🚀 Server running at http://localhost:3000")
-	log.Fatal(app.Listen(":3000"))
+	// 6. Start Server (ใช้ Port จาก env)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3000"
+	}
+	fmt.Printf("🚀 Server running at http://localhost:%s\n", port)
+	log.Fatal(app.Listen(":" + port))
 }
