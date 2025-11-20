@@ -4,7 +4,9 @@
         <label><strong>กรอก "ชื่อ/สกุล" และ "วันเกิด" :</strong></label>
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
 
-            <input type="text" name="name" class="form-control" placeholder="ชื่อ-นามสกุล (ภาษาไทย)" required
+            <input type="text" name="name" class="form-control" placeholder="ชื่อ-นามสกุล (ภาษาไทย/อังกฤษ)" required
+                   maxlength="24"
+                   oninput="this.value = this.value.replace(/[^a-zA-Z\u0E00-\u0E7F\s]/g, '').replace(/\s{2,}/g, ' ')"
                    value="{{if .Name}}{{.Name}}{{else}}อณัญญา{{end}}"
                    style="flex: 2; min-width: 200px; margin: 0;">
 
@@ -89,21 +91,18 @@
                     </div>
 
                     <div class="score-circle {{if lt .Result.TotalScore 0}}sun-bad{{else}}sun-good{{end}}">
-                        {{.Result.Name}}
+                        <span id="sunNameDisplay">{{.Result.Name}}</span>
                     </div>
                 </div>
 
-                <div style="margin-top: 10px; width: 100%; max-width: 350px;">
+                <div style="margin-top: 15px; width: 100%; max-width: 350px; text-align: center;">
                     {{if .Result.HasKakis}}
-                        <div style="background-color: #ffebee; color: #c62828; padding: 12px; border-radius: 8px; border: 1px solid #ef9a9a; text-align: center;">
-                            <strong>⚠️ พบอักษรกาลกิณี:</strong>
-                            {{range .Result.KakisFound}}
-                                <span class="badge" style="background: #c62828; color: white; font-size: 1rem; margin: 0 2px;">{{.}}</span>
-                            {{end}}
+                        <div style="color: #555; font-size: 0.9rem; background: rgba(255,255,255,0.8); padding: 8px 15px; border-radius: 20px; display: inline-block; border: 1px solid #eee;">
+                            <span style="color: #d32f2f;">●</span> หมายเหตุ: อักษรที่ปรากฏ<span style="color: #d32f2f; font-weight: bold;">สีแดง</span>คือกาลกิณี
                         </div>
                     {{else}}
-                        <div style="background-color: #e8f5e9; color: #2e7d32; padding: 12px; border-radius: 8px; border: 1px solid #a5d6a7; text-align: center;">
-                            🏆 ชื่อ <strong>{{.Result.Name}}</strong> ไม่พบกาลกิณี
+                        <div class="speech-bubble-success">
+                            🏆 ชื่อนี้ไม่มีกาลกิณี
                         </div>
                     {{end}}
                 </div>
@@ -116,7 +115,7 @@
                 <a href="#sha-section" class="btn-action btn-lang">
                     <span style="font-size: 1.2rem;">📜</span> ภาษาศาสตร์
                 </a>
-                <div class="action-desc">คลิกเพื่อดูความหมาย</div>
+                <div class="action-desc">คลิกที่ปุ่มดูความหมาย 💬</div>
             </div>
 
         </div>
@@ -185,6 +184,7 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
+        // 1. Animation ตัวเลข
         const counters = [
             document.getElementById('totalScore'),
             document.getElementById('goodScore'),
@@ -213,8 +213,29 @@
                     counter.innerText = target;
                 }
             }
-
             requestAnimationFrame(updateCount);
         });
+
+        // 2. ไฮไลท์ชื่อในดวงอาทิตย์
+        const fullName = "{{.Result.Name}}";
+        const badChars = [{{range .Result.KakisFound}}"{{.}}",{{end}}];
+
+        function highlightText(elementId) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+
+            let styledName = "";
+            for (let char of fullName) {
+                if (badChars.includes(char)) {
+                    // กาลกิณี: สีแดงเข้ม + ตัวหนา + ขยายใหญ่ + มีเงา
+                    styledName += `<span style="color: #d32f2f; font-weight: 800; font-size: 1.2em; margin: 0 1px; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">${char}</span>`;
+                } else {
+                    styledName += `<span>${char}</span>`;
+                }
+            }
+            el.innerHTML = styledName;
+        }
+
+        highlightText('sunNameDisplay');
     });
 </script>

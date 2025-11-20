@@ -1,3 +1,5 @@
+/* public/style.css */
+
 /* --- Global Styles --- */
 body { font-family: 'Sarabun', sans-serif; margin: 0; padding: 0; background-color: #f9f9f9; color: #333; }
 a { text-decoration: none; }
@@ -40,7 +42,6 @@ h1, h2, h3 { color: #333; }
 .summary-box {
     background: white;
     border-radius: 12px;
-    /* ลด padding ด้านบนจาก 25px เหลือ 10px เพื่อให้เนื้อหาชิดขอบบน */
     padding: 10px 25px 25px 25px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.1);
     margin-bottom: 30px;
@@ -53,7 +54,6 @@ h1, h2, h3 { color: #333; }
     justify-content: space-between;
     align-items: center;
     gap: 10px;
-    /* ลด margin ด้านบนจาก 30px เหลือ 0 เพื่อดันขึ้นไปสุด */
     margin: 0 0 30px 0;
     flex-wrap: wrap;
 }
@@ -85,6 +85,24 @@ h1, h2, h3 { color: #333; }
 .val-bad  { color: #c62828; }
 .divider { height: 1px; background: #e0e0e0; width: 100%; margin: 5px 0; }
 
+/* --- Speech Bubble --- */
+.speech-bubble-success {
+    position: relative;
+    background: #e8f5e9;
+    border: 1px solid #a5d6a7;
+    border-radius: 15px;
+    padding: 10px 20px;
+    color: #2e7d32;
+    font-weight: bold;
+    font-size: 1rem;
+    display: inline-block;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+.speech-bubble-success::after, .speech-bubble-success::before {
+    top: 100%; left: 50%; border: solid transparent; content: " "; height: 0; width: 0; position: absolute; pointer-events: none;
+}
+.speech-bubble-success::after { border-color: rgba(232, 245, 233, 0); border-top-color: #e8f5e9; border-width: 8px; margin-left: -8px; }
+.speech-bubble-success::before { border-color: rgba(165, 214, 167, 0); border-top-color: #a5d6a7; border-width: 9px; margin-left: -9px; }
 
 /* --- Right Action Buttons --- */
 .action-frame {
@@ -108,11 +126,10 @@ h1, h2, h3 { color: #333; }
 /* --- Solar System (Galaxy) --- */
 .galaxy-wrapper { display: flex; flex-direction: column; align-items: center; order: 2; }
 
-/* Solar System: ปรับขนาดให้กระชับขึ้น เพื่อลดพื้นที่ว่างแนวตั้ง */
 .solar-system {
     position: relative;
-    width: 340px; /* ลดจาก 380px */
-    height: 340px; /* ลดจาก 380px */
+    width: 340px;
+    height: 340px;
     display: flex; justify-content: center; align-items: center;
 }
 .solar-system .score-circle {
@@ -130,7 +147,6 @@ h1, h2, h3 { color: #333; }
 /* --- Orbits & Planets --- */
 .orbit-ring { position: absolute; border-radius: 50%; border: 1px dashed rgba(0, 0, 0, 0.08); top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; }
 
-/* Middle Ring (Sat) */
 .ring-middle {
     width: 220px; height: 220px;
     border-color: rgba(33, 150, 243, 0.15);
@@ -138,7 +154,6 @@ h1, h2, h3 { color: #333; }
     z-index: 2;
 }
 
-/* Outer Ring (Sha) - ปรับขนาด 310px เพื่อให้ชิดกัน */
 .ring-outer {
     width: 310px; height: 310px;
     border-color: rgba(111, 66, 193, 0.15);
@@ -146,7 +161,10 @@ h1, h2, h3 { color: #333; }
     z-index: 1;
 }
 
-@keyframes orbit-spin { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+@keyframes orbit-spin {
+    from { transform: translate(-50%, -50%) rotate(-90deg); }
+    to { transform: translate(-50%, -50%) rotate(270deg); }
+}
 
 .planet-wrapper { position: absolute; width: 40px; height: 40px; top: 50%; left: 50%; margin-top: -20px; margin-left: -20px; }
 .mini-star { width: 100%; height: 100%; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 0.9rem; font-weight: bold; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
@@ -174,16 +192,18 @@ h1, h2, h3 { color: #333; }
 
 .c-spin-middle { animation: counter-spin 40s linear infinite; }
 .c-spin-outer { animation: counter-spin 60s linear infinite; }
-@keyframes counter-spin { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
 
-/* Positioning (Middle Radius ~110px) */
+@keyframes counter-spin {
+    from { transform: rotate(90deg); }
+    to { transform: rotate(-270deg); }
+}
+
 .pos-mid-0 { transform: rotate(0deg) translate(110px) rotate(0deg); }
 .pos-mid-1 { transform: rotate(72deg) translate(110px) rotate(-72deg); }
 .pos-mid-2 { transform: rotate(144deg) translate(110px) rotate(-144deg); }
 .pos-mid-3 { transform: rotate(216deg) translate(110px) rotate(-216deg); }
 .pos-mid-4 { transform: rotate(288deg) translate(110px) rotate(-288deg); }
 
-/* Positioning (Outer Radius ~155px) */
 .pos-out-0 { transform: rotate(30deg) translate(155px) rotate(-30deg); }
 .pos-out-1 { transform: rotate(90deg) translate(155px) rotate(-90deg); }
 .pos-out-2 { transform: rotate(150deg) translate(155px) rotate(-150deg); }
@@ -193,16 +213,16 @@ h1, h2, h3 { color: #333; }
 .visual-section { display: none; }
 
 /* =========================================
-   Mobile / Responsive Adjustments
+   Mobile / Responsive Adjustments (UPDATED)
    ========================================= */
 @media (max-width: 850px) {
-    .summary-row { flex-direction: column; gap: 25px; }
+    /* ปรับ gap ให้น้อยลงเพื่อดึงเข้าหากัน */
+    .summary-row { flex-direction: column; gap: 5px; }
 
-    /* Galaxy Wrapper: Order 1 */
+    /* Galaxy Wrapper */
     .galaxy-wrapper {
         order: 1;
         margin-right: 0;
-        /* ปรับ margin ลบเพิ่มเล็กน้อยเพื่อดึงขึ้นให้สุดในมือถือ */
         margin-top: -10px;
     }
     .solar-system {
@@ -211,19 +231,37 @@ h1, h2, h3 { color: #333; }
         margin-bottom: -30px;
     }
 
-    /* Score Panel: Order 2 */
+    /* Score Panel: Compact Version + Pull Up */
     .score-panel {
-        order: 2; width: 100%; max-width: 400px;
-        flex-direction: row; justify-content: space-around; align-items: center;
-        padding: 15px 10px; gap: 5px;
+        order: 2; width: 100%; max-width: 340px;
+        flex-direction: row; justify-content: center; align-items: center;
+        padding: 12px 8px;
+        gap: 10px;
+        min-height: auto;
+        /* ดึงขึ้นไปชิดกับกล่องข้อความ */
+        margin-top: -15px;
     }
-    .score-panel .divider { width: 1px; height: 40px; background: #e0e0e0; margin: 0 5px; }
-    .score-value-big { width: 80px; height: 80px; font-size: 1.8rem; border-width: 3px; }
-    .score-value-small { font-size: 1.2rem; min-width: 30px; min-height: 30px; }
-    .score-label { font-size: 0.8rem; white-space: nowrap; }
+
+    .score-panel .divider {
+        width: 1px; height: 50px;
+        background: #e0e0e0; margin: 0 5px;
+    }
+
+    .score-value-big {
+        width: 70px; height: 70px;
+        font-size: 1.6rem;
+        border-width: 3px;
+    }
+
+    .score-value-small {
+        font-size: 1.1rem;
+        min-width: 35px; min-height: 35px;
+    }
+
+    .score-label { font-size: 0.75rem; white-space: nowrap; margin-bottom: 2px; }
     .score-item { justify-content: center; }
 
-    /* Action Buttons: Order 3 */
+    /* Action Buttons */
     .action-frame {
         order: 3; width: 100%; max-width: 350px;
         flex-direction: row; flex-wrap: wrap; justify-content: center;
@@ -236,5 +274,5 @@ h1, h2, h3 { color: #333; }
 
 @media (max-width: 380px) {
     .solar-system { transform: scale(0.75); margin-bottom: -50px; }
-    .score-panel { flex-wrap: wrap; }
+    .score-value-big { width: 60px; height: 60px; font-size: 1.4rem; }
 }
