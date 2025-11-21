@@ -8,14 +8,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const clearBtn = document.getElementById('clearInputBtn');
     const typingStatus = document.getElementById('typingStatus');
     let typingTimer;
-    const doneTypingInterval = 1500; // 1.5 วินาที
+    const doneTypingInterval = 1500;
 
-    // เริ่มต้นฟังก์ชันต่างๆ ครั้งแรก
+    // เรียกใช้ครั้งแรกตอนโหลดหน้าเว็บ
     initResultFeatures();
     initFormLogic();
 
     // --- 2. Core Function: Perform Analysis (AJAX) ---
-    // ฟังก์ชันนี้จะถูกเรียกเมื่อหยุดพิมพ์ หรือเปลี่ยนวันเกิด หรือคลิกชื่อตัวอย่าง
     async function performAnalysis(overrideName) {
         const name = overrideName || nameInput.value.trim();
         const birthDay = birthDayInput.value;
@@ -26,7 +25,6 @@ document.addEventListener("DOMContentLoaded", () => {
         typingStatus.innerText = '🚀 กำลังวิเคราะห์...';
 
         try {
-            // ใช้ Fetch ส่งข้อมูลแบบ POST
             const formData = new FormData();
             formData.append('name', name);
             formData.append('birth_day', birthDay);
@@ -38,20 +36,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (response.ok) {
                 const html = await response.text();
-
-                // แปลง HTML String เป็น DOM Element
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
 
-                // ดึงเฉพาะส่วน #result-wrapper จาก HTML ใหม่
+                // ดึงเนื้อหาใหม่มาแทนที่
                 const newResult = doc.getElementById('result-wrapper');
                 const currentResult = document.getElementById('result-wrapper');
 
                 if (newResult && currentResult) {
-                    // แทนที่เนื้อหาเดิมด้วยเนื้อหาใหม่ (โดยไม่รีโหลดหน้า)
                     currentResult.innerHTML = newResult.innerHTML;
 
-                    // เรียกฟังก์ชันเพื่อผูก Event Listener ให้กับ Elements ใหม่
+                    // 🔥 สำคัญมาก: ต้องเรียกฟังก์ชันนี้ใหม่ทุกครั้งหลังโหลด AJAX เสร็จ
+                    // เพื่อให้ปุ่ม "บันทึกชื่อ" (และกราฟอื่นๆ) กลับมาทำงาน
                     initResultFeatures();
                 }
             }
@@ -62,10 +58,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // ทำให้ฟังก์ชันนี้เรียกใช้ได้จาก HTML (สำหรับ onclick ในตาราง)
     window.analyzeName = function(name) {
         if(nameInput) nameInput.value = name;
-        // เลื่อนหน้าจอขึ้นไปที่ฟอร์มนิดนึงเพื่อให้รู้ว่าเปลี่ยนแล้ว
         document.querySelector('.card').scrollIntoView({ behavior: 'smooth' });
         performAnalysis(name);
     };
@@ -76,8 +70,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const updateBtnState = () => {
                 clearBtn.style.display = nameInput.value.length > 0 ? 'block' : 'none';
             };
-
-            // Keyup: นับถอยหลังเมื่อพิมพ์เสร็จ
             nameInput.addEventListener('keyup', () => {
                 clearTimeout(typingTimer);
                 if (nameInput.value.trim()) {
@@ -88,21 +80,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     typingStatus.style.display = 'none';
                 }
             });
-
-            // Keydown: หยุดนับถ้ากำลังพิมพ์
-            nameInput.addEventListener('keydown', () => {
-                clearTimeout(typingTimer);
-            });
-
-            // Input Clean & Btn State
+            nameInput.addEventListener('keydown', () => { clearTimeout(typingTimer); });
             nameInput.addEventListener('input', () => {
+                // กรองให้พิมพ์ได้เฉพาะภาษาไทย อังกฤษ และช่องว่าง
                 let val = nameInput.value;
                 let cleanVal = val.replace(/[^a-zA-Z\u0E00-\u0E7F\s]/g, '').replace(/\s{2,}/g, ' ');
                 if (val !== cleanVal) nameInput.value = cleanVal;
                 updateBtnState();
             });
-
-            // Clear Button
             clearBtn.addEventListener('click', () => {
                 nameInput.value = '';
                 updateBtnState();
@@ -113,16 +98,12 @@ document.addEventListener("DOMContentLoaded", () => {
             updateBtnState();
         }
 
-        // Change Birthday: Trigger Analysis Immediately
         if(birthDayInput) {
             birthDayInput.addEventListener('change', () => {
-                if (nameInput.value.trim()) {
-                    performAnalysis();
-                }
+                if (nameInput.value.trim()) { performAnalysis(); }
             });
         }
 
-        // Sample Click Handler
         document.querySelectorAll('.sample-item').forEach(item => {
             item.addEventListener('click', () => {
                 const name = item.getAttribute('data-name');
@@ -135,8 +116,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // --- 4. Result Features (ต้องเรียกซ้ำทุกครั้งที่ AJAX โหลดเสร็จ) ---
+    // --- 4. Result Features ---
+    // ฟังก์ชันนี้รวม Logic ของปุ่มและกราฟิกทั้งหมด
     function initResultFeatures() {
+
         // 4.1 Animation Counters
         const counters = [
             document.getElementById('totalScore'),
@@ -158,13 +141,12 @@ document.addEventListener("DOMContentLoaded", () => {
             requestAnimationFrame(update);
         });
 
-        // 4.2 Kakis Highlight Logic
+        // 4.2 Highlight Text
         const dataContainer = document.getElementById('analysisData');
         if (dataContainer) {
             const fullName = dataContainer.getAttribute('data-name');
             const kakisString = dataContainer.getAttribute('data-kakis');
             const badChars = kakisString ? kakisString.split(',') : [];
-
             const sunEl = document.getElementById('sunNameDisplay');
             const similarEl = document.getElementById('similarNameDisplay');
 
@@ -175,11 +157,10 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        // 4.3 Detail Section Toggle
+        // 4.3 Detail Toggle
         const btnShowDetails = document.getElementById('btnShowDetails');
         const detailSection = document.getElementById('detailSection');
         const btnCloseDetails = document.getElementById('btnCloseDetails');
-
         if (btnShowDetails && detailSection) {
             btnShowDetails.addEventListener('click', () => {
                 detailSection.style.display = 'block';
@@ -192,24 +173,20 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // 4.4 AI Linguistics
+        // 4.4 AI Modal
         const btnLang = document.getElementById('btnLinguistics');
         const modal = document.getElementById('aiModal');
         const closeModal = document.querySelector('.close-modal');
         const aiContent = document.getElementById('aiContent');
 
         if (btnLang && dataContainer) {
-            // ลบ Event Listener เก่า (ถ้ามี) เพื่อกันการกดซ้ำซ้อน (จริงๆ replace innerHTML ก็หายแล้ว แต่กันเหนียว)
             const newBtnLang = btnLang.cloneNode(true);
             btnLang.parentNode.replaceChild(newBtnLang, btnLang);
-
             newBtnLang.addEventListener('click', async () => {
                 const currentName = dataContainer.getAttribute('data-name');
                 if (!currentName) return;
-
                 modal.style.display = "block";
                 aiContent.innerHTML = '<div class="ai-loading">⏳ กำลังสอบถาม Gemini AI...<br><small>โปรดรอสักครู่</small></div>';
-
                 try {
                     const response = await fetch(`/api/linguistics?name=${encodeURIComponent(currentName)}`);
                     const data = await response.json();
@@ -223,13 +200,62 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
         }
-
-        // Modal Close Logic (Global)
         if (closeModal) closeModal.onclick = () => modal.style.display = "none";
         window.onclick = (event) => { if (event.target == modal) modal.style.display = "none"; }
+
+        // 🔥 4.5 SAVE BUTTON LOGIC (สำคัญมาก ต้องอยู่ตรงนี้!) 🔥
+        // ใช้ getElementById ตามที่เราแก้ใน HTML
+        const btnSave = document.getElementById('btnSaveName');
+
+        if (btnSave && dataContainer) {
+            // เคลียร์ event เก่าก่อน (กันเบิ้ล)
+            const newBtnSave = btnSave.cloneNode(true);
+            btnSave.parentNode.replaceChild(newBtnSave, btnSave);
+
+            newBtnSave.addEventListener('click', async () => {
+                const name = dataContainer.getAttribute('data-name');
+                const birthDay = document.getElementById('birthDayInput').value;
+
+                newBtnSave.innerText = "⏳ กำลังบันทึก...";
+                newBtnSave.disabled = true;
+
+                try {
+                    const response = await fetch('/api/save-name', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name: name, birth_day: birthDay })
+                    });
+
+                    const resData = await response.json();
+
+                    if (response.status === 401 || resData.redirect) {
+                        // กรณีไม่ได้ Login
+                        if(confirm("คุณต้องเข้าสู่ระบบก่อนบันทึกชื่อ\nกด 'ตกลง' เพื่อไปหน้าเข้าสู่ระบบ")) {
+                            window.location.href = '/login';
+                        } else {
+                            newBtnSave.innerText = "💾 บันทึกชื่อ";
+                            newBtnSave.disabled = false;
+                        }
+                    } else if (response.ok) {
+                        // กรณีสำเร็จ
+                        newBtnSave.innerText = "✅ บันทึกแล้ว";
+                        newBtnSave.style.color = "green";
+                    } else {
+                        // กรณี Error อื่นๆ
+                        alert("เกิดข้อผิดพลาด: " + resData.error);
+                        newBtnSave.innerText = "💾 บันทึกชื่อ";
+                        newBtnSave.disabled = false;
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert("เชื่อมต่อเซิร์ฟเวอร์ไม่ได้");
+                    newBtnSave.innerText = "💾 บันทึกชื่อ";
+                    newBtnSave.disabled = false;
+                }
+            });
+        }
     }
 
-    // Helper for Color Rendering
     function renderColoredName(name, badChars) {
         if (!name) return "";
         let html = "";

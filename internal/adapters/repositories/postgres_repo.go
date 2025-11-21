@@ -17,8 +17,6 @@ func NewPostgresRepository(db *gorm.DB) ports.NumberRepository {
 	return &postgresRepository{db: db}
 }
 
-// ... (ฟังก์ชัน GetSatValue, GetShaValue, GetNumberMeaning, GetKakisByDay คงเดิม ไม่ต้องแก้) ...
-
 func (r *postgresRepository) GetSatValue(char string) (int, error) {
 	var satNum domain.SatNum
 	result := r.db.Table("sat_nums").Where("char_key = ?", char).First(&satNum)
@@ -64,13 +62,9 @@ func (r *postgresRepository) GetKakisByDay(day string) ([]string, error) {
 	return kakisList, nil
 }
 
-// ---------------------------------------------------------
-// 🔥 ส่วนที่อัปเดตตาม Logic LevenshteinNormal ที่คุณให้มา 🔥
-// ---------------------------------------------------------
 func (r *postgresRepository) SearchSimilarNames(name string, day string, limit int) ([]domain.NamesMiracle, error) {
 	var results []domain.NamesMiracle
 
-	// 1. แปลงวันเกิดเป็นชื่อคอลัมน์ (เหมือน switch case ในโค้ดต้นฉบับ)
 	columnMap := map[string]string{
 		"sunday":     "k_sunday",
 		"monday":     "k_monday",
@@ -82,16 +76,11 @@ func (r *postgresRepository) SearchSimilarNames(name string, day string, limit i
 		"saturday":   "k_saturday",
 	}
 
-	// ตรวจสอบความถูกต้องของ key ถ้าไม่เจอให้ Default เป็นวันอาทิตย์
 	targetCol, ok := columnMap[day]
 	if !ok {
 		targetCol = "k_sunday"
 	}
 
-	// 2. สร้าง SQL Query (ใช้ Logic เดียวกับที่คุณให้มา)
-	// - ใช้ levenshtein($1, thname) / greatest(...) เพื่อหา distance ratio
-	// - WHERE <column_day> = false (กรองกาลกิณีออก)
-	// - ORDER BY distance
 	query := fmt.Sprintf(`
 		SELECT 
 			name_id, thname, satnum, shanum, 
@@ -103,12 +92,26 @@ func (r *postgresRepository) SearchSimilarNames(name string, day string, limit i
 		LIMIT ?
 	`, targetCol)
 
-	// 3. Execute Query
-	// GORM จะทำการ Map ผลลัพธ์เข้า struct NamesMiracle ให้อัตโนมัติ รวมถึง Array pq
 	err := r.db.Raw(query, name, name, limit).Scan(&results).Error
 	if err != nil {
 		return nil, err
 	}
 
 	return results, nil
+}
+
+// 🔥 เพิ่มส่วน SavedName Repository 🔥
+
+func (r *postgresRepository) SaveName(savedName *domain.SavedName) error {
+	return r.db.Create(savedName).Error
+}
+
+func (r *postgresRepository) GetSavedNamesByUserID(userID uint) ([]domain.SavedName, error) {
+	var names []domain.SavedName
+	err := r.db.Where("user_id = ?", userID).Order("created_at desc").Find(&names).Error
+	return names, err
+}
+
+func (r *postgresRepository) DeleteSavedName(id uint, userID uint) error {
+	return r.db.Where("id = ? AND user_id = ?", id, userID).Delete(&domain.SavedName{}).Error
 }

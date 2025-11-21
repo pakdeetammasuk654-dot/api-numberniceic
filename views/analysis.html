@@ -58,7 +58,8 @@
         </div>
 
         <div class="summary-box">
-            <button class="btn-save-solar" onclick="alert('บันทึกชื่อเรียบร้อย! (Demo)')">💾 บันทึกชื่อ</button>
+            <button class="btn-save-solar" id="btnSaveName">💾 บันทึกชื่อ</button>
+
             <div class="summary-row">
                 <div class="score-panel">
                     <div class="score-item"><div class="score-label">คะแนนรวม</div><div class="score-value-big {{if lt .Result.TotalScore 0}}bg-bad{{else}}bg-good{{end}}" id="totalScore" data-target="{{.Result.TotalScore}}">0</div></div>

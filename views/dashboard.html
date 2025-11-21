@@ -1,17 +1,125 @@
+<link rel="stylesheet" href="/static/analysis.css">
+
 <div class="card">
     <h2 class="header-line">📊 แดชบอร์ดภาพรวม</h2>
-    <p>ยินดีต้อนรับสู่หน้าแดชบอร์ดส่วนตัว</p>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <p style="margin: 0;">ยินดีต้อนรับสู่หน้าแดชบอร์ดส่วนตัว</p>
+        <a href="/analysis" class="btn btn-primary" style="width: auto; padding: 8px 20px; font-size: 0.95rem; border-radius: 20px;">+ วิเคราะห์ชื่อใหม่</a>
+    </div>
 
-    <div class="result-container">
-        <div class="result-col" style="background-color: #fff3e0; padding: 20px; border-radius: 8px; text-align: center;">
-            <h3>📝 ชื่อที่วิเคราะห์ไปแล้ว</h3>
-            <p style="font-size: 2rem; font-weight: bold; color: #e65100;">0</p>
-            <small>ครั้ง</small>
+    <div class="result-container" style="margin-bottom: 30px;">
+        <div class="result-col" style="background-color: #fff3e0; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+            <h3 style="margin: 0 0 10px 0; color: #ef6c00;">📝 บันทึกแล้ว</h3>
+            <p style="font-size: 2.5rem; font-weight: 800; color: #e65100; margin: 0;">{{.TotalCount}}</p>
+            <small style="color: #666;">รายชื่อ</small>
         </div>
-        <div class="result-col" style="background-color: #e8f5e9; padding: 20px; border-radius: 8px; text-align: center;">
-            <h3>⭐ คะแนนเฉลี่ย</h3>
-            <p style="font-size: 2rem; font-weight: bold; color: #1b5e20;">-</p>
-            <small>คะแนน</small>
+        <div class="result-col" style="background-color: #e8f5e9; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+            <h3 style="margin: 0 0 10px 0; color: #2e7d32;">⭐ คะแนนบารมีรวม</h3>
+            <p style="font-size: 2.5rem; font-weight: 800; color: #1b5e20; margin: 0;">{{.TotalScoreSum}}</p>
+            <small style="color: #666;">แต้มสะสม (รวมทุกชื่อ)</small>
         </div>
     </div>
+
+    <h3 class="header-line">📂 รายชื่อที่บันทึกไว้</h3>
+
+    {{if .SavedNames}}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle" style="width: 100%; border-collapse: separate; border-spacing: 0 8px; margin-top: 0;">
+                <thead style="background: #f8f9fa; color: #555;">
+                <tr>
+                    <th style="padding: 15px; border-radius: 10px 0 0 10px;">ชื่อ-นามสกุล</th>
+                    <th style="padding: 15px; text-align: center;">วันเกิด</th>
+                    <th style="padding: 15px; text-align: center;">เลขศาสตร์</th>
+                    <th style="padding: 15px; text-align: center;">พลังเงา</th>
+                    <th style="padding: 15px; text-align: center;">คะแนนรวม</th>
+                    <th style="padding: 15px; text-align: center; border-radius: 0 10px 10px 0;">จัดการ</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{range .SavedNames}}
+                    <tr style="background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.02); transition: transform 0.2s;"
+                        onclick="window.location.href='/analysis?name={{.Name}}&birth_day={{.BirthDay}}'"
+                        onmouseover="this.style.transform='scale(1.005)'; this.style.boxShadow='0 4px 8px rgba(0,0,0,0.1)';"
+                        onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.02)';"
+                        class="clickable-row">
+
+                        <td style="padding: 15px; border-radius: 10px 0 0 10px; border: 1px solid #eee; border-right: none;">
+                            <div style="font-weight: bold; font-size: 1.1rem; color: #333;">{{.NameHTML}}</div>
+                        </td>
+
+                        <td style="padding: 15px; text-align: center; border: 1px solid #eee; border-left: none; border-right: none;">
+                        <span style="font-size: 0.9rem; color: #666; background: #f5f5f5; padding: 4px 10px; border-radius: 15px;">
+                            {{.BirthDayTH}}
+                        </span>
+                        </td>
+
+                        <td style="padding: 15px; text-align: center; border: 1px solid #eee; border-left: none; border-right: none;">
+                            <div style="display: flex; justify-content: center; gap: 5px;">
+                                <div class="mini-star-table {{if .SatPairType}}type-{{.SatPairType}}{{else}}star-sat{{end}}">
+                                    {{.SatSum}}
+                                </div>
+                            </div>
+                        </td>
+
+                        <td style="padding: 15px; text-align: center; border: 1px solid #eee; border-left: none; border-right: none;">
+                            <div style="display: flex; justify-content: center; gap: 5px;">
+                                <div class="mini-star-table {{if .ShaPairType}}type-{{.ShaPairType}}{{else}}star-sha{{end}}">
+                                    {{.ShaSum}}
+                                </div>
+                            </div>
+                        </td>
+
+                        <td style="padding: 15px; text-align: center; border: 1px solid #eee; border-left: none; border-right: none;">
+                            <div style="
+                                    display: inline-block;
+                                    padding: 6px 15px;
+                                    border-radius: 20px;
+                                    font-weight: bold;
+                                    min-width: 60px;
+                                    color: white;
+                            {{if lt .TotalScore 0}}
+                                background: linear-gradient(135deg, #ef5350, #c62828); box-shadow: 0 2px 5px rgba(198, 40, 40, 0.3);
+                            {{else}}
+                                background: linear-gradient(135deg, #66bb6a, #2e7d32); box-shadow: 0 2px 5px rgba(46, 125, 50, 0.3);
+                            {{end}}
+                                    ">
+                                {{.TotalScore}}
+                            </div>
+                        </td>
+
+                        <td style="padding: 15px; text-align: center; border-radius: 0 10px 10px 0; border: 1px solid #eee; border-left: none;">
+                            <a href="/api/delete-name/{{.ID}}"
+                               onclick="event.stopPropagation(); return confirm('ต้องการลบชื่อ {{.Name}} ใช่หรือไม่?')"
+                               style="color: #d32f2f; font-size: 1.2rem; text-decoration: none; opacity: 0.7; transition: opacity 0.2s;"
+                               onmouseover="this.style.opacity='1'"
+                               onmouseout="this.style.opacity='0.7'"
+                               title="ลบชื่อนี้">
+                                🗑️
+                            </a>
+                        </td>
+                    </tr>
+                {{end}}
+                </tbody>
+            </table>
+        </div>
+    {{else}}
+        <div style="text-align: center; padding: 50px 20px; color: #888; background: #f9f9f9; border-radius: 15px; border: 2px dashed #eee;">
+            <div style="font-size: 3rem; margin-bottom: 10px;">📭</div>
+            <p style="margin: 0;">ยังไม่มีรายชื่อที่บันทึกไว้</p>
+            <a href="/analysis" style="color: #007bff; font-weight: bold; margin-top: 10px; display: inline-block;">👉 ไปวิเคราะห์ชื่อเลย!</a>
+        </div>
+    {{end}}
 </div>
+
+<style>
+    .clickable-row { cursor: pointer; }
+    .mini-star-table {
+        width: 38px; height: 38px; font-size: 0.9rem;
+        display: flex; justify-content: center; align-items: center;
+        border-radius: 50%; color: white; font-weight: bold;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        text-shadow: 0 1px 1px rgba(0,0,0,0.2);
+    }
+    .star-sat { background: linear-gradient(135deg, #42a5f5, #1976d2); }
+    .star-sha { background: linear-gradient(135deg, #ab47bc, #7b1fa2); }
+</style>

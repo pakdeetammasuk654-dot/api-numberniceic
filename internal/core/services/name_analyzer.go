@@ -27,7 +27,6 @@ func (s *analyzerService) AnalyzeName(name string, birthDay string) (*domain.Nam
 	satSum := 0
 	shaSum := 0
 
-	// 1. เตรียมข้อมูลกาลกิณี
 	kakisList, _ := s.repo.GetKakisByDay(birthDay)
 	foundKakis := []string{}
 	kakisMap := make(map[string]bool)
@@ -35,7 +34,6 @@ func (s *analyzerService) AnalyzeName(name string, birthDay string) (*domain.Nam
 		kakisMap[k] = true
 	}
 
-	// 2. คำนวณค่าพลัง
 	for _, charRune := range cleanName {
 		charStr := string(charRune)
 		if charStr == " " {
@@ -53,13 +51,11 @@ func (s *analyzerService) AnalyzeName(name string, birthDay string) (*domain.Nam
 		shaSum += shaVal
 	}
 
-	// 3. สร้างคู่เลข & ดึงความหมาย (สำหรับชื่อหลัก)
 	rawSatPairs := s.generatePairs(satSum)
 	rawShaPairs := s.generatePairs(shaSum)
 	satPairData := s.enrichPairs(rawSatPairs)
 	shaPairData := s.enrichPairs(rawShaPairs)
 
-	// 4. คำนวณคะแนนรวม
 	totalScore := 0
 	goodScore := 0
 	badScore := 0
@@ -80,12 +76,8 @@ func (s *analyzerService) AnalyzeName(name string, birthDay string) (*domain.Nam
 	calculatePoints(satPairData)
 	calculatePoints(shaPairData)
 
-	// --- 5. (UPDATED) ค้นหาชื่อที่คล้ายกัน & เติมข้อมูลความหมายคู่เลข ---
 	similarNames, _ := s.repo.SearchSimilarNames(cleanName, birthDay, 12)
-
-	// 🔥 วนลูปรายชื่อที่แนะนำ เพื่อหาความหมายคู่เลข (เอาไปใช้แสดงสีในตารางหน้าเว็บ)
 	for i := range similarNames {
-		// แปลง SatNum/ShaNum (ที่เป็น array string) ให้กลายเป็น []PairData ที่มีความหมาย (Meaning)
 		similarNames[i].SatPairs = s.enrichPairs(similarNames[i].SatNum)
 		similarNames[i].ShaPairs = s.enrichPairs(similarNames[i].ShaNum)
 	}
@@ -104,34 +96,28 @@ func (s *analyzerService) AnalyzeName(name string, birthDay string) (*domain.Nam
 		TotalScore:   totalScore,
 		GoodScore:    goodScore,
 		BadScore:     badScore,
-		SimilarNames: similarNames, // ส่งรายชื่อพร้อมข้อมูลคู่เลขกลับไป
+		SimilarNames: similarNames,
 	}, nil
 }
 
-// ฟังก์ชันช่วย: ดึงความหมายของคู่เลขจาก Repository
 func (s *analyzerService) enrichPairs(pairs []string) []domain.PairData {
 	var result []domain.PairData
 	for _, p := range pairs {
 		meaning, _ := s.repo.GetNumberMeaning(p)
-		result = append(result, domain.PairData{
-			Pair:    p,
-			Meaning: meaning,
-		})
+		result = append(result, domain.PairData{Pair: p, Meaning: meaning})
 	}
 	return result
 }
 
-// ฟังก์ชันช่วย: แยกผลรวมเป็นคู่เลข (เช่น 159 -> 15, 59)
 func (s *analyzerService) generatePairs(sum int) []string {
 	strSum := strconv.Itoa(sum)
-	length := len(strSum)
-	if length == 1 {
+	if len(strSum) == 1 {
 		return []string{"0" + strSum}
 	}
-	if length == 2 {
+	if len(strSum) == 2 {
 		return []string{strSum}
 	}
-	if length == 3 {
+	if len(strSum) == 3 {
 		return []string{strSum[0:2], strSum[1:3]}
 	}
 	return []string{}
@@ -142,30 +128,44 @@ func (s *analyzerService) GetNameLinguistics(name string) (string, error) {
 	if apiKey == "" {
 		return "", fmt.Errorf("API Key configuration error")
 	}
-
 	ctx := context.Background()
-	// กำหนด Config
-	client, err := genai.NewClient(ctx, &genai.ClientConfig{
-		APIKey:  apiKey,
-		Backend: genai.BackendGeminiAPI,
-	})
+	client, err := genai.NewClient(ctx, &genai.ClientConfig{APIKey: apiKey, Backend: genai.BackendGeminiAPI})
 	if err != nil {
 		return "", fmt.Errorf("GenAI Client Error: %v", err)
 	}
-
-	// เรียก AI (ใช้ gemini-1.5-flash เพื่อความไว)
 	prompt := fmt.Sprintf("อธิบายความหมายและรากศัพท์ของชื่อ '%s' แบบสั้นๆ กระชับ เข้าใจง่าย ในเชิงภาษาศาสตร์และสิริมงคล", name)
-
-	result, err := client.Models.GenerateContent(
-		ctx,
-		"gemini-flash-latest",
-		genai.Text(prompt),
-		nil,
-	)
+	result, err := client.Models.GenerateContent(ctx, "gemini-flash-latest", genai.Text(prompt), nil)
 	if err != nil {
 		return "", fmt.Errorf("GenAI Generate Error: %v", err)
 	}
-
-	// ดึงข้อความตอบกลับ
 	return result.Text(), nil
+}
+
+func (s *analyzerService) SaveNameForUser(userID uint, name, birthDay string) error {
+	analysis, err := s.AnalyzeName(name, birthDay)
+	if err != nil {
+		return err
+	}
+	newSave := &domain.SavedName{
+		UserID: userID, Name: name, BirthDay: birthDay,
+		TotalScore: analysis.TotalScore, SatSum: analysis.SatSum, ShaSum: analysis.ShaSum,
+	}
+	return s.repo.SaveName(newSave)
+}
+
+func (s *analyzerService) GetSavedNames(userID uint) ([]domain.SavedName, error) {
+	return s.repo.GetSavedNamesByUserID(userID)
+}
+
+func (s *analyzerService) RemoveSavedName(id uint, userID uint) error {
+	return s.repo.DeleteSavedName(id, userID)
+}
+
+func (s *analyzerService) GetPairMeaning(pair string) (*domain.NumberMeaning, error) {
+	return s.repo.GetNumberMeaning(pair)
+}
+
+// 🔥 เพิ่มใหม่: เรียก Repo เพื่อดึงกาลกิณี
+func (s *analyzerService) GetKakisList(day string) ([]string, error) {
+	return s.repo.GetKakisByDay(day)
 }
