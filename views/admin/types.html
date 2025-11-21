@@ -1,0 +1,40 @@
+<div class="card" style="max-width: 800px; margin: 20px auto;">
+    <h2 class="header-line">🏷️ จัดการหมวดหมู่บทความ</h2>
+
+    <form action="/admin/types" method="POST" style="display: flex; gap: 10px; margin-bottom: 30px; padding: 20px; background: #f9f9f9; border-radius: 10px;">
+        <input type="text" name="name" class="form-control" placeholder="ชื่อหมวดหมู่ใหม่ (เช่น ความรัก, การเงิน)" required style="flex: 1; margin: 0;">
+        <button type="submit" class="btn btn-success" style="width: auto; padding: 0 20px;">+ เพิ่ม</button>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-striped" style="width: 100%; border-collapse: collapse;">
+            <thead>
+            <tr style="background: #f8f9fa;">
+                <th style="padding: 12px; width: 50px;">ID</th>
+                <th style="padding: 12px;">ชื่อหมวดหมู่</th>
+                <th style="padding: 12px; text-align: center; width: 100px;">จัดการ</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{range .Types}}
+                <tr>
+                    <td style="padding: 12px; color: #666;">{{.ID}}</td>
+                    <td style="padding: 12px; font-weight: bold; color: #333;">{{.Name}}</td>
+                    <td style="padding: 12px; text-align: center;">
+                        <a href="/admin/delete-type/{{.ID}}"
+                           class="btn btn-danger"
+                           style="padding: 5px 10px; font-size: 0.85rem; background-color: #ef5350; color: white;"
+                           onclick="return confirm('⚠️ คำเตือน: การลบหมวดหมู่อาจทำให้บทความที่อยู่ในหมวดนี้หายไปหรือแสดงผลผิดพลาด\nยืนยันการลบ?')">
+                            ลบ
+                        </a>
+                    </td>
+                </tr>
+            {{end}}
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top: 20px; text-align: center;">
+        <a href="/admin" class="btn" style="color: #666;">&larr; กลับไปแผงควบคุม</a>
+    </div>
+</div>

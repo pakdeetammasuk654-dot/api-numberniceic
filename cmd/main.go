@@ -112,7 +112,7 @@ func main() {
 	// 7. Start Server
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "9000"
+		port = "9000" // ใช้ Port 9000 ตามที่ต้องการ
 	}
 	fmt.Printf("🚀 Server running at http://localhost:%s\n", port)
 	log.Fatal(app.Listen(":" + port))

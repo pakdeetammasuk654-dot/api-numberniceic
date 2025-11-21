@@ -20,10 +20,11 @@ type NumberRepository interface {
 	UpdateBlog(blog *domain.Blog) error
 	DeleteBlog(id uint) error
 
-	// 🔥 เพิ่มใหม่: ดึงประเภทบทความทั้งหมด
+	// --- Blog Type Repository ---
 	GetAllBlogTypes() ([]domain.BlogType, error)
-	// (Optional) สร้างประเภทเริ่มต้น
 	SeedBlogTypes() error
+	CreateBlogType(blogType *domain.BlogType) error // 🔥 เพิ่มใหม่
+	DeleteBlogType(id uint) error                   // 🔥 เพิ่มใหม่
 }
 
 // NumberService (Input Port)
@@ -38,13 +39,14 @@ type NumberService interface {
 	GetEnrichedPairs(sum int) []domain.PairData
 
 	// --- Blog Service ---
-	// 🔥 อัปเดต: รับ shortTitle และ typeID เพิ่ม
 	CreateNewBlog(userID uint, isAdmin bool, title, shortTitle string, typeID uint, content, coverURL string) error
 	GetLatestBlogs() ([]domain.Blog, error)
 	GetBlogDetail(id uint) (*domain.Blog, error)
 	UpdateExistingBlog(id uint, userID uint, isAdmin bool, title, shortTitle string, typeID uint, content, coverURL string) error
 	RemoveBlog(id uint, userID uint, isAdmin bool) error
 
-	// 🔥 เพิ่มใหม่: ขอ list ประเภท
+	// --- Blog Type Service ---
 	GetBlogTypes() ([]domain.BlogType, error)
+	CreateNewBlogType(name string) error // 🔥 เพิ่มใหม่
+	RemoveBlogType(id uint) error        // 🔥 เพิ่มใหม่
 }
