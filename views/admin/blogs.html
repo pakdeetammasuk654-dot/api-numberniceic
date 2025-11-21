@@ -10,7 +10,7 @@
             <tr style="background: #f8f9fa;">
                 <th style="padding: 12px;">ID</th>
                 <th style="padding: 12px;">หัวข้อ</th>
-                <th style="padding: 12px;">ผู้เขียน</th>
+                <th style="padding: 12px;">ประเภท</th> <th style="padding: 12px;">ผู้เขียน</th>
                 <th style="padding: 12px;">วันที่</th>
                 <th style="padding: 12px; text-align: center;">จัดการ</th>
             </tr>
@@ -21,12 +21,14 @@
                     <td style="padding: 12px;">{{.ID}}</td>
                     <td style="padding: 12px; font-weight: bold;">
                         <a href="/articles/{{.ID}}" target="_blank" style="color: #333; text-decoration: none;">{{.Title}}</a>
+                        {{if .ShortTitle}}<br><small style="color: #777;">{{.ShortTitle}}</small>{{end}}
                     </td>
+                    <td style="padding: 12px;"><span class="badge" style="background: #eee; color: #555; font-weight: normal;">{{.BlogType.Name}}</span></td>
                     <td style="padding: 12px;">{{.Author.DisplayName}}</td>
                     <td style="padding: 12px; color: #666;">{{.CreatedAt.Format "02/01/2006"}}</td>
                     <td style="padding: 12px; text-align: center;">
                         <a href="/admin/edit-blog/{{.ID}}" class="btn btn-primary" style="padding: 5px 10px; font-size: 0.85rem;">✏️ แก้ไข</a>
-                        <a href="/admin/delete-blog/{{.ID}}" class="btn btn-danger" style="padding: 5px 10px; font-size: 0.85rem; background-color: #d32f2f; color: white;" onclick="return confirm('ยืนยันการลบบทความนี้?')">🗑️ ลบ</a>
+                        <a href="/admin/delete-blog/{{.ID}}" class="btn btn-danger" style="padding: 5px 10px; font-size: 0.85rem; background-color: #d32f2f; color: white;" onclick="return confirm('ยืนยันการลบ?')">🗑️ ลบ</a>
                     </td>
                 </tr>
             {{end}}
