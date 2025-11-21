@@ -51,6 +51,7 @@ func (s *analyzerService) AnalyzeName(name string, birthDay string) (*domain.Nam
 		shaSum += shaVal
 	}
 
+	// ใช้ Logic เดียวกัน
 	rawSatPairs := s.generatePairs(satSum)
 	rawShaPairs := s.generatePairs(shaSum)
 	satPairData := s.enrichPairs(rawSatPairs)
@@ -104,20 +105,24 @@ func (s *analyzerService) enrichPairs(pairs []string) []domain.PairData {
 	var result []domain.PairData
 	for _, p := range pairs {
 		meaning, _ := s.repo.GetNumberMeaning(p)
-		result = append(result, domain.PairData{Pair: p, Meaning: meaning})
+		result = append(result, domain.PairData{
+			Pair:    p,
+			Meaning: meaning,
+		})
 	}
 	return result
 }
 
 func (s *analyzerService) generatePairs(sum int) []string {
 	strSum := strconv.Itoa(sum)
-	if len(strSum) == 1 {
+	length := len(strSum)
+	if length == 1 {
 		return []string{"0" + strSum}
 	}
-	if len(strSum) == 2 {
+	if length == 2 {
 		return []string{strSum}
 	}
-	if len(strSum) == 3 {
+	if length == 3 {
 		return []string{strSum[0:2], strSum[1:3]}
 	}
 	return []string{}
@@ -165,7 +170,12 @@ func (s *analyzerService) GetPairMeaning(pair string) (*domain.NumberMeaning, er
 	return s.repo.GetNumberMeaning(pair)
 }
 
-// 🔥 เพิ่มใหม่: เรียก Repo เพื่อดึงกาลกิณี
 func (s *analyzerService) GetKakisList(day string) ([]string, error) {
 	return s.repo.GetKakisByDay(day)
+}
+
+// 🔥 เพิ่มใหม่: รวม Logic การสร้างคู่และการหาความหมายไว้ให้ Handler เรียกใช้ง่ายๆ
+func (s *analyzerService) GetEnrichedPairs(sum int) []domain.PairData {
+	pairs := s.generatePairs(sum)
+	return s.enrichPairs(pairs)
 }

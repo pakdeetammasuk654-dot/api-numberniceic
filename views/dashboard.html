@@ -54,19 +54,25 @@
                         </td>
 
                         <td style="padding: 15px; text-align: center; border: 1px solid #eee; border-left: none; border-right: none;">
-                            <div style="display: flex; justify-content: center; gap: 5px;">
-                                <div class="mini-star-table {{if .SatPairType}}type-{{.SatPairType}}{{else}}star-sat{{end}}">
-                                    {{.SatSum}}
-                                </div>
+                            <div style="display: flex; justify-content: center; gap: 3px; flex-wrap: wrap; max-width: 150px; margin: 0 auto;">
+                                {{range .SatPairs}}
+                                    <div class="mini-star-table {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sat{{end}}">
+                                        {{.Pair}}
+                                    </div>
+                                {{end}}
                             </div>
+                            <div style="font-size: 0.75rem; color: #888; margin-top: 4px;">(รวม: {{.SatSum}})</div>
                         </td>
 
                         <td style="padding: 15px; text-align: center; border: 1px solid #eee; border-left: none; border-right: none;">
-                            <div style="display: flex; justify-content: center; gap: 5px;">
-                                <div class="mini-star-table {{if .ShaPairType}}type-{{.ShaPairType}}{{else}}star-sha{{end}}">
-                                    {{.ShaSum}}
-                                </div>
+                            <div style="display: flex; justify-content: center; gap: 3px; flex-wrap: wrap; max-width: 150px; margin: 0 auto;">
+                                {{range .ShaPairs}}
+                                    <div class="mini-star-table {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sha{{end}}">
+                                        {{.Pair}}
+                                    </div>
+                                {{end}}
                             </div>
+                            <div style="font-size: 0.75rem; color: #888; margin-top: 4px;">(รวม: {{.ShaSum}})</div>
                         </td>
 
                         <td style="padding: 15px; text-align: center; border: 1px solid #eee; border-left: none; border-right: none;">
@@ -114,10 +120,10 @@
 <style>
     .clickable-row { cursor: pointer; }
     .mini-star-table {
-        width: 38px; height: 38px; font-size: 0.9rem;
+        width: 34px; height: 34px; font-size: 0.85rem; /* ปรับขนาดลงนิดหน่อยเพื่อให้เรียงสวย */
         display: flex; justify-content: center; align-items: center;
         border-radius: 50%; color: white; font-weight: bold;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
         text-shadow: 0 1px 1px rgba(0,0,0,0.2);
     }
     .star-sat { background: linear-gradient(135deg, #42a5f5, #1976d2); }

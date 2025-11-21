@@ -1,11 +1,11 @@
 package handlers
 
 import (
+	"api-numberniceic/internal/core/domain" // 🔥 เพิ่ม import domain
 	"api-numberniceic/internal/core/ports"
-	"fmt"
-	"html/template" // 🔥 เพิ่ม import นี้สำหรับจัดการ HTML
+	"html/template"
 	"os"
-	"strings" // 🔥 เพิ่ม import นี้สำหรับ StringBuilder
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
@@ -104,7 +104,6 @@ func (h *FiberHandler) ViewHome(c *fiber.Ctx) error {
 	return h.RenderWithAuth(c, "home", nil)
 }
 
-// 🔥 อัปเดต: ViewDashboard พร้อมไฮไลท์กาลกิณี
 func (h *FiberHandler) ViewDashboard(c *fiber.Ctx) error {
 	userID := getUserIDFromContext(c)
 	savedNames, _ := h.service.GetSavedNames(userID)
@@ -114,16 +113,17 @@ func (h *FiberHandler) ViewDashboard(c *fiber.Ctx) error {
 
 	// ViewModel
 	type SavedNameView struct {
-		ID          uint
-		Name        string
-		NameHTML    template.HTML // 🔥 เพิ่มฟิลด์สำหรับชื่อที่มีสี (HTML)
-		BirthDay    string
-		BirthDayTH  string
-		TotalScore  int
-		SatSum      int
-		SatPairType string
-		ShaSum      int
-		ShaPairType string
+		ID         uint
+		Name       string
+		NameHTML   template.HTML
+		BirthDay   string
+		BirthDayTH string
+		TotalScore int
+		SatSum     int
+		// 🔥 เปลี่ยนจาก PairType ตัวเดียว เป็น Array ของ PairData
+		SatPairs []domain.PairData
+		ShaSum   int
+		ShaPairs []domain.PairData
 	}
 
 	var viewModels []SavedNameView
@@ -131,19 +131,17 @@ func (h *FiberHandler) ViewDashboard(c *fiber.Ctx) error {
 	for _, n := range savedNames {
 		totalScoreSum += n.TotalScore
 
-		// 1. ดึงกาลกิณีของวันเกิดนั้น
+		// 1. กาลกิณี
 		kakis, _ := h.service.GetKakisList(n.BirthDay)
 		kakisMap := make(map[string]bool)
 		for _, k := range kakis {
 			kakisMap[k] = true
 		}
 
-		// 2. สร้าง HTML ของชื่อ ไฮไลท์ตัวกาลกิณี
 		var sb strings.Builder
 		for _, r := range n.Name {
 			s := string(r)
 			if kakisMap[s] {
-				// ใส่ class bad-char (สีแดง)
 				sb.WriteString(`<span class="bad-char">` + s + `</span>`)
 			} else {
 				sb.WriteString(s)
@@ -151,39 +149,21 @@ func (h *FiberHandler) ViewDashboard(c *fiber.Ctx) error {
 		}
 		nameHTML := template.HTML(sb.String())
 
-		// 3. หาความหมายผลรวม
-		satKey := fmt.Sprintf("%d", n.SatSum)
-		if len(satKey) == 1 {
-			satKey = "0" + satKey
-		}
-		shaKey := fmt.Sprintf("%d", n.ShaSum)
-		if len(shaKey) == 1 {
-			shaKey = "0" + shaKey
-		}
-
-		satMeaning, _ := h.service.GetPairMeaning(satKey)
-		shaMeaning, _ := h.service.GetPairMeaning(shaKey)
-
-		satType := ""
-		if satMeaning != nil {
-			satType = satMeaning.PairType
-		}
-		shaType := ""
-		if shaMeaning != nil {
-			shaType = shaMeaning.PairType
-		}
+		// 2. 🔥 ใช้ GetEnrichedPairs เพื่อแตกผลรวมเป็นคู่เลข (เช่น 190 -> 19, 90)
+		satPairs := h.service.GetEnrichedPairs(n.SatSum)
+		shaPairs := h.service.GetEnrichedPairs(n.ShaSum)
 
 		viewModels = append(viewModels, SavedNameView{
-			ID:          n.ID,
-			Name:        n.Name,
-			NameHTML:    nameHTML, // ส่ง HTML กลับไป
-			BirthDay:    n.BirthDay,
-			BirthDayTH:  translateDay(n.BirthDay),
-			TotalScore:  n.TotalScore,
-			SatSum:      n.SatSum,
-			SatPairType: satType,
-			ShaSum:      n.ShaSum,
-			ShaPairType: shaType,
+			ID:         n.ID,
+			Name:       n.Name,
+			NameHTML:   nameHTML,
+			BirthDay:   n.BirthDay,
+			BirthDayTH: translateDay(n.BirthDay),
+			TotalScore: n.TotalScore,
+			SatSum:     n.SatSum,
+			SatPairs:   satPairs, // ส่ง Array ไป Loop
+			ShaSum:     n.ShaSum,
+			ShaPairs:   shaPairs, // ส่ง Array ไป Loop
 		})
 	}
 

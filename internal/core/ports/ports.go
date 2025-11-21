@@ -21,7 +21,9 @@ type NumberService interface {
 	SaveNameForUser(userID uint, name, birthDay string) error
 	GetSavedNames(userID uint) ([]domain.SavedName, error)
 	RemoveSavedName(id uint, userID uint) error
-
-	GetKakisList(day string) ([]string, error)
 	GetPairMeaning(pair string) (*domain.NumberMeaning, error)
+	GetKakisList(day string) ([]string, error)
+
+	// 🔥 เพิ่มใหม่: ฟังก์ชันแปลงผลรวมเป็นคู่เลขพร้อมความหมาย (เช่น 190 -> 19(D), 90(R))
+	GetEnrichedPairs(sum int) []domain.PairData
 }
