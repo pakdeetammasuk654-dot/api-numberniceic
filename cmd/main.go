@@ -18,12 +18,10 @@ import (
 )
 
 func main() {
-	// 1. โหลด Environment Variables
 	if err := godotenv.Load(); err != nil {
 		log.Println("⚠️  Warning: No .env file found")
 	}
 
-	// 2. ตั้งค่าเชื่อมต่อ Database
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Bangkok",
 		os.Getenv("DB_HOST"),
@@ -39,17 +37,14 @@ func main() {
 	}
 	fmt.Println("✅ Connected to Database successfully")
 
-	// 🔥 Auto Migrate: เพิ่ม SavedName
-	db.AutoMigrate(&domain.User{}, &domain.SavedName{})
+	db.AutoMigrate(&domain.User{}, &domain.SavedName{}, &domain.Blog{})
 
-	// 3. Setup Template Engine & Fiber
 	engine := html.New("./views", ".html")
 	app := fiber.New(fiber.Config{
 		Views: engine,
 	})
 	app.Static("/static", "./public")
 
-	// 4. Init Layers
 	repo := repositories.NewPostgresRepository(db)
 	service := services.NewAnalyzerService(repo)
 	handler := handlers.NewFiberHandler(service)
@@ -58,35 +53,44 @@ func main() {
 	authService := services.NewAuthService(userRepo)
 	authHandler := handlers.NewAuthHandler(authService)
 
-	// 5. Setup Routes
 	app.Get("/", handler.ViewHome)
 	app.Get("/about", handler.ViewAbout)
-	app.Get("/articles", handler.ViewArticles)
 
 	app.Get("/analysis", handler.ViewAnalysis)
 	app.Post("/analysis", handler.HandleAnalysis)
 
-	// Auth Routes
 	app.Get("/login", authHandler.ViewLogin)
 	app.Post("/login", authHandler.HandleLogin)
 	app.Get("/register", authHandler.ViewRegister)
 	app.Post("/register", authHandler.HandleRegister)
 	app.Get("/logout", authHandler.HandleLogout)
 
-	// Protected Routes
 	app.Get("/dashboard", middlewares.IsAuthenticated, handler.ViewDashboard)
 
-	// 🔥 API Routes (Updated)
+	app.Get("/articles", handler.ViewArticles)
+	app.Get("/articles/:id", handler.ViewBlogDetail)
+
+	// 🔥 Admin Routes
+	admin := app.Group("/admin", middlewares.IsAuthenticated)
+
+	admin.Get("/", handler.ViewAdminPanel) // 🔥 หน้าหลัก Admin
+
+	admin.Get("/blogs", handler.ViewAdminBlogs)
+	admin.Get("/create-blog", handler.ViewCreateBlog)
+	admin.Post("/create-blog", handler.HandleCreateBlog)
+	admin.Get("/edit-blog/:id", handler.ViewEditBlog)
+	admin.Post("/edit-blog/:id", handler.HandleEditBlog)
+	admin.Get("/delete-blog/:id", handler.HandleDeleteBlog)
+
 	api := app.Group("/api")
-	api.Post("/save-name", handler.ApiSaveName)                                     // API บันทึกชื่อ
-	api.Get("/delete-name/:id", middlewares.IsAuthenticated, handler.ApiDeleteName) // ลบชื่อ
+	api.Post("/save-name", handler.ApiSaveName)
+	api.Get("/delete-name/:id", middlewares.IsAuthenticated, handler.ApiDeleteName)
 	api.Get("/analyze", handler.ApiAnalyze)
 	api.Get("/linguistics", handler.ApiGetLinguistics)
 
-	// 6. Start Server
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "3000"
+		port = "9000"
 	}
 	fmt.Printf("🚀 Server running at http://localhost:%s\n", port)
 	log.Fatal(app.Listen(":" + port))

@@ -7,6 +7,15 @@
             <li><a href="/articles" class="nav-link">บทความ</a></li>
 
             {{if .IsLoggedIn}}
+
+                {{if .IsAdmin}}
+                    <li>
+                        <a href="/admin" class="nav-link" style="color: #ffca28; font-weight: bold;">
+                            🛠️ แผงควบคุม
+                        </a>
+                    </li>
+                {{end}}
+
                 <li><a href="/dashboard" class="nav-link" style="font-weight: bold;">แดชบอร์ด</a></li>
                 <li>
                     <div style="display: flex; align-items: center; gap: 10px; margin-left: 10px;">

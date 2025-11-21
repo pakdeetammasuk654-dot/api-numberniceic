@@ -20,6 +20,8 @@ func NewAnalyzerService(repo ports.NumberRepository) ports.NumberService {
 	return &analyzerService{repo: repo}
 }
 
+// --- Existing Name Analysis Logic ---
+
 func (s *analyzerService) AnalyzeName(name string, birthDay string) (*domain.NameAnalysis, error) {
 	cleanName := strings.TrimSpace(name)
 	satValues := []map[string]int{}
@@ -45,13 +47,11 @@ func (s *analyzerService) AnalyzeName(name string, birthDay string) (*domain.Nam
 		satVal, _ := s.repo.GetSatValue(charStr)
 		satValues = append(satValues, map[string]int{charStr: satVal})
 		satSum += satVal
-
 		shaVal, _ := s.repo.GetShaValue(charStr)
 		shaValues = append(shaValues, map[string]int{charStr: shaVal})
 		shaSum += shaVal
 	}
 
-	// ใช้ Logic เดียวกัน
 	rawSatPairs := s.generatePairs(satSum)
 	rawShaPairs := s.generatePairs(shaSum)
 	satPairData := s.enrichPairs(rawSatPairs)
@@ -105,24 +105,20 @@ func (s *analyzerService) enrichPairs(pairs []string) []domain.PairData {
 	var result []domain.PairData
 	for _, p := range pairs {
 		meaning, _ := s.repo.GetNumberMeaning(p)
-		result = append(result, domain.PairData{
-			Pair:    p,
-			Meaning: meaning,
-		})
+		result = append(result, domain.PairData{Pair: p, Meaning: meaning})
 	}
 	return result
 }
 
 func (s *analyzerService) generatePairs(sum int) []string {
 	strSum := strconv.Itoa(sum)
-	length := len(strSum)
-	if length == 1 {
+	if len(strSum) == 1 {
 		return []string{"0" + strSum}
 	}
-	if length == 2 {
+	if len(strSum) == 2 {
 		return []string{strSum}
 	}
-	if length == 3 {
+	if len(strSum) == 3 {
 		return []string{strSum[0:2], strSum[1:3]}
 	}
 	return []string{}
@@ -146,7 +142,17 @@ func (s *analyzerService) GetNameLinguistics(name string) (string, error) {
 	return result.Text(), nil
 }
 
-func (s *analyzerService) SaveNameForUser(userID uint, name, birthDay string) error {
+func (s *analyzerService) SaveNameForUser(userID uint, isAdmin bool, name, birthDay string) error {
+	// เช็คโควต้า
+	if !isAdmin {
+		existingNames, err := s.repo.GetSavedNamesByUserID(userID)
+		if err != nil {
+			return err
+		}
+		if len(existingNames) >= 12 {
+			return fmt.Errorf("สมาชิกทั่วไปบันทึกได้สูงสุด 12 รายชื่อ (กรุณาลบชื่อเก่าออกก่อน)")
+		}
+	}
 	analysis, err := s.AnalyzeName(name, birthDay)
 	if err != nil {
 		return err
@@ -174,8 +180,55 @@ func (s *analyzerService) GetKakisList(day string) ([]string, error) {
 	return s.repo.GetKakisByDay(day)
 }
 
-// 🔥 เพิ่มใหม่: รวม Logic การสร้างคู่และการหาความหมายไว้ให้ Handler เรียกใช้ง่ายๆ
 func (s *analyzerService) GetEnrichedPairs(sum int) []domain.PairData {
 	pairs := s.generatePairs(sum)
 	return s.enrichPairs(pairs)
+}
+
+// --- Blog Service ---
+
+func (s *analyzerService) CreateNewBlog(userID uint, isAdmin bool, title, content, coverURL string) error {
+	if !isAdmin {
+		return fmt.Errorf("Unauthorized")
+	}
+	newBlog := &domain.Blog{
+		Title:    title,
+		Content:  content,
+		CoverURL: coverURL,
+		AuthorID: userID,
+	}
+	return s.repo.CreateBlog(newBlog)
+}
+
+func (s *analyzerService) GetLatestBlogs() ([]domain.Blog, error) {
+	return s.repo.GetAllBlogs()
+}
+
+func (s *analyzerService) GetBlogDetail(id uint) (*domain.Blog, error) {
+	return s.repo.GetBlogByID(id)
+}
+
+// 🔥 เพิ่มใหม่: แก้ไขบทความ
+func (s *analyzerService) UpdateExistingBlog(id uint, userID uint, isAdmin bool, title, content, coverURL string) error {
+	if !isAdmin {
+		return fmt.Errorf("Unauthorized")
+	}
+	blog, err := s.repo.GetBlogByID(id)
+	if err != nil {
+		return err
+	}
+
+	blog.Title = title
+	blog.Content = content
+	blog.CoverURL = coverURL
+
+	return s.repo.UpdateBlog(blog)
+}
+
+// 🔥 เพิ่มใหม่: ลบบทความ
+func (s *analyzerService) RemoveBlog(id uint, userID uint, isAdmin bool) error {
+	if !isAdmin {
+		return fmt.Errorf("Unauthorized")
+	}
+	return s.repo.DeleteBlog(id)
 }

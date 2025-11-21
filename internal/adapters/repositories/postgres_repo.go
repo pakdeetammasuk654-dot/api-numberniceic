@@ -17,6 +17,8 @@ func NewPostgresRepository(db *gorm.DB) ports.NumberRepository {
 	return &postgresRepository{db: db}
 }
 
+// --- Existing Methods ---
+
 func (r *postgresRepository) GetSatValue(char string) (int, error) {
 	var satNum domain.SatNum
 	result := r.db.Table("sat_nums").Where("char_key = ?", char).First(&satNum)
@@ -64,43 +66,28 @@ func (r *postgresRepository) GetKakisByDay(day string) ([]string, error) {
 
 func (r *postgresRepository) SearchSimilarNames(name string, day string, limit int) ([]domain.NamesMiracle, error) {
 	var results []domain.NamesMiracle
-
 	columnMap := map[string]string{
-		"sunday":     "k_sunday",
-		"monday":     "k_monday",
-		"tuesday":    "k_tuesday",
-		"wednesday1": "k_wednesday1",
-		"wednesday2": "k_wednesday2",
-		"thursday":   "k_thursday",
-		"friday":     "k_friday",
-		"saturday":   "k_saturday",
+		"sunday": "k_sunday", "monday": "k_monday", "tuesday": "k_tuesday",
+		"wednesday1": "k_wednesday1", "wednesday2": "k_wednesday2",
+		"thursday": "k_thursday", "friday": "k_friday", "saturday": "k_saturday",
 	}
-
 	targetCol, ok := columnMap[day]
 	if !ok {
 		targetCol = "k_sunday"
 	}
-
 	query := fmt.Sprintf(`
-		SELECT 
-			name_id, thname, satnum, shanum, 
-			k_sunday, k_monday, k_tuesday, k_wednesday1, k_wednesday2, k_thursday, k_friday, k_saturday,
-			levenshtein(?, thname) / greatest(length(?), length(thname))::real as distance
-		FROM names_miracle
-		WHERE %s = false
+		SELECT name_id, thname, satnum, shanum, distance
+		FROM (
+			SELECT *, levenshtein($1, thname) / greatest(length($2), length(thname))::real as distance
+			FROM names_miracle
+			WHERE %s = false
+		) as sub
 		ORDER BY distance ASC
-		LIMIT ?
+		LIMIT $3
 	`, targetCol)
-
 	err := r.db.Raw(query, name, name, limit).Scan(&results).Error
-	if err != nil {
-		return nil, err
-	}
-
-	return results, nil
+	return results, err
 }
-
-// 🔥 เพิ่มส่วน SavedName Repository 🔥
 
 func (r *postgresRepository) SaveName(savedName *domain.SavedName) error {
 	return r.db.Create(savedName).Error
@@ -114,4 +101,34 @@ func (r *postgresRepository) GetSavedNamesByUserID(userID uint) ([]domain.SavedN
 
 func (r *postgresRepository) DeleteSavedName(id uint, userID uint) error {
 	return r.db.Where("id = ? AND user_id = ?", id, userID).Delete(&domain.SavedName{}).Error
+}
+
+// --- Blog Repository ---
+
+func (r *postgresRepository) CreateBlog(blog *domain.Blog) error {
+	return r.db.Create(blog).Error
+}
+
+func (r *postgresRepository) GetAllBlogs() ([]domain.Blog, error) {
+	var blogs []domain.Blog
+	err := r.db.Preload("Author").Order("created_at desc").Find(&blogs).Error
+	return blogs, err
+}
+
+func (r *postgresRepository) GetBlogByID(id uint) (*domain.Blog, error) {
+	var blog domain.Blog
+	err := r.db.Preload("Author").First(&blog, id).Error
+	if err != nil {
+		return nil, err
+	}
+	return &blog, nil
+}
+
+// 🔥 เพิ่มใหม่: Update Blog
+func (r *postgresRepository) UpdateBlog(blog *domain.Blog) error {
+	return r.db.Save(blog).Error
+}
+
+func (r *postgresRepository) DeleteBlog(id uint) error {
+	return r.db.Delete(&domain.Blog{}, id).Error
 }

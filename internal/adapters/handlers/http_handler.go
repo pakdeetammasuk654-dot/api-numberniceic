@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"api-numberniceic/internal/core/domain" // 🔥 เพิ่ม import domain
+	"api-numberniceic/internal/core/domain"
 	"api-numberniceic/internal/core/ports"
 	"html/template"
 	"os"
@@ -29,28 +29,35 @@ func getJwtSecret() []byte {
 	return []byte(secret)
 }
 
-func getUserIDFromContext(c *fiber.Ctx) uint {
+func getUserInfoFromContext(c *fiber.Ctx) (uint, bool) {
 	cookie := c.Cookies("jwt")
 	if cookie == "" {
-		return 0
+		return 0, false
 	}
 	token, _ := jwt.Parse(cookie, func(token *jwt.Token) (interface{}, error) {
 		return getJwtSecret(), nil
 	})
 	if token != nil && token.Valid {
 		if claims, ok := token.Claims.(jwt.MapClaims); ok {
+			userID := uint(0)
+			isAdmin := false
 			if idFloat, ok := claims["user_id"].(float64); ok {
-				return uint(idFloat)
+				userID = uint(idFloat)
 			}
+			if adminVal, ok := claims["is_admin"].(bool); ok {
+				isAdmin = adminVal
+			}
+			return userID, isAdmin
 		}
 	}
-	return 0
+	return 0, false
 }
 
 func (h *FiberHandler) RenderWithAuth(c *fiber.Ctx, template string, data fiber.Map) error {
 	cookie := c.Cookies("jwt")
 	isLoggedIn := false
 	displayName := ""
+	isAdmin := false
 
 	if cookie != "" {
 		token, _ := jwt.Parse(cookie, func(token *jwt.Token) (interface{}, error) {
@@ -62,6 +69,9 @@ func (h *FiberHandler) RenderWithAuth(c *fiber.Ctx, template string, data fiber.
 				if name, ok := claims["display_name"].(string); ok {
 					displayName = name
 				}
+				if adminVal, ok := claims["is_admin"].(bool); ok {
+					isAdmin = adminVal
+				}
 			}
 		}
 	}
@@ -71,6 +81,7 @@ func (h *FiberHandler) RenderWithAuth(c *fiber.Ctx, template string, data fiber.
 	}
 	data["IsLoggedIn"] = isLoggedIn
 	data["DisplayName"] = displayName
+	data["IsAdmin"] = isAdmin
 
 	return c.Render(template, data, "layouts/main")
 }
@@ -104,14 +115,17 @@ func (h *FiberHandler) ViewHome(c *fiber.Ctx) error {
 	return h.RenderWithAuth(c, "home", nil)
 }
 
+func (h *FiberHandler) ViewAbout(c *fiber.Ctx) error {
+	return h.RenderWithAuth(c, "about", nil)
+}
+
 func (h *FiberHandler) ViewDashboard(c *fiber.Ctx) error {
-	userID := getUserIDFromContext(c)
+	userID, _ := getUserInfoFromContext(c)
 	savedNames, _ := h.service.GetSavedNames(userID)
 
 	totalCount := len(savedNames)
 	totalScoreSum := 0
 
-	// ViewModel
 	type SavedNameView struct {
 		ID         uint
 		Name       string
@@ -120,10 +134,9 @@ func (h *FiberHandler) ViewDashboard(c *fiber.Ctx) error {
 		BirthDayTH string
 		TotalScore int
 		SatSum     int
-		// 🔥 เปลี่ยนจาก PairType ตัวเดียว เป็น Array ของ PairData
-		SatPairs []domain.PairData
-		ShaSum   int
-		ShaPairs []domain.PairData
+		SatPairs   []domain.PairData
+		ShaSum     int
+		ShaPairs   []domain.PairData
 	}
 
 	var viewModels []SavedNameView
@@ -131,7 +144,6 @@ func (h *FiberHandler) ViewDashboard(c *fiber.Ctx) error {
 	for _, n := range savedNames {
 		totalScoreSum += n.TotalScore
 
-		// 1. กาลกิณี
 		kakis, _ := h.service.GetKakisList(n.BirthDay)
 		kakisMap := make(map[string]bool)
 		for _, k := range kakis {
@@ -149,7 +161,6 @@ func (h *FiberHandler) ViewDashboard(c *fiber.Ctx) error {
 		}
 		nameHTML := template.HTML(sb.String())
 
-		// 2. 🔥 ใช้ GetEnrichedPairs เพื่อแตกผลรวมเป็นคู่เลข (เช่น 190 -> 19, 90)
 		satPairs := h.service.GetEnrichedPairs(n.SatSum)
 		shaPairs := h.service.GetEnrichedPairs(n.ShaSum)
 
@@ -161,9 +172,9 @@ func (h *FiberHandler) ViewDashboard(c *fiber.Ctx) error {
 			BirthDayTH: translateDay(n.BirthDay),
 			TotalScore: n.TotalScore,
 			SatSum:     n.SatSum,
-			SatPairs:   satPairs, // ส่ง Array ไป Loop
+			SatPairs:   satPairs,
 			ShaSum:     n.ShaSum,
-			ShaPairs:   shaPairs, // ส่ง Array ไป Loop
+			ShaPairs:   shaPairs,
 		})
 	}
 
@@ -172,14 +183,6 @@ func (h *FiberHandler) ViewDashboard(c *fiber.Ctx) error {
 		"TotalCount":    totalCount,
 		"TotalScoreSum": totalScoreSum,
 	})
-}
-
-func (h *FiberHandler) ViewArticles(c *fiber.Ctx) error {
-	return h.RenderWithAuth(c, "articles", nil)
-}
-
-func (h *FiberHandler) ViewAbout(c *fiber.Ctx) error {
-	return h.RenderWithAuth(c, "about", nil)
 }
 
 func (h *FiberHandler) ViewAnalysis(c *fiber.Ctx) error {
@@ -214,8 +217,135 @@ func (h *FiberHandler) HandleAnalysis(c *fiber.Ctx) error {
 	return h.RenderWithAuth(c, "analysis", data)
 }
 
+// --- Blog View Handlers ---
+
+func (h *FiberHandler) ViewArticles(c *fiber.Ctx) error {
+	blogs, _ := h.service.GetLatestBlogs()
+	type BlogView struct {
+		domain.Blog
+		SummaryHTML template.HTML
+	}
+	var blogViews []BlogView
+	for _, b := range blogs {
+		summary := b.Content
+		if len(summary) > 200 {
+			summary = summary[:200] + "..."
+		}
+		blogViews = append(blogViews, BlogView{
+			Blog:        b,
+			SummaryHTML: template.HTML(summary),
+		})
+	}
+	_, isAdmin := getUserInfoFromContext(c)
+	return h.RenderWithAuth(c, "articles", fiber.Map{
+		"Blogs":   blogViews,
+		"IsAdmin": isAdmin,
+	})
+}
+
+func (h *FiberHandler) ViewBlogDetail(c *fiber.Ctx) error {
+	id, _ := c.ParamsInt("id")
+	blog, err := h.service.GetBlogDetail(uint(id))
+	if err != nil {
+		return c.Redirect("/articles")
+	}
+	return h.RenderWithAuth(c, "blog_detail", fiber.Map{
+		"Blog":        blog,
+		"ContentHTML": template.HTML(blog.Content),
+	})
+}
+
+// --- Admin Handlers ---
+
+// 🔥 เพิ่มใหม่: หน้า Admin Panel รวมเมนู
+func (h *FiberHandler) ViewAdminPanel(c *fiber.Ctx) error {
+	_, isAdmin := getUserInfoFromContext(c)
+	if !isAdmin {
+		return c.Redirect("/")
+	}
+	return h.RenderWithAuth(c, "admin/panel", nil)
+}
+
+func (h *FiberHandler) ViewCreateBlog(c *fiber.Ctx) error {
+	_, isAdmin := getUserInfoFromContext(c)
+	if !isAdmin {
+		return c.Redirect("/articles")
+	}
+	return h.RenderWithAuth(c, "admin/create_blog", nil)
+}
+
+func (h *FiberHandler) ViewAdminBlogs(c *fiber.Ctx) error {
+	_, isAdmin := getUserInfoFromContext(c)
+	if !isAdmin {
+		return c.Redirect("/")
+	}
+	blogs, _ := h.service.GetLatestBlogs()
+	return h.RenderWithAuth(c, "admin/blogs", fiber.Map{"Blogs": blogs})
+}
+
+func (h *FiberHandler) ViewEditBlog(c *fiber.Ctx) error {
+	_, isAdmin := getUserInfoFromContext(c)
+	if !isAdmin {
+		return c.Redirect("/")
+	}
+	id, _ := c.ParamsInt("id")
+	blog, err := h.service.GetBlogDetail(uint(id))
+	if err != nil {
+		return c.Redirect("/admin/blogs")
+	}
+	return h.RenderWithAuth(c, "admin/edit_blog", fiber.Map{"Blog": blog})
+}
+
+// --- Blog Action Handlers ---
+
+func (h *FiberHandler) HandleCreateBlog(c *fiber.Ctx) error {
+	userID, isAdmin := getUserInfoFromContext(c)
+	if !isAdmin {
+		return c.Status(403).SendString("Unauthorized")
+	}
+	title := c.FormValue("title")
+	content := c.FormValue("content")
+	coverURL := c.FormValue("cover_url")
+
+	if err := h.service.CreateNewBlog(userID, isAdmin, title, content, coverURL); err != nil {
+		return h.RenderWithAuth(c, "admin/create_blog", fiber.Map{"Error": err.Error()})
+	}
+	return c.Redirect("/articles")
+}
+
+func (h *FiberHandler) HandleEditBlog(c *fiber.Ctx) error {
+	userID, isAdmin := getUserInfoFromContext(c)
+	if !isAdmin {
+		return c.Status(403).SendString("Unauthorized")
+	}
+	id, _ := c.ParamsInt("id")
+	title := c.FormValue("title")
+	content := c.FormValue("content")
+	coverURL := c.FormValue("cover_url")
+
+	if err := h.service.UpdateExistingBlog(uint(id), userID, isAdmin, title, content, coverURL); err != nil {
+		return h.RenderWithAuth(c, "admin/edit_blog", fiber.Map{
+			"Error": err.Error(),
+			"Blog":  fiber.Map{"ID": id, "Title": title, "Content": content, "CoverURL": coverURL},
+		})
+	}
+	return c.Redirect("/admin/blogs")
+}
+
+func (h *FiberHandler) HandleDeleteBlog(c *fiber.Ctx) error {
+	userID, isAdmin := getUserInfoFromContext(c)
+	if !isAdmin {
+		return c.Status(403).SendString("Unauthorized")
+	}
+	id, _ := c.ParamsInt("id")
+	h.service.RemoveBlog(uint(id), userID, isAdmin)
+	return c.Redirect("/admin/blogs")
+}
+
+// --- API Handlers ---
+
 func (h *FiberHandler) ApiSaveName(c *fiber.Ctx) error {
-	userID := getUserIDFromContext(c)
+	userID, isAdmin := getUserInfoFromContext(c)
 	if userID == 0 {
 		return c.Status(401).JSON(fiber.Map{"error": "Unauthorized", "redirect": "/login"})
 	}
@@ -227,14 +357,14 @@ func (h *FiberHandler) ApiSaveName(c *fiber.Ctx) error {
 	if err := c.BodyParser(&req); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "Invalid data"})
 	}
-	if err := h.service.SaveNameForUser(userID, req.Name, req.BirthDay); err != nil {
+	if err := h.service.SaveNameForUser(userID, isAdmin, req.Name, req.BirthDay); err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}
 	return c.JSON(fiber.Map{"success": true, "message": "Saved successfully"})
 }
 
 func (h *FiberHandler) ApiDeleteName(c *fiber.Ctx) error {
-	userID := getUserIDFromContext(c)
+	userID, _ := getUserInfoFromContext(c)
 	if userID == 0 {
 		return c.Status(401).JSON(fiber.Map{"error": "Unauthorized"})
 	}

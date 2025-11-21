@@ -1,0 +1,38 @@
+<div class="card" style="max-width: 800px; margin: 20px auto;">
+    <h2 class="header-line">✍️ เขียนบทความใหม่</h2>
+
+    {{if .Error}}
+        <div class="alert alert-danger" style="color: red; background: #ffebee; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+            ⚠️ {{.Error}}
+        </div>
+    {{end}}
+
+    <form action="/admin/create-blog" method="POST">
+        <div style="margin-bottom: 15px;">
+            <label style="font-weight: bold; display: block; margin-bottom: 5px;">หัวข้อบทความ</label>
+            <input type="text" name="title" class="form-control" placeholder="ตั้งชื่อเรื่องให้น่าสนใจ..." required value="{{.Title}}" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label style="font-weight: bold; display: block; margin-bottom: 5px;">รูปปก (URL)</label>
+            <input type="text" name="cover_url" class="form-control" placeholder="https://example.com/image.jpg" value="{{.CoverURL}}" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label style="font-weight: bold; display: block; margin-bottom: 5px;">เนื้อหา</label>
+            <textarea id="blogContent" name="content" style="min-height: 400px;">{{.Content}}</textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 1.1rem;">🚀 เผยแพร่บทความ</button>
+    </form>
+</div>
+
+<script src="https://cdn.tiny.cloud/1/cjxisbeytjox72893gsmxnjqybx7z0k02g8qned32t9xx85s/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+    tinymce.init({
+        selector: '#blogContent',
+        plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+        height: 400
+    });
+</script>
