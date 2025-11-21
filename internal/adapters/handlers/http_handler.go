@@ -22,7 +22,6 @@ func NewFiberHandler(service ports.NumberService) *FiberHandler {
 	}
 }
 
-// 🔥 Helper: ดึง Secret Key
 func getJwtSecret() []byte {
 	secret := os.Getenv("JWT_SECRET")
 	if secret == "" {
@@ -31,7 +30,6 @@ func getJwtSecret() []byte {
 	return []byte(secret)
 }
 
-// 🔥 Helper: แกะ User Info จาก Token
 func getUserInfoFromContext(c *fiber.Ctx) (uint, bool) {
 	cookie := c.Cookies("jwt")
 	if cookie == "" {
@@ -59,7 +57,6 @@ func getUserInfoFromContext(c *fiber.Ctx) (uint, bool) {
 	return 0, false
 }
 
-// 🔥 Helper: Render หน้าเว็บพร้อมข้อมูล Auth
 func (h *FiberHandler) RenderWithAuth(c *fiber.Ctx, template string, data fiber.Map) error {
 	cookie := c.Cookies("jwt")
 	isLoggedIn := false
@@ -116,7 +113,7 @@ func translateDay(day string) string {
 	}
 }
 
-// --- View Handlers ---
+// --- View Handlers (General) ---
 
 func (h *FiberHandler) ViewHome(c *fiber.Ctx) error {
 	return h.RenderWithAuth(c, "home", nil)
@@ -126,7 +123,7 @@ func (h *FiberHandler) ViewAbout(c *fiber.Ctx) error {
 	return h.RenderWithAuth(c, "about", nil)
 }
 
-// 🔥 หน้าวิเคราะห์ชื่อ (View)
+// 🔥 กู้คืน: ViewAnalysis
 func (h *FiberHandler) ViewAnalysis(c *fiber.Ctx) error {
 	name := c.Query("name")
 	birthDay := c.Query("birth_day")
@@ -153,7 +150,7 @@ func (h *FiberHandler) ViewAnalysis(c *fiber.Ctx) error {
 	return h.RenderWithAuth(c, "analysis", data)
 }
 
-// 🔥 หน้าวิเคราะห์ชื่อ (Handle POST)
+// 🔥 กู้คืน: HandleAnalysis
 func (h *FiberHandler) HandleAnalysis(c *fiber.Ctx) error {
 	name := c.FormValue("name")
 	birthDay := c.FormValue("birth_day")
@@ -174,7 +171,7 @@ func (h *FiberHandler) HandleAnalysis(c *fiber.Ctx) error {
 	return h.RenderWithAuth(c, "analysis", data)
 }
 
-// 🔥 Dashboard ส่วนตัว
+// 🔥 กู้คืน: ViewDashboard
 func (h *FiberHandler) ViewDashboard(c *fiber.Ctx) error {
 	userID, _ := getUserInfoFromContext(c)
 	savedNames, _ := h.service.GetSavedNames(userID)
@@ -326,6 +323,17 @@ func (h *FiberHandler) ViewEditBlog(c *fiber.Ctx) error {
 	})
 }
 
+func (h *FiberHandler) ViewAdminTypes(c *fiber.Ctx) error {
+	_, isAdmin := getUserInfoFromContext(c)
+	if !isAdmin {
+		return c.Redirect("/")
+	}
+	types, _ := h.service.GetBlogTypes()
+	return h.RenderWithAuth(c, "admin/types", fiber.Map{
+		"Types": types,
+	})
+}
+
 // --- Admin Actions ---
 
 func (h *FiberHandler) HandleCreateBlog(c *fiber.Ctx) error {
@@ -374,19 +382,6 @@ func (h *FiberHandler) HandleDeleteBlog(c *fiber.Ctx) error {
 	id, _ := c.ParamsInt("id")
 	h.service.RemoveBlog(uint(id), userID, isAdmin)
 	return c.Redirect("/admin/blogs")
-}
-
-// --- Admin Category Management (Types) ---
-
-func (h *FiberHandler) ViewAdminTypes(c *fiber.Ctx) error {
-	_, isAdmin := getUserInfoFromContext(c)
-	if !isAdmin {
-		return c.Redirect("/")
-	}
-	types, _ := h.service.GetBlogTypes()
-	return h.RenderWithAuth(c, "admin/types", fiber.Map{
-		"Types": types,
-	})
 }
 
 func (h *FiberHandler) HandleCreateBlogType(c *fiber.Ctx) error {
