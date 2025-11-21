@@ -1,0 +1,24 @@
+<div class="card" style="max-width: 500px; margin: 2rem auto;">
+    <h2 class="header-line text-center">📝 สมัครสมาชิก</h2>
+
+    {{if .Error}}
+        <div class="text-danger text-center mb-3" style="color: red; background: #ffebee; padding: 10px; border-radius: 5px;">{{.Error}}</div>
+    {{end}}
+
+    <form action="/register" method="POST">
+        <label>Username (สำหรับระบบ)</label>
+        <input type="text" name="username" class="form-control" placeholder="เช่น user001" required>
+
+        <label>ชื่อที่ใช้แสดง (Display Name)</label>
+        <input type="text" name="display_name" class="form-control" placeholder="เช่น พี่สมชาย สายมู" required>
+
+        <label>อีเมล</label>
+        <input type="email" name="email" class="form-control" placeholder="example@mail.com" required>
+
+        <label>รหัสผ่าน</label>
+        <input type="password" name="password" class="form-control" required>
+
+        <button type="submit" class="btn btn-success mt-3" style="margin-top: 20px;">ยืนยันการสมัคร</button>
+    </form>
+    <p class="text-center mt-3">มีบัญชีแล้ว? <a href="/login">เข้าสู่ระบบ</a></p>
+</div>

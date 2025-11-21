@@ -1,0 +1,18 @@
+<div class="card" style="max-width: 500px; margin: 2rem auto;">
+    <h2 class="header-line text-center">🔐 เข้าสู่ระบบ</h2>
+
+    {{if .Error}}
+        <div class="text-danger text-center mb-3">{{.Error}}</div>
+    {{end}}
+
+    <form action="/login" method="POST">
+        <label>อีเมล</label>
+        <input type="email" name="email" class="form-control" required>
+
+        <label>รหัสผ่าน</label>
+        <input type="password" name="password" class="form-control" required>
+
+        <button type="submit" class="btn btn-primary mt-3">เข้าสู่ระบบ</button>
+    </form>
+    <p class="text-center mt-3">ยังไม่มีบัญชี? <a href="/register">สมัครสมาชิก</a></p>
+</div>
