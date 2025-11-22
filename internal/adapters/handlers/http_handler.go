@@ -145,6 +145,13 @@ func (h *FiberHandler) ViewAbout(c *fiber.Ctx) error {
 	return h.RenderWithAuth(c, "about", nil)
 }
 
+func (h *FiberHandler) ViewSitemap(c *fiber.Ctx) error {
+	blogs, _ := h.service.GetLatestBlogs(0) // Get all blogs
+	return h.RenderWithAuth(c, "sitemap", fiber.Map{
+		"Blogs": blogs,
+	})
+}
+
 // 🔥 กู้คืน: ViewAnalysis
 func (h *FiberHandler) ViewAnalysis(c *fiber.Ctx) error {
 	name := c.Query("name")

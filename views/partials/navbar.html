@@ -1,48 +1,41 @@
 <nav class="navbar">
     <div class="navbar-container">
-        <a href="/" class="brand">🔮 NumberNice</a>
-        <ul class="nav-menu">
+        <a href="/" class="brand">ชื่อดี.com</a>
+
+        <ul class="nav-menu-main">
             <li><a href="/" class="nav-link">หน้าแรก</a></li>
-            <li><a href="/analysis" class="nav-link">วิเคราะห์ชื่อ</a></li>
+            <li><a href="/analysis" class="nav-link">ชื่อ</a></li>
             <li><a href="/articles" class="nav-link">บทความ</a></li>
-
-            {{if .IsLoggedIn}}
-
-                {{if .IsAdmin}}
-                    <li>
-                        <a href="/admin" class="nav-link" style="color: #ffca28; font-weight: bold;">
-                            🛠️ แผงควบคุม
-                        </a>
-                    </li>
-                {{end}}
-
-                <li><a href="/dashboard" class="nav-link" style="font-weight: bold;">แดชบอร์ด</a></li>
-                <li>
-                    <div style="display: flex; align-items: center; gap: 10px; margin-left: 10px;">
-                        <span style="color: #fff; font-size: 0.9rem;">👤 {{if .DisplayName}}{{.DisplayName}}{{else}}สมาชิก{{end}}</span>
-                        <a href="/logout" class="btn-logout">ออกจากระบบ</a>
-                    </div>
-                </li>
-            {{else}}
-                <li><a href="/login" class="nav-link login-link">เข้าสู่ระบบ</a></li>
-                <li><a href="/register" class="nav-link register-link">สมัครสมาชิก</a></li>
-            {{end}}
         </ul>
+
+        <!-- Hamburger Menu Button -->
+        <button class="hamburger" id="hamburger-button" aria-label="เมนู">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </button>
+
+        <div class="nav-menu-wrapper" id="nav-menu-wrapper">
+            <ul class="nav-menu-side">
+                <li><a href="/about" class="nav-link">เกี่ยวกับเรา</a></li>
+                <li><a href="/sitemap" class="nav-link">แผนที่เว็บไซต์</a></li>
+                <li class="nav-divider"></li>
+                {{if .IsLoggedIn}}
+                    <li><a href="/dashboard" class="nav-link dashboard-link">แดชบอร์ด</a></li>
+                    {{if .IsAdmin}}
+                        <li><a href="/admin" class="nav-link admin-link">🛠️ แผงควบคุม</a></li>
+                    {{end}}
+                    <li>
+                        <div class="user-info">
+                            <span class="user-display-name">👤 {{if .DisplayName}}{{.DisplayName}}{{else}}สมาชิก{{end}}</span>
+                        </div>
+                    </li>
+                     <li><a href="/logout" class="nav-link">ออกจากระบบ</a></li>
+                {{else}}
+                    <li><a href="/login" class="nav-link login-link">เข้าสู่ระบบ</a></li>
+                    <li><a href="/register" class="nav-link register-link">สมัครสมาชิก</a></li>
+                {{end}}
+            </ul>
+        </div>
     </div>
 </nav>
-
-<style>
-    .btn-logout {
-        padding: 5px 12px;
-        background-color: #ef5350;
-        color: white;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        transition: background 0.3s;
-        text-decoration: none;
-    }
-    .btn-logout:hover { background-color: #c62828; }
-
-    .login-link { color: #90caf9 !important; }
-    .register-link { color: #a5d6a7 !important; }
-</style>

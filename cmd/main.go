@@ -70,6 +70,7 @@ func main() {
 	// --- General Pages ---
 	app.Get("/", handler.ViewHome)
 	app.Get("/about", handler.ViewAbout)
+	app.Get("/sitemap", handler.ViewSitemap)
 
 	// --- Analysis Features ---
 	app.Get("/analysis", handler.ViewAnalysis)
