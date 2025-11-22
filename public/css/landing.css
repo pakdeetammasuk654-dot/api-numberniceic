@@ -23,6 +23,8 @@
     display: block;
     overflow: hidden;
     text-decoration: none;
+    height: 100%; /* Ensure it fills the grid cell height */
+    width: 100%; /* Ensure it fills the grid cell width */
 }
 .article-image {
     position: absolute;
@@ -110,7 +112,7 @@
     inset: 0;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
+    justify-content: center; /* Center vertically */
     align-items: center;
     text-align: center;
     padding: 1rem;
@@ -128,15 +130,22 @@
 .secondary-links-list {
     background-color: #333; /* Same as header */
     color: white;
-    padding: 1.5rem;
+    padding: 1rem; /* Reduced padding */
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    height: 100%; /* Ensure it fills the grid cell height */
+    box-sizing: border-box; /* Include padding in height calculation */
 }
 .secondary-links-list ul {
     list-style: none;
     padding: 0;
     margin: 0;
+    flex-grow: 1; /* Allow ul to take available space */
+    overflow-y: auto; /* Add scroll for overflowing content here */
+    height: 100%; /* Ensure ul takes 100% height of its flex parent */
+    display: flex; /* Make ul a flex container */
+    flex-direction: column; /* Stack li vertically */
+    justify-content: space-around; /* Distribute li evenly */
 }
 .secondary-links-list li {
     border-bottom: 1px solid #555; /* Darker border */
@@ -173,6 +182,7 @@
 .all-articles-link {
     font-weight: bold;
     color: #ffd700 !important; /* Golden text to stand out */
+    margin-top: 0.5rem; /* Add margin to separate from list */
 }
 .all-articles-link:hover {
     color: #fff !important;
@@ -182,4 +192,62 @@
 }
 .all-articles-link:hover .arrow {
     color: #fff;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 767px) {
+    .featured-articles-grid-fullscreen {
+        grid-template-columns: 1fr; /* Single column layout */
+        grid-template-rows: auto; /* Rows adjust to content */
+    }
+
+    .main-article-card {
+        grid-column: 1 / -1; /* Full width */
+        grid-row: auto; /* Auto height */
+        aspect-ratio: 1 / 1; /* Square for mobile */
+    }
+    .main-article-text-box {
+        bottom: 0.5rem;
+        left: 0.5rem;
+        right: 0.5rem;
+        padding: 1rem;
+    }
+    .main-article-type-badge {
+        top: -0.5rem;
+        left: 1rem;
+        font-size: 0.65rem;
+        padding: 0.2rem 0.6rem;
+    }
+    .main-article-title {
+        font-size: 1.2rem;
+        margin: 0 0 0.15rem 0;
+    }
+    .main-article-description {
+        font-size: 0.8rem;
+        -webkit-line-clamp: 1; /* Reduce description to 1 line */
+    }
+
+    .secondary-grid-container {
+        grid-column: 1 / -1; /* Full width */
+        grid-row: auto; /* Auto height */
+        grid-template-columns: 1fr 1fr; /* 2 columns for secondary items */
+        grid-template-rows: auto;
+    }
+    .secondary-article-card, .secondary-links-list {
+        aspect-ratio: 1 / 1; /* Square for mobile */
+    }
+    .secondary-article-overlay {
+        padding: 0.75rem;
+        justify-content: center; /* Center vertically */
+    }
+    .secondary-article-title {
+        font-size: 1rem;
+    }
+    .secondary-links-list {
+        padding: 1rem;
+    }
+    .secondary-links-list a {
+        font-size: 0.9rem;
+        padding: 0.6rem 0;
+    }
 }

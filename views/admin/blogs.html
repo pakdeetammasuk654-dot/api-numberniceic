@@ -1,35 +1,54 @@
+<link rel="stylesheet" href="/static/css/admin.css">
+
 <div class="card">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2 class="header-line" style="margin: 0;">🛠️ จัดการบทความ</h2>
+    <div class="admin-header">
+        <h2 class="header-line">📝 จัดการบทความ</h2>
         <a href="/admin/create-blog" class="btn btn-success">+ เขียนบทความใหม่</a>
     </div>
 
     <div class="table-responsive">
-        <table class="table table-striped" style="width: 100%; border-collapse: collapse;">
+        <table class="table admin-blog-table">
             <thead>
-            <tr style="background: #f8f9fa;">
-                <th style="padding: 12px;">ID</th>
-                <th style="padding: 12px;">หัวข้อ</th>
-                <th style="padding: 12px;">ประเภท</th> <th style="padding: 12px;">ผู้เขียน</th>
-                <th style="padding: 12px;">วันที่</th>
-                <th style="padding: 12px; text-align: center;">จัดการ</th>
-            </tr>
+                <tr>
+                    <th>บทความ</th>
+                    <th>สถานะ</th>
+                    <th>วันที่สร้าง</th>
+                    <th>จัดการ</th>
+                </tr>
             </thead>
             <tbody>
             {{range .Blogs}}
                 <tr>
-                    <td style="padding: 12px;">{{.ID}}</td>
-                    <td style="padding: 12px; font-weight: bold;">
-                        <a href="/articles/{{.ID}}" target="_blank" style="color: #333; text-decoration: none;">{{.Title}}</a>
-                        {{if .ShortTitle}}<br><small style="color: #777;">{{.ShortTitle}}</small>{{end}}
+                    <td>
+                        <div class="article-info">
+                            <div class="article-cover">
+                                <img src="{{.CoverURL}}" alt="{{.Title}}">
+                            </div>
+                            <div class="article-details">
+                                <a href="/articles/{{.Slug}}" target="_blank" class="article-title-link">{{.Title}}</a>
+                                <p class="article-description-admin">{{.Description}}</p>
+                                <span class="article-type-badge">{{.BlogType.Name}}</span>
+                            </div>
+                        </div>
                     </td>
-                    <td style="padding: 12px;"><span class="badge" style="background: #eee; color: #555; font-weight: normal;">{{.BlogType.Name}}</span></td>
-                    <td style="padding: 12px;">{{.Author.DisplayName}}</td>
-                    <td style="padding: 12px; color: #666;">{{.CreatedAt.Format "02/01/2006"}}</td>
-                    <td style="padding: 12px; text-align: center;">
-                        <a href="/admin/edit-blog/{{.ID}}" class="btn btn-primary" style="padding: 5px 10px; font-size: 0.85rem;">✏️ แก้ไข</a>
-                        <a href="/admin/delete-blog/{{.ID}}" class="btn btn-danger" style="padding: 5px 10px; font-size: 0.85rem; background-color: #d32f2f; color: white;" onclick="return confirm('ยืนยันการลบ?')">🗑️ ลบ</a>
+                    <td>
+                        {{if .Published}}
+                            <span class="status-badge status-published">เผยแพร่แล้ว</span>
+                        {{else}}
+                            <span class="status-badge status-draft">ฉบับร่าง</span>
+                        {{end}}
                     </td>
+                    <td>{{.CreatedAt.Format "02 Jan 2006"}}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <a href="/admin/edit-blog/{{.ID}}" class="btn btn-warning btn-sm">แก้ไข</a>
+                            <a href="/admin/delete-blog/{{.ID}}" class="btn btn-danger btn-sm" onclick="return confirm('ยืนยันการลบ?')">ลบ</a>
+                        </div>
+                    </td>
+                </tr>
+            {{else}}
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 2rem;">ยังไม่มีบทความในระบบ</td>
                 </tr>
             {{end}}
             </tbody>
