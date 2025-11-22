@@ -34,6 +34,7 @@
                         <td>{{.Name}}</td>
                         <td>{{.CreatedAt.Format "02 Jan 2006"}}</td>
                         <td>
+                            <a href="/admin/edit-type/{{.ID}}" class="btn btn-warning btn-sm">แก้ไข</a>
                             <a href="/admin/delete-type/{{.ID}}" class="btn btn-danger btn-sm" onclick="return confirm('คุณแน่ใจหรือไม่ที่จะลบประเภทนี้?')">ลบ</a>
                         </td>
                     </tr>
@@ -75,5 +76,9 @@
     .btn-danger {
         background-color: #dc3545;
         color: white;
+    }
+    .btn-warning {
+        background-color: #ffc107;
+        color: #212529;
     }
 </style>

@@ -105,6 +105,8 @@ func main() {
 	// Blog Type Management
 	admin.Get("/types", handler.ViewAdminTypes)
 	admin.Post("/types", handler.HandleCreateBlogType)
+	admin.Get("/edit-type/:id", handler.ViewEditBlogType)
+	admin.Post("/edit-type/:id", handler.HandleEditBlogType)
 	admin.Get("/delete-type/:id", handler.HandleDeleteBlogType)
 
 

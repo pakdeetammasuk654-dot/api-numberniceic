@@ -17,15 +17,17 @@ type NumberRepository interface {
 	CreateBlog(blog *domain.Blog) error
 	GetAllBlogs() ([]domain.Blog, error)
 	GetBlogByID(id uint) (*domain.Blog, error)
-	GetBlogBySlug(slug string) (*domain.Blog, error) // เพิ่มใหม่
+	GetBlogBySlug(slug string) (*domain.Blog, error)
 	UpdateBlog(blog *domain.Blog) error
 	DeleteBlog(id uint) error
 
 	// --- Blog Type Repository ---
 	GetAllBlogTypes() ([]domain.BlogType, error)
+	GetBlogTypeByID(id uint) (*domain.BlogType, error)
 	SeedBlogTypes() error
-	CreateBlogType(blogType *domain.BlogType) error // 🔥 เพิ่มใหม่
-	DeleteBlogType(id uint) error                   // 🔥 เพิ่มใหม่
+	CreateBlogType(blogType *domain.BlogType) error
+	UpdateBlogType(blogType *domain.BlogType) error
+	DeleteBlogType(id uint) error
 }
 
 // NumberService (Input Port)
@@ -42,12 +44,14 @@ type NumberService interface {
 	// --- Blog Service ---
 	CreateNewBlog(userID uint, isAdmin bool, title, shortTitle string, typeID uint, content, coverURL string) error
 	GetLatestBlogs() ([]domain.Blog, error)
-	GetBlogDetail(identifier string) (*domain.Blog, error) // เปลี่ยนเป็น string
+	GetBlogDetail(identifier string) (*domain.Blog, error)
 	UpdateExistingBlog(id uint, userID uint, isAdmin bool, title, shortTitle string, typeID uint, content, coverURL string) error
 	RemoveBlog(id uint, userID uint, isAdmin bool) error
 
 	// --- Blog Type Service ---
 	GetBlogTypes() ([]domain.BlogType, error)
-	CreateNewBlogType(name string) error // 🔥 เพิ่มใหม่
-	RemoveBlogType(id uint) error        // 🔥 เพิ่มใหม่
+	GetBlogTypeByID(id uint) (*domain.BlogType, error)
+	CreateNewBlogType(name string) error
+	UpdateBlogType(id uint, name string) error
+	RemoveBlogType(id uint) error
 }

@@ -171,6 +171,15 @@ func (r *postgresRepository) GetAllBlogTypes() ([]domain.BlogType, error) {
 	return types, err
 }
 
+func (r *postgresRepository) GetBlogTypeByID(id uint) (*domain.BlogType, error) {
+	var blogType domain.BlogType
+	err := r.db.First(&blogType, id).Error
+	if err != nil {
+		return nil, err
+	}
+	return &blogType, nil
+}
+
 func (r *postgresRepository) SeedBlogTypes() error {
 	var count int64
 	r.db.Model(&domain.BlogType{}).Count(&count)
@@ -188,6 +197,10 @@ func (r *postgresRepository) SeedBlogTypes() error {
 
 func (r *postgresRepository) CreateBlogType(blogType *domain.BlogType) error {
 	return r.db.Create(blogType).Error
+}
+
+func (r *postgresRepository) UpdateBlogType(blogType *domain.BlogType) error {
+	return r.db.Save(blogType).Error
 }
 
 func (r *postgresRepository) DeleteBlogType(id uint) error {

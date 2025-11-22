@@ -337,6 +337,21 @@ func (h *FiberHandler) ViewAdminTypes(c *fiber.Ctx) error {
 	})
 }
 
+func (h *FiberHandler) ViewEditBlogType(c *fiber.Ctx) error {
+	_, isAdmin := getUserInfoFromContext(c)
+	if !isAdmin {
+		return c.Redirect("/")
+	}
+	id, _ := c.ParamsInt("id")
+	blogType, err := h.service.GetBlogTypeByID(uint(id))
+	if err != nil {
+		return c.Redirect("/admin/types")
+	}
+	return h.RenderWithAuth(c, "admin/edit_type", fiber.Map{
+		"Type": blogType,
+	})
+}
+
 // --- Admin Actions ---
 
 func (h *FiberHandler) HandleCreateBlog(c *fiber.Ctx) error {
@@ -394,6 +409,19 @@ func (h *FiberHandler) HandleCreateBlogType(c *fiber.Ctx) error {
 	}
 	name := c.FormValue("name")
 	if err := h.service.CreateNewBlogType(name); err != nil {
+		return c.Redirect("/admin/types")
+	}
+	return c.Redirect("/admin/types")
+}
+
+func (h *FiberHandler) HandleEditBlogType(c *fiber.Ctx) error {
+	_, isAdmin := getUserInfoFromContext(c)
+	if !isAdmin {
+		return c.Status(403).SendString("Unauthorized")
+	}
+	id, _ := c.ParamsInt("id")
+	name := c.FormValue("name")
+	if err := h.service.UpdateBlogType(uint(id), name); err != nil {
 		return c.Redirect("/admin/types")
 	}
 	return c.Redirect("/admin/types")

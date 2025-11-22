@@ -1,0 +1,13 @@
+<h1>แก้ไขประเภทบทความ</h1>
+<p>เปลี่ยนชื่อประเภทบทความ</p>
+
+<div class="card">
+    <form action="/admin/edit-type/{{.Type.ID}}" method="POST">
+        <div class="form-group">
+            <label for="name">ชื่อประเภท</label>
+            <input type="text" id="name" name="name" class="form-control" value="{{.Type.Name}}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">บันทึกการเปลี่ยนแปลง</button>
+        <a href="/admin/types" class="btn btn-secondary">ยกเลิก</a>
+    </form>
+</div>

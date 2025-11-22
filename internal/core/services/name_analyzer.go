@@ -295,11 +295,27 @@ func (s *analyzerService) GetBlogTypes() ([]domain.BlogType, error) {
 	return s.repo.GetAllBlogTypes()
 }
 
+func (s *analyzerService) GetBlogTypeByID(id uint) (*domain.BlogType, error) {
+	return s.repo.GetBlogTypeByID(id)
+}
+
 func (s *analyzerService) CreateNewBlogType(name string) error {
 	if name == "" {
 		return fmt.Errorf("Category name cannot be empty")
 	}
 	return s.repo.CreateBlogType(&domain.BlogType{Name: name})
+}
+
+func (s *analyzerService) UpdateBlogType(id uint, name string) error {
+	if name == "" {
+		return fmt.Errorf("Category name cannot be empty")
+	}
+	blogType, err := s.repo.GetBlogTypeByID(id)
+	if err != nil {
+		return err
+	}
+	blogType.Name = name
+	return s.repo.UpdateBlogType(blogType)
 }
 
 func (s *analyzerService) RemoveBlogType(id uint) error {
