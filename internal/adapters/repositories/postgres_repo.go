@@ -124,10 +124,13 @@ func (r *postgresRepository) CreateBlog(blog *domain.Blog) error {
 	return r.db.Create(blog).Error
 }
 
-func (r *postgresRepository) GetAllBlogs() ([]domain.Blog, error) {
+func (r *postgresRepository) GetAllBlogs(limit int) ([]domain.Blog, error) {
 	var blogs []domain.Blog
-	// Preload Author และ BlogType
-	err := r.db.Preload("Author").Preload("BlogType").Order("created_at desc").Find(&blogs).Error
+	query := r.db.Preload("Author").Preload("BlogType").Order("created_at desc")
+	if limit > 0 {
+		query = query.Limit(limit)
+	}
+	err := query.Find(&blogs).Error
 	return blogs, err
 }
 
@@ -167,7 +170,7 @@ func (r *postgresRepository) DeleteBlog(id uint) error {
 
 func (r *postgresRepository) GetAllBlogTypes() ([]domain.BlogType, error) {
 	var types []domain.BlogType
-	err := r.db.Find(&types).Error
+	err := r.db.Order("id asc").Find(&types).Error
 	return types, err
 }
 
@@ -175,10 +178,26 @@ func (r *postgresRepository) GetBlogTypeByID(id uint) (*domain.BlogType, error) 
 	var blogType domain.BlogType
 	err := r.db.First(&blogType, id).Error
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, fmt.Errorf("ไม่พบประเภท ID: %d", id)
+		}
 		return nil, err
 	}
 	return &blogType, nil
 }
+
+func (r *postgresRepository) GetBlogTypeByName(name string) (*domain.BlogType, error) {
+	var blogType domain.BlogType
+	err := r.db.Where("name = ?", name).First(&blogType).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil // คืนค่า nil เมื่อไม่พบ ถือเป็นเรื่องปกติ
+		}
+		return nil, err // คืนค่า error กรณีเกิดปัญหาอื่นๆ
+	}
+	return &blogType, nil
+}
+
 
 func (r *postgresRepository) SeedBlogTypes() error {
 	var count int64

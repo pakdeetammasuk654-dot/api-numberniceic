@@ -20,11 +20,12 @@ func (BlogType) TableName() string {
 // Blog: ตารางบทความ (posts)
 type Blog struct {
 	gorm.Model
-	Title      string `gorm:"column:title;not null" json:"title"`
-	ShortTitle string `gorm:"column:short_title" json:"short_title"` // 🔥 เพิ่มใหม่
-	Slug       string `gorm:"column:slug;unique;not null" json:"slug"`
-	Content    string `gorm:"column:content;type:text;not null" json:"content"`
-	CoverURL   string `gorm:"column:cover_url" json:"cover_url"`
+	Title       string `gorm:"column:title;not null" json:"title"`
+	ShortTitle  string `gorm:"column:short_title" json:"short_title"`
+	Slug        string `gorm:"column:slug;unique;not null" json:"slug"`
+	Description string `gorm:"column:description;type:text" json:"description"`
+	Content     string `gorm:"column:content;type:text;not null" json:"content"`
+	CoverURL    string `gorm:"column:cover_url" json:"cover_url"`
 
 	AuthorID uint `gorm:"column:author_id" json:"author_id"`
 	Author   User `gorm:"foreignKey:AuthorID" json:"author"`

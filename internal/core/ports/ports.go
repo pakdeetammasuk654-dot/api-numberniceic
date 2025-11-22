@@ -15,7 +15,7 @@ type NumberRepository interface {
 
 	// --- Blog Repository ---
 	CreateBlog(blog *domain.Blog) error
-	GetAllBlogs() ([]domain.Blog, error)
+	GetAllBlogs(limit int) ([]domain.Blog, error)
 	GetBlogByID(id uint) (*domain.Blog, error)
 	GetBlogBySlug(slug string) (*domain.Blog, error)
 	UpdateBlog(blog *domain.Blog) error
@@ -24,6 +24,7 @@ type NumberRepository interface {
 	// --- Blog Type Repository ---
 	GetAllBlogTypes() ([]domain.BlogType, error)
 	GetBlogTypeByID(id uint) (*domain.BlogType, error)
+	GetBlogTypeByName(name string) (*domain.BlogType, error)
 	SeedBlogTypes() error
 	CreateBlogType(blogType *domain.BlogType) error
 	UpdateBlogType(blogType *domain.BlogType) error
@@ -42,10 +43,10 @@ type NumberService interface {
 	GetEnrichedPairs(sum int) []domain.PairData
 
 	// --- Blog Service ---
-	CreateNewBlog(userID uint, isAdmin bool, title, shortTitle string, typeID uint, content, coverURL string) error
-	GetLatestBlogs() ([]domain.Blog, error)
+	CreateNewBlog(userID uint, isAdmin bool, title, shortTitle, description string, typeID uint, content, coverURL string) error
+	GetLatestBlogs(limit int) ([]domain.Blog, error)
 	GetBlogDetail(identifier string) (*domain.Blog, error)
-	UpdateExistingBlog(id uint, userID uint, isAdmin bool, title, shortTitle string, typeID uint, content, coverURL string) error
+	UpdateExistingBlog(id uint, userID uint, isAdmin bool, title, shortTitle, description string, typeID uint, content, coverURL string) error
 	RemoveBlog(id uint, userID uint, isAdmin bool) error
 
 	// --- Blog Type Service ---

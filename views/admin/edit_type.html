@@ -3,6 +3,9 @@
 
 <div class="card">
     <form action="/admin/edit-type/{{.Type.ID}}" method="POST">
+        {{if .Error}}
+            <div class="alert alert-danger">{{.Error}}</div>
+        {{end}}
         <div class="form-group">
             <label for="name">ชื่อประเภท</label>
             <input type="text" id="name" name="name" class="form-control" value="{{.Type.Name}}" required>
@@ -11,3 +14,17 @@
         <a href="/admin/types" class="btn btn-secondary">ยกเลิก</a>
     </form>
 </div>
+
+<style>
+    .alert {
+        padding: 15px;
+        margin-bottom: 20px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+    }
+    .alert-danger {
+        color: #721c24;
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+    }
+</style>

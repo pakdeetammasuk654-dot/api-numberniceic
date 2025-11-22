@@ -116,9 +116,21 @@ func translateDay(day string) string {
 // --- View Handlers (General) ---
 
 func (h *FiberHandler) ViewHome(c *fiber.Ctx) error {
-	blogs, _ := h.service.GetLatestBlogs()
+	blogs, _ := h.service.GetLatestBlogs(5)
+
+	var mainArticle *domain.Blog
+	var secondaryArticles []domain.Blog
+
+	if len(blogs) > 0 {
+		mainArticle = &blogs[0]
+	}
+	if len(blogs) > 1 {
+		secondaryArticles = blogs[1:]
+	}
+
 	return h.RenderWithAuth(c, "landing_page", fiber.Map{
-		"Blogs": blogs,
+		"MainArticle":       mainArticle,
+		"SecondaryArticles": secondaryArticles,
 	})
 }
 
@@ -244,7 +256,7 @@ func (h *FiberHandler) ViewDashboard(c *fiber.Ctx) error {
 // --- Blog Handlers ---
 
 func (h *FiberHandler) ViewArticles(c *fiber.Ctx) error {
-	blogs, _ := h.service.GetLatestBlogs()
+	blogs, _ := h.service.GetLatestBlogs(0) // 0 for all
 	type BlogView struct {
 		domain.Blog
 		SummaryHTML template.HTML
@@ -305,7 +317,7 @@ func (h *FiberHandler) ViewAdminBlogs(c *fiber.Ctx) error {
 	if !isAdmin {
 		return c.Redirect("/")
 	}
-	blogs, _ := h.service.GetLatestBlogs()
+	blogs, _ := h.service.GetLatestBlogs(0) // 0 for all
 	return h.RenderWithAuth(c, "admin/blogs", fiber.Map{"Blogs": blogs})
 }
 
@@ -362,11 +374,12 @@ func (h *FiberHandler) HandleCreateBlog(c *fiber.Ctx) error {
 
 	title := c.FormValue("title")
 	shortTitle := c.FormValue("short_title")
+	description := c.FormValue("description")
 	content := c.FormValue("content")
 	coverURL := c.FormValue("cover_url")
 	typeID, _ := strconv.Atoi(c.FormValue("blog_type_id"))
 
-	if err := h.service.CreateNewBlog(userID, isAdmin, title, shortTitle, uint(typeID), content, coverURL); err != nil {
+	if err := h.service.CreateNewBlog(userID, isAdmin, title, shortTitle, description, uint(typeID), content, coverURL); err != nil {
 		types, _ := h.service.GetBlogTypes()
 		return h.RenderWithAuth(c, "admin/create_blog", fiber.Map{"Error": err.Error(), "Types": types})
 	}
@@ -382,12 +395,21 @@ func (h *FiberHandler) HandleEditBlog(c *fiber.Ctx) error {
 	id, _ := c.ParamsInt("id")
 	title := c.FormValue("title")
 	shortTitle := c.FormValue("short_title")
+	description := c.FormValue("description")
 	content := c.FormValue("content")
 	coverURL := c.FormValue("cover_url")
-	typeID, _ := strconv.Atoi(c.FormValue("blog_type_id"))
+	typeIDVal, _ := strconv.Atoi(c.FormValue("blog_type_id"))
+	typeID := uint(typeIDVal)
 
-	if err := h.service.UpdateExistingBlog(uint(id), userID, isAdmin, title, shortTitle, uint(typeID), content, coverURL); err != nil {
-		return h.RenderWithAuth(c, "admin/edit_blog", fiber.Map{"Error": err.Error()})
+	if err := h.service.UpdateExistingBlog(uint(id), userID, isAdmin, title, shortTitle, description, typeID, content, coverURL); err != nil {
+		// หากเกิดข้อผิดพลาด ให้กลับไปที่หน้าแก้ไขพร้อมกับข้อความ Error
+		blog, _ := h.service.GetBlogDetail(strconv.Itoa(id))
+		types, _ := h.service.GetBlogTypes()
+		return h.RenderWithAuth(c, "admin/edit_blog", fiber.Map{
+			"Blog":  blog,
+			"Types": types,
+			"Error": err.Error(),
+		})
 	}
 	return c.Redirect("/admin/blogs")
 }
@@ -409,6 +431,7 @@ func (h *FiberHandler) HandleCreateBlogType(c *fiber.Ctx) error {
 	}
 	name := c.FormValue("name")
 	if err := h.service.CreateNewBlogType(name); err != nil {
+		// Consider showing an error message on the page
 		return c.Redirect("/admin/types")
 	}
 	return c.Redirect("/admin/types")
@@ -421,11 +444,20 @@ func (h *FiberHandler) HandleEditBlogType(c *fiber.Ctx) error {
 	}
 	id, _ := c.ParamsInt("id")
 	name := c.FormValue("name")
+
 	if err := h.service.UpdateBlogType(uint(id), name); err != nil {
-		return c.Redirect("/admin/types")
+		// หากเกิดข้อผิดพลาด ให้กลับไปที่หน้าแก้ไขพร้อมกับข้อความ Error
+		blogType, _ := h.service.GetBlogTypeByID(uint(id))
+		return h.RenderWithAuth(c, "admin/edit_type", fiber.Map{
+			"Type":  blogType,
+			"Error": err.Error(),
+		})
 	}
+
+	// หากสำเร็จ ให้กลับไปที่หน้ารายการ
 	return c.Redirect("/admin/types")
 }
+
 
 func (h *FiberHandler) HandleDeleteBlogType(c *fiber.Ctx) error {
 	_, isAdmin := getUserInfoFromContext(c)

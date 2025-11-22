@@ -219,7 +219,7 @@ func (s *analyzerService) generateUniqueSlug(title string) (string, error) {
 	return uniqueSlug, nil
 }
 
-func (s *analyzerService) CreateNewBlog(userID uint, isAdmin bool, title, shortTitle string, typeID uint, content, coverURL string) error {
+func (s *analyzerService) CreateNewBlog(userID uint, isAdmin bool, title, shortTitle, description string, typeID uint, content, coverURL string) error {
 	if !isAdmin {
 		return fmt.Errorf("Unauthorized: Only admin can create blogs")
 	}
@@ -230,19 +230,20 @@ func (s *analyzerService) CreateNewBlog(userID uint, isAdmin bool, title, shortT
 	}
 
 	newBlog := &domain.Blog{
-		Title:      title,
-		ShortTitle: shortTitle,
-		Slug:       generatedSlug,
-		BlogTypeID: typeID,
-		Content:    content,
-		CoverURL:   coverURL,
-		AuthorID:   userID,
+		Title:       title,
+		ShortTitle:  shortTitle,
+		Slug:        generatedSlug,
+		Description: description,
+		BlogTypeID:  typeID,
+		Content:     content,
+		CoverURL:    coverURL,
+		AuthorID:    userID,
 	}
 	return s.repo.CreateBlog(newBlog)
 }
 
-func (s *analyzerService) GetLatestBlogs() ([]domain.Blog, error) {
-	return s.repo.GetAllBlogs()
+func (s *analyzerService) GetLatestBlogs(limit int) ([]domain.Blog, error) {
+	return s.repo.GetAllBlogs(limit)
 }
 
 func (s *analyzerService) GetBlogDetail(identifier string) (*domain.Blog, error) {
@@ -257,13 +258,16 @@ func (s *analyzerService) GetBlogDetail(identifier string) (*domain.Blog, error)
 	return s.repo.GetBlogBySlug(identifier)
 }
 
-func (s *analyzerService) UpdateExistingBlog(id uint, userID uint, isAdmin bool, title, shortTitle string, typeID uint, content, coverURL string) error {
+func (s *analyzerService) UpdateExistingBlog(id uint, userID uint, isAdmin bool, title, shortTitle, description string, typeID uint, content, coverURL string) error {
 	if !isAdmin {
 		return fmt.Errorf("Unauthorized")
 	}
 	blog, err := s.repo.GetBlogByID(id)
 	if err != nil {
 		return err
+	}
+	if blog == nil {
+		return fmt.Errorf("ไม่พบบทความ ID: %d", id)
 	}
 
 	// ถ้ามีการเปลี่ยน Title ให้สร้าง Slug ใหม่
@@ -275,9 +279,20 @@ func (s *analyzerService) UpdateExistingBlog(id uint, userID uint, isAdmin bool,
 		blog.Slug = newSlug
 	}
 
+	// ตรวจสอบและกำหนดค่า BlogType
+	if typeID != 0 && blog.BlogTypeID != typeID {
+		blogType, err := s.repo.GetBlogTypeByID(typeID)
+		if err != nil {
+			return fmt.Errorf("ไม่พบประเภทบทความ ID: %d", typeID)
+		}
+		blog.BlogType = *blogType
+		blog.BlogTypeID = typeID
+	}
+
+
 	blog.Title = title
 	blog.ShortTitle = shortTitle
-	blog.BlogTypeID = typeID
+	blog.Description = description
 	blog.Content = content
 	blog.CoverURL = coverURL
 
@@ -301,19 +316,37 @@ func (s *analyzerService) GetBlogTypeByID(id uint) (*domain.BlogType, error) {
 
 func (s *analyzerService) CreateNewBlogType(name string) error {
 	if name == "" {
-		return fmt.Errorf("Category name cannot be empty")
+		return fmt.Errorf("ชื่อประเภทห้ามว่าง")
+	}
+	existing, err := s.repo.GetBlogTypeByName(name)
+	if err != nil {
+		return fmt.Errorf("เกิดข้อผิดพลาดในการตรวจสอบฐานข้อมูล: %w", err)
+	}
+	if existing != nil {
+		return fmt.Errorf("มีประเภท '%s' อยู่ในระบบแล้ว", name)
 	}
 	return s.repo.CreateBlogType(&domain.BlogType{Name: name})
 }
 
 func (s *analyzerService) UpdateBlogType(id uint, name string) error {
 	if name == "" {
-		return fmt.Errorf("Category name cannot be empty")
+		return fmt.Errorf("ชื่อประเภทห้ามว่าง")
 	}
+
+	// ตรวจสอบว่ามีชื่อนี้อยู่แล้วหรือไม่ และไม่ใช่ ID ของตัวเอง
+	existing, err := s.repo.GetBlogTypeByName(name)
+	if err != nil {
+		return fmt.Errorf("เกิดข้อผิดพลาดในการตรวจสอบฐานข้อมูล: %w", err)
+	}
+	if existing != nil && existing.ID != id {
+		return fmt.Errorf("มีประเภท '%s' อยู่ในระบบแล้ว", name)
+	}
+
 	blogType, err := s.repo.GetBlogTypeByID(id)
 	if err != nil {
-		return err
+		return fmt.Errorf("ไม่พบประเภทที่ต้องการแก้ไข: %w", err)
 	}
+
 	blogType.Name = name
 	return s.repo.UpdateBlogType(blogType)
 }

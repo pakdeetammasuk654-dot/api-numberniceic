@@ -1,12 +1,53 @@
+<!-- Latest Articles Section -->
+<section class="latest-articles-fullscreen">
+    {{if .MainArticle}}
+        <div class="featured-articles-grid-fullscreen">
+            <!-- Main Article (Left Column) -->
+            <div class="main-article-card">
+                <img src="{{.MainArticle.CoverURL}}" alt="{{.MainArticle.Title}}" class="article-image">
+                <a href="/articles/{{.MainArticle.Slug}}" class="main-article-link-overlay"></a>
+                <div class="main-article-text-box">
+                    <div class="main-article-type-badge">{{.MainArticle.BlogType.Name}}</div>
+                    <h3 class="main-article-title">{{.MainArticle.Title}}</h3>
+                    <p class="main-article-description">{{.MainArticle.Description}}</p>
+                </div>
+            </div>
+
+            <!-- Secondary Articles (Right Column) -->
+            {{if .SecondaryArticles}}
+                <div class="secondary-articles-grid">
+                    {{range .SecondaryArticles}}
+                        <a href="/articles/{{.Slug}}" class="secondary-article-card">
+                            <img src="{{.CoverURL}}" alt="{{.Title}}" class="article-image">
+                            <div class="secondary-article-overlay">
+                                <h4 class="secondary-article-title">{{.ShortTitle}}</h4>
+                            </div>
+                        </a>
+                    {{end}}
+                </div>
+            {{end}}
+        </div>
+        <div class="container view-all-articles">
+             <a href="/articles" class="btn btn-secondary">ดูบทความทั้งหมด</a>
+        </div>
+    {{else}}
+        <div class="container">
+            <p style="text-align: center; padding: 40px 0;">ยังไม่มีบทความในขณะนี้</p>
+        </div>
+    {{end}}
+</section>
+
 <!-- Hero Section -->
 <section class="hero-landing">
-    <div class="hero-content">
-        <h1 class="hero-title">วิเคราะห์ชื่อมงคล ตามหลักเลขศาสตร์และพลังเงา</h1>
-        <p class="hero-subtitle">ค้นพบความหมายที่ซ่อนอยู่เบื้องหลังชื่อของคุณ พร้อมรับคำทำนายที่แม่นยำและคำแนะนำเพื่อเสริมสิริมงคล</p>
-        <a href="/analysis" class="btn btn-primary btn-lg">
-            <i class="icon-sparkles"></i> เริ่มวิเคราะห์ชื่อของคุณ
-        </a>
-        <p class="hero-subtext">ฟรี! ไม่ต้องสมัครสมาชิก</p>
+    <div class="container">
+        <div class="hero-content">
+            <h1 class="hero-title">วิเคราะห์ชื่อมงคล ตามหลักเลขศาสตร์และพลังเงา</h1>
+            <p class="hero-subtitle">ค้นพบความหมายที่ซ่อนอยู่เบื้องหลังชื่อของคุณ พร้อมรับคำทำนายที่แม่นยำและคำแนะนำเพื่อเสริมสิริมงคล</p>
+            <a href="/analysis" class="btn btn-primary btn-lg">
+                <i class="icon-sparkles"></i> เริ่มวิเคราะห์ชื่อของคุณ
+            </a>
+            <p class="hero-subtext">ฟรี! ไม่ต้องสมัครสมาชิก</p>
+        </div>
     </div>
 </section>
 
@@ -47,38 +88,10 @@
     </div>
 </section>
 
-<!-- Latest Articles Section -->
-<section class="latest-articles">
-    <div class="container">
-        <h2 class="section-title">บทความน่ารู้</h2>
-        {{if .Blogs}}
-            <div class="articles-grid">
-                {{range .Blogs}}
-                <a href="/articles/{{.Slug}}" class="article-card">
-                    <img src="{{.CoverURL}}" alt="{{.Title}}" class="article-image">
-                    <div class="article-content">
-                        <span class="article-type">{{.BlogType.Name}}</span>
-                        <h3 class="article-title">{{.Title}}</h3>
-                        <p class="article-summary">{{.ShortTitle}}</p>
-                        <span class="article-readmore">อ่านต่อ &rarr;</span>
-                    </div>
-                </a>
-                {{end}}
-            </div>
-            <div class="view-all-articles">
-                <a href="/articles" class="btn btn-secondary">ดูบทความทั้งหมด</a>
-            </div>
-        {{else}}
-            <p>ยังไม่มีบทความในขณะนี้</p>
-        {{end}}
-    </div>
-</section>
-
 <style>
 /* General Styles */
-.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-.section-title { text-align: center; font-size: 2.5rem; margin-bottom: 1rem; color: #333; }
-.section-subtitle { text-align: center; font-size: 1.2rem; margin-bottom: 4rem; color: #666; }
+.container { max-width: 1200px; margin-left: auto; margin-right: auto; padding-left: 20px; padding-right: 20px; }
+.section-title { text-align: center; font-size: 2.5rem; margin-bottom: 2.5rem; color: #333; }
 .btn { padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: all 0.3s ease; display: inline-block; }
 .btn-primary { background-color: #6a11cb; color: white; }
 .btn-primary:hover { background-color: #2575fc; }
@@ -87,15 +100,133 @@
 .btn-light { background-color: white; color: #6a11cb; }
 .btn-outline-light { background-color: transparent; color: white; border: 2px solid white; }
 
+/* Featured Articles Fullscreen Section */
+.latest-articles-fullscreen { padding: 0; background-color: #f9f9f9; }
+.featured-articles-grid-fullscreen {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 2rem;
+}
+@media (min-width: 768px) {
+    .featured-articles-grid-fullscreen {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Common Article Card Styles */
+.main-article-card, .secondary-article-card {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    color: white;
+    text-decoration: none;
+    border-radius: 0; /* No border radius */
+}
+.article-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+.main-article-card:hover .article-image, .secondary-article-card:hover .article-image {
+    transform: scale(1.05);
+}
+
+/* Main Article Card */
+.main-article-card {
+    grid-row: span 2 / span 2;
+    position: relative;
+}
+.main-article-link-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+}
+.main-article-text-box {
+    position: absolute;
+    bottom: 1rem;
+    left: 0;
+    right: 2rem;
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: #333;
+    padding: 1.5rem 1.5rem 1.5rem 1.5rem;
+    z-index: 5;
+}
+.main-article-type-badge {
+    position: absolute;
+    top: -1rem;
+    left: 1.5rem;
+    display: inline-block;
+    background-color: #D97706;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border-radius: 9999px;
+    z-index: 6;
+}
+.main-article-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0 0 0.25rem 0; /* Reduced bottom margin */
+    line-height: 1.3;
+    color: #111;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.main-article-description {
+    font-size: 0.9rem;
+    margin: 0;
+    color: #444;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+/* Secondary Articles Grid */
+.secondary-articles-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+}
+.secondary-article-card {
+    aspect-ratio: 1 / 1; /* Crop to a square */
+}
+.secondary-article-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    text-align: center;
+    padding: 1rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+}
+.secondary-article-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.view-all-articles { text-align: center; padding-bottom: 80px; }
+
+
 /* Hero Section */
 .hero-landing {
     background: linear-gradient(45deg, #6a11cb 0%, #2575fc 100%);
     color: white;
-    text-align: center;
-    padding: 100px 20px;
-    border-bottom-left-radius: 50px;
-    border-bottom-right-radius: 50px;
+    padding: 100px 0;
 }
+.hero-content { text-align: center; }
 .hero-title { font-size: 3.5rem; margin-bottom: 1rem; }
 .hero-subtitle { font-size: 1.3rem; max-width: 700px; margin: 0 auto 2rem auto; }
 .hero-subtext { margin-top: 1rem; opacity: 0.8; }
@@ -103,7 +234,7 @@
 .icon-sparkles { margin-right: 10px; }
 
 /* Features Section */
-.features-section { padding: 80px 0; background-color: #f9f9f9; }
+.features-section { padding: 80px 0; }
 .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
 .feature-card { background: white; padding: 40px; border-radius: 12px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
 .feature-icon { font-size: 1.2rem; font-weight: bold; color: #6a11cb; margin-bottom: 1rem; background-color: rgba(106, 17, 203, 0.1); padding: 5px 15px; border-radius: 20px; display: inline-block; }
@@ -115,16 +246,4 @@
 .cta-section h2 { font-size: 2.2rem; margin-bottom: 1rem; }
 .cta-buttons { margin-top: 2rem; display: flex; justify-content: center; gap: 20px; }
 
-/* Latest Articles Section */
-.latest-articles { padding: 80px 0; }
-.articles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-bottom: 3rem; }
-.article-card { display: block; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 25px rgba(0,0,0,0.08); text-decoration: none; color: inherit; transition: transform 0.3s ease; }
-.article-card:hover { transform: translateY(-5px); }
-.article-image { width: 100%; height: 200px; object-fit: cover; }
-.article-content { padding: 20px; }
-.article-type { background-color: #eee; color: #555; padding: 3px 10px; border-radius: 15px; font-size: 0.8rem; font-weight: bold; }
-.article-title { font-size: 1.3rem; margin: 10px 0; }
-.article-summary { color: #666; font-size: 0.95rem; }
-.article-readmore { display: inline-block; margin-top: 15px; font-weight: bold; color: #6a11cb; }
-.view-all-articles { text-align: center; margin-top: 2rem; }
 </style>
