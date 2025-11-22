@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="/static/css/admin.css">
+
 <div class="card" style="margin-bottom: 30px;">
     <div class="admin-panel-content"> <h2 class="header-line">🛠️ Admin Control Panel</h2>
         <p style="color: #666; margin-bottom: 25px;">ยินดีต้อนรับผู้ดูแลระบบ เลือกเมนูที่ต้องการจัดการด้านล่าง</p>
@@ -20,7 +22,7 @@
                 </div>
             </a>
 
-            <a href="#" class="admin-card-link" onclick="alert('ระบบจัดการผู้ใช้จะเปิดให้ใช้งานเร็วๆ นี้!')">
+            <a href="#" class="admin-card-link" id="manage-users-link">
                 <div class="admin-card inactive">
                     <div class="icon">👥</div>
                     <h3>จัดการผู้ใช้งาน</h3>
@@ -28,7 +30,7 @@
                 </div>
             </a>
 
-            <a href="#" class="admin-card-link" onclick="alert('ระบบสถิติจะเปิดให้ใช้งานเร็วๆ นี้!')">
+            <a href="#" class="admin-card-link" id="view-stats-link">
                 <div class="admin-card inactive">
                     <div class="icon">📊</div>
                     <h3>สถิติภาพรวม</h3>
@@ -40,81 +42,4 @@
     </div>
 </div>
 
-<style>
-    /* บังคับ Box Sizing เฉพาะในส่วนนี้ เพื่อแก้ปัญหาขนาดเพี้ยน */
-    .admin-panel-content * {
-        box-sizing: border-box;
-    }
-
-    .admin-grid-container {
-        display: grid;
-        /* ใช้ Grid แบบ auto-fit ที่เสถียรกว่า Flexbox สำหรับการ์ด */
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 20px; /* ช่องว่างระหว่างการ์ดที่แน่นอน */
-        width: 100%;
-    }
-
-    .admin-card-link {
-        text-decoration: none;
-        color: inherit;
-        display: block;
-        height: 100%; /* ให้ลิงก์สูงเต็มช่อง Grid */
-    }
-
-    .admin-card {
-        background: #fff;
-        border: 1px solid #e0e0e0;
-        border-radius: 12px;
-        padding: 25px 15px;
-        text-align: center;
-        transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
-        height: 100%; /* การ์ดจะสูงเท่ากันเสมอในแถวเดียวกัน */
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        min-height: 180px; /* กันไม่ให้การ์ดแบนเกินไป */
-    }
-
-    .admin-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-        border-color: #ffca28;
-        z-index: 1; /* ยกให้ลอยเหนือเพื่อน */
-    }
-
-    .admin-card .icon {
-        font-size: 3rem;
-        margin-bottom: 15px;
-        line-height: 1;
-    }
-
-    .admin-card h3 {
-        margin: 0 0 10px 0;
-        color: #333;
-        font-size: 1.2rem;
-        font-weight: bold;
-    }
-
-    .admin-card p {
-        margin: 0;
-        color: #777;
-        font-size: 0.9rem;
-        line-height: 1.4;
-    }
-
-    /* เมนูที่ยังไม่เปิดใช้งาน */
-    .admin-card.inactive {
-        background-color: #fafafa;
-        opacity: 0.7;
-        cursor: not-allowed;
-    }
-
-    /* แก้บั๊กมือถือ: ถ้าจอเล็กมาก ให้เรียง 1 แถว */
-    @media (max-width: 500px) {
-        .admin-grid-container {
-            grid-template-columns: 1fr; /* บังคับ 1 คอลัมน์เต็ม */
-        }
-    }
-</style>
+<script src="/static/js/admin.js"></script>

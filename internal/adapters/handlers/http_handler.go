@@ -116,21 +116,28 @@ func translateDay(day string) string {
 // --- View Handlers (General) ---
 
 func (h *FiberHandler) ViewHome(c *fiber.Ctx) error {
-	blogs, _ := h.service.GetLatestBlogs(5)
+	// 1 main + 3 secondary images + 3 for link list = 7 total
+	blogs, _ := h.service.GetLatestBlogs(7)
 
 	var mainArticle *domain.Blog
 	var secondaryArticles []domain.Blog
+	var linkListArticles []domain.Blog
 
 	if len(blogs) > 0 {
 		mainArticle = &blogs[0]
 	}
 	if len(blogs) > 1 {
-		secondaryArticles = blogs[1:]
+		end := min(4, len(blogs))
+		secondaryArticles = blogs[1:end]
+	}
+	if len(blogs) > 4 {
+		linkListArticles = blogs[4:]
 	}
 
 	return h.RenderWithAuth(c, "landing_page", fiber.Map{
 		"MainArticle":       mainArticle,
 		"SecondaryArticles": secondaryArticles,
+		"LinkListArticles":  linkListArticles,
 	})
 }
 
@@ -257,24 +264,9 @@ func (h *FiberHandler) ViewDashboard(c *fiber.Ctx) error {
 
 func (h *FiberHandler) ViewArticles(c *fiber.Ctx) error {
 	blogs, _ := h.service.GetLatestBlogs(0) // 0 for all
-	type BlogView struct {
-		domain.Blog
-		SummaryHTML template.HTML
-	}
-	var blogViews []BlogView
-	for _, b := range blogs {
-		summary := b.Content
-		if len(summary) > 200 {
-			summary = summary[:200] + "..."
-		}
-		blogViews = append(blogViews, BlogView{
-			Blog:        b,
-			SummaryHTML: template.HTML(summary),
-		})
-	}
 	_, isAdmin := getUserInfoFromContext(c)
 	return h.RenderWithAuth(c, "articles", fiber.Map{
-		"Blogs":   blogViews,
+		"Blogs":   blogs,
 		"IsAdmin": isAdmin,
 	})
 }

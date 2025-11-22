@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="/static/css/admin.css">
+
 <h1>จัดการประเภทบทความ</h1>
 <p>เพิ่ม ลบ หรือแก้ไขประเภทของบทความ</p>
 
@@ -35,7 +37,7 @@
                         <td>{{.CreatedAt.Format "02 Jan 2006"}}</td>
                         <td>
                             <a href="/admin/edit-type/{{.ID}}" class="btn btn-warning btn-sm">แก้ไข</a>
-                            <a href="/admin/delete-type/{{.ID}}" class="btn btn-danger btn-sm" onclick="return confirm('คุณแน่ใจหรือไม่ที่จะลบประเภทนี้?')">ลบ</a>
+                            <a href="/admin/delete-type/{{.ID}}" class="btn btn-danger btn-sm delete-type-btn">ลบ</a>
                         </td>
                     </tr>
                     {{end}}
@@ -47,38 +49,4 @@
     </div>
 </div>
 
-<style>
-    .admin-grid {
-        display: grid;
-        grid-template-columns: 1fr 2fr;
-        gap: 20px;
-        margin-top: 20px;
-    }
-    .card {
-        background: #fff;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 15px;
-    }
-    .table th, .table td {
-        padding: 12px;
-        text-align: left;
-        border-bottom: 1px solid #eee;
-    }
-    .table th {
-        background-color: #f8f9fa;
-    }
-    .btn-danger {
-        background-color: #dc3545;
-        color: white;
-    }
-    .btn-warning {
-        background-color: #ffc107;
-        color: #212529;
-    }
-</style>
+<script src="/static/js/admin.js"></script>
