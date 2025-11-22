@@ -87,7 +87,7 @@ func main() {
 
 	// --- Blog Public Routes ---
 	app.Get("/articles", handler.ViewArticles)
-	app.Get("/articles/:id", handler.ViewBlogDetail)
+	app.Get("/articles/:slug", handler.ViewBlogDetail)
 
 	// --- Admin Routes (Protected + Check Admin) ---
 	admin := app.Group("/admin", middlewares.IsAuthenticated)
@@ -101,6 +101,12 @@ func main() {
 	admin.Get("/edit-blog/:id", handler.ViewEditBlog)
 	admin.Post("/edit-blog/:id", handler.HandleEditBlog)
 	admin.Get("/delete-blog/:id", handler.HandleDeleteBlog)
+
+	// Blog Type Management
+	admin.Get("/types", handler.ViewAdminTypes)
+	admin.Post("/types", handler.HandleCreateBlogType)
+	admin.Get("/delete-type/:id", handler.HandleDeleteBlogType)
+
 
 	// --- API Routes ---
 	api := app.Group("/api")

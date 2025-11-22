@@ -17,6 +17,7 @@ type NumberRepository interface {
 	CreateBlog(blog *domain.Blog) error
 	GetAllBlogs() ([]domain.Blog, error)
 	GetBlogByID(id uint) (*domain.Blog, error)
+	GetBlogBySlug(slug string) (*domain.Blog, error) // เพิ่มใหม่
 	UpdateBlog(blog *domain.Blog) error
 	DeleteBlog(id uint) error
 
@@ -41,7 +42,7 @@ type NumberService interface {
 	// --- Blog Service ---
 	CreateNewBlog(userID uint, isAdmin bool, title, shortTitle string, typeID uint, content, coverURL string) error
 	GetLatestBlogs() ([]domain.Blog, error)
-	GetBlogDetail(id uint) (*domain.Blog, error)
+	GetBlogDetail(identifier string) (*domain.Blog, error) // เปลี่ยนเป็น string
 	UpdateExistingBlog(id uint, userID uint, isAdmin bool, title, shortTitle string, typeID uint, content, coverURL string) error
 	RemoveBlog(id uint, userID uint, isAdmin bool) error
 

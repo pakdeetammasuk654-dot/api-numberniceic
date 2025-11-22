@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/gosimple/slug"
 	"google.golang.org/genai"
 )
 
@@ -200,13 +201,38 @@ func (s *analyzerService) GetEnrichedPairs(sum int) []domain.PairData {
 
 // --- 2. Logic Blog Service (ใหม่) ---
 
+func (s *analyzerService) generateUniqueSlug(title string) (string, error) {
+	baseSlug := slug.Make(title)
+	uniqueSlug := baseSlug
+	counter := 1
+	for {
+		existing, err := s.repo.GetBlogBySlug(uniqueSlug)
+		if err != nil {
+			return "", err // DB error
+		}
+		if existing == nil {
+			break // Slug is unique
+		}
+		uniqueSlug = fmt.Sprintf("%s-%d", baseSlug, counter)
+		counter++
+	}
+	return uniqueSlug, nil
+}
+
 func (s *analyzerService) CreateNewBlog(userID uint, isAdmin bool, title, shortTitle string, typeID uint, content, coverURL string) error {
 	if !isAdmin {
 		return fmt.Errorf("Unauthorized: Only admin can create blogs")
 	}
+
+	generatedSlug, err := s.generateUniqueSlug(title)
+	if err != nil {
+		return fmt.Errorf("failed to generate slug: %w", err)
+	}
+
 	newBlog := &domain.Blog{
 		Title:      title,
 		ShortTitle: shortTitle,
+		Slug:       generatedSlug,
 		BlogTypeID: typeID,
 		Content:    content,
 		CoverURL:   coverURL,
@@ -219,8 +245,16 @@ func (s *analyzerService) GetLatestBlogs() ([]domain.Blog, error) {
 	return s.repo.GetAllBlogs()
 }
 
-func (s *analyzerService) GetBlogDetail(id uint) (*domain.Blog, error) {
-	return s.repo.GetBlogByID(id)
+func (s *analyzerService) GetBlogDetail(identifier string) (*domain.Blog, error) {
+	// พยายามหาจาก ID ก่อน
+	if id, err := strconv.Atoi(identifier); err == nil {
+		blog, err := s.repo.GetBlogByID(uint(id))
+		if err == nil && blog != nil {
+			return blog, nil
+		}
+	}
+	// ถ้าไม่เจอ ID หรือ identifier ไม่ใช่ตัวเลข ให้หาจาก Slug
+	return s.repo.GetBlogBySlug(identifier)
 }
 
 func (s *analyzerService) UpdateExistingBlog(id uint, userID uint, isAdmin bool, title, shortTitle string, typeID uint, content, coverURL string) error {
@@ -230,6 +264,15 @@ func (s *analyzerService) UpdateExistingBlog(id uint, userID uint, isAdmin bool,
 	blog, err := s.repo.GetBlogByID(id)
 	if err != nil {
 		return err
+	}
+
+	// ถ้ามีการเปลี่ยน Title ให้สร้าง Slug ใหม่
+	if blog.Title != title {
+		newSlug, err := s.generateUniqueSlug(title)
+		if err != nil {
+			return fmt.Errorf("failed to generate new slug: %w", err)
+		}
+		blog.Slug = newSlug
 	}
 
 	blog.Title = title

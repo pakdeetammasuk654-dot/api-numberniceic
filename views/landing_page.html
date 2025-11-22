@@ -1,0 +1,130 @@
+<!-- Hero Section -->
+<section class="hero-landing">
+    <div class="hero-content">
+        <h1 class="hero-title">วิเคราะห์ชื่อมงคล ตามหลักเลขศาสตร์และพลังเงา</h1>
+        <p class="hero-subtitle">ค้นพบความหมายที่ซ่อนอยู่เบื้องหลังชื่อของคุณ พร้อมรับคำทำนายที่แม่นยำและคำแนะนำเพื่อเสริมสิริมงคล</p>
+        <a href="/analysis" class="btn btn-primary btn-lg">
+            <i class="icon-sparkles"></i> เริ่มวิเคราะห์ชื่อของคุณ
+        </a>
+        <p class="hero-subtext">ฟรี! ไม่ต้องสมัครสมาชิก</p>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="container">
+        <h2 class="section-title">ศาสตร์แห่งการตั้งชื่อที่ครบวงจร</h2>
+        <p class="section-subtitle">เราใช้หลากหลายหลักการเพื่อการวิเคราะห์ที่ลึกซึ้งและรอบด้าน</p>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">เลขศาสตร์</div>
+                <h3 class="feature-title">พลังแห่งตัวเลข</h3>
+                <p class="feature-description">วิเคราะห์ผลรวมของชื่อและนามสกุลตามหลักเลขศาสตร์ เพื่อหาพลังที่ส่งผลต่อชีวิต</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">พลังเงา</div>
+                <h3 class="feature-title">อิทธิพลจากวันเกิด</h3>
+                <p class="feature-description">ค้นหา "กาลกิณี" ตามวันเกิด และหลีกเลี่ยงอักษรที่จะส่งผลเสียต่อดวงชะตา</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">นามศาสตร์</div>
+                <h3 class="feature-title">ความหมายของชื่อ</h3>
+                <p class="feature-description">เจาะลึกความหมายของแต่ละพยางค์ในชื่อ เพื่อให้ได้ชื่อที่เป็นมงคลและไพเราะ</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action (CTA) Section -->
+<section class="cta-section">
+    <div class="container">
+        <h2>พร้อมที่จะค้นพบชื่อที่ดีที่สุดของคุณแล้วหรือยัง?</h2>
+        <p>บันทึกชื่อที่คุณชื่นชอบไว้เปรียบเทียบ หรือกลับมาดูภายหลังได้ง่ายๆ เพียงสมัครสมาชิก</p>
+        <div class="cta-buttons">
+            <a href="/analysis" class="btn btn-light">วิเคราะห์ชื่อทันที</a>
+            <a href="/register" class="btn btn-outline-light">สมัครสมาชิกฟรี</a>
+        </div>
+    </div>
+</section>
+
+<!-- Latest Articles Section -->
+<section class="latest-articles">
+    <div class="container">
+        <h2 class="section-title">บทความน่ารู้</h2>
+        {{if .Blogs}}
+            <div class="articles-grid">
+                {{range .Blogs}}
+                <a href="/articles/{{.Slug}}" class="article-card">
+                    <img src="{{.CoverURL}}" alt="{{.Title}}" class="article-image">
+                    <div class="article-content">
+                        <span class="article-type">{{.BlogType.Name}}</span>
+                        <h3 class="article-title">{{.Title}}</h3>
+                        <p class="article-summary">{{.ShortTitle}}</p>
+                        <span class="article-readmore">อ่านต่อ &rarr;</span>
+                    </div>
+                </a>
+                {{end}}
+            </div>
+            <div class="view-all-articles">
+                <a href="/articles" class="btn btn-secondary">ดูบทความทั้งหมด</a>
+            </div>
+        {{else}}
+            <p>ยังไม่มีบทความในขณะนี้</p>
+        {{end}}
+    </div>
+</section>
+
+<style>
+/* General Styles */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+.section-title { text-align: center; font-size: 2.5rem; margin-bottom: 1rem; color: #333; }
+.section-subtitle { text-align: center; font-size: 1.2rem; margin-bottom: 4rem; color: #666; }
+.btn { padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: all 0.3s ease; display: inline-block; }
+.btn-primary { background-color: #6a11cb; color: white; }
+.btn-primary:hover { background-color: #2575fc; }
+.btn-secondary { background-color: #f0f0f0; color: #333; }
+.btn-secondary:hover { background-color: #e0e0e0; }
+.btn-light { background-color: white; color: #6a11cb; }
+.btn-outline-light { background-color: transparent; color: white; border: 2px solid white; }
+
+/* Hero Section */
+.hero-landing {
+    background: linear-gradient(45deg, #6a11cb 0%, #2575fc 100%);
+    color: white;
+    text-align: center;
+    padding: 100px 20px;
+    border-bottom-left-radius: 50px;
+    border-bottom-right-radius: 50px;
+}
+.hero-title { font-size: 3.5rem; margin-bottom: 1rem; }
+.hero-subtitle { font-size: 1.3rem; max-width: 700px; margin: 0 auto 2rem auto; }
+.hero-subtext { margin-top: 1rem; opacity: 0.8; }
+.btn-lg { font-size: 1.2rem; padding: 15px 35px; }
+.icon-sparkles { margin-right: 10px; }
+
+/* Features Section */
+.features-section { padding: 80px 0; background-color: #f9f9f9; }
+.features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+.feature-card { background: white; padding: 40px; border-radius: 12px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+.feature-icon { font-size: 1.2rem; font-weight: bold; color: #6a11cb; margin-bottom: 1rem; background-color: rgba(106, 17, 203, 0.1); padding: 5px 15px; border-radius: 20px; display: inline-block; }
+.feature-title { font-size: 1.5rem; margin-bottom: 0.5rem; }
+.feature-description { color: #555; }
+
+/* CTA Section */
+.cta-section { background: #333; color: white; text-align: center; padding: 60px 20px; }
+.cta-section h2 { font-size: 2.2rem; margin-bottom: 1rem; }
+.cta-buttons { margin-top: 2rem; display: flex; justify-content: center; gap: 20px; }
+
+/* Latest Articles Section */
+.latest-articles { padding: 80px 0; }
+.articles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-bottom: 3rem; }
+.article-card { display: block; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 25px rgba(0,0,0,0.08); text-decoration: none; color: inherit; transition: transform 0.3s ease; }
+.article-card:hover { transform: translateY(-5px); }
+.article-image { width: 100%; height: 200px; object-fit: cover; }
+.article-content { padding: 20px; }
+.article-type { background-color: #eee; color: #555; padding: 3px 10px; border-radius: 15px; font-size: 0.8rem; font-weight: bold; }
+.article-title { font-size: 1.3rem; margin: 10px 0; }
+.article-summary { color: #666; font-size: 0.95rem; }
+.article-readmore { display: inline-block; margin-top: 15px; font-weight: bold; color: #6a11cb; }
+.view-all-articles { text-align: center; margin-top: 2rem; }
+</style>

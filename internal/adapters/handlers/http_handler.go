@@ -116,7 +116,10 @@ func translateDay(day string) string {
 // --- View Handlers (General) ---
 
 func (h *FiberHandler) ViewHome(c *fiber.Ctx) error {
-	return h.RenderWithAuth(c, "home", nil)
+	blogs, _ := h.service.GetLatestBlogs()
+	return h.RenderWithAuth(c, "landing_page", fiber.Map{
+		"Blogs": blogs,
+	})
 }
 
 func (h *FiberHandler) ViewAbout(c *fiber.Ctx) error {
@@ -265,9 +268,9 @@ func (h *FiberHandler) ViewArticles(c *fiber.Ctx) error {
 }
 
 func (h *FiberHandler) ViewBlogDetail(c *fiber.Ctx) error {
-	id, _ := c.ParamsInt("id")
-	blog, err := h.service.GetBlogDetail(uint(id))
-	if err != nil {
+	slug := c.Params("slug")
+	blog, err := h.service.GetBlogDetail(slug)
+	if err != nil || blog == nil {
 		return c.Redirect("/articles")
 	}
 	return h.RenderWithAuth(c, "blog_detail", fiber.Map{
@@ -311,8 +314,8 @@ func (h *FiberHandler) ViewEditBlog(c *fiber.Ctx) error {
 	if !isAdmin {
 		return c.Redirect("/")
 	}
-	id, _ := c.ParamsInt("id")
-	blog, err := h.service.GetBlogDetail(uint(id))
+	id := c.Params("id")
+	blog, err := h.service.GetBlogDetail(id)
 	if err != nil {
 		return c.Redirect("/admin/blogs")
 	}

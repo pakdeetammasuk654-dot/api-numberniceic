@@ -135,6 +135,21 @@ func (r *postgresRepository) GetBlogByID(id uint) (*domain.Blog, error) {
 	var blog domain.Blog
 	err := r.db.Preload("Author").Preload("BlogType").First(&blog, id).Error
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &blog, nil
+}
+
+func (r *postgresRepository) GetBlogBySlug(slug string) (*domain.Blog, error) {
+	var blog domain.Blog
+	err := r.db.Preload("Author").Preload("BlogType").Where("slug = ?", slug).First(&blog).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
 		return nil, err
 	}
 	return &blog, nil
