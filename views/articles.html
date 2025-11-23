@@ -1,16 +1,26 @@
 <div class="container">
-    <div class="hero" style="padding: 30px 0; text-align: center;">
+    <div class="hero-section">
         <h1>📚 บทความน่ารู้</h1>
         <p>เกร็ดความรู้เกี่ยวกับศาสตร์ตัวเลขและพลังเงา</p>
-        {{if .IsAdmin}}<a href="/admin/create-blog" class="btn btn-success" style="margin-top: 10px; display: inline-block; padding: 8px 20px;">+ เขียนบทความใหม่</a>{{end}}
+        {{if .IsAdmin}}
+            <a href="/admin/create-blog" class="btn btn-success btn-create-article">
+                <i class="fa-solid fa-plus"></i> เขียนบทความใหม่
+            </a>
+        {{end}}
     </div>
 
     <div class="articles-page-grid">
         {{range .Blogs}}
             <a href="/articles/{{.Slug}}" class="article-list-card">
-                <img src="{{.CoverURL}}" alt="{{.Title}}" class="article-list-image">
+                <div class="article-image-wrapper">
+                    {{if .CoverURL}}
+                        <img src="{{.CoverURL}}" alt="{{.Title}}" class="article-list-image">
+                    {{else}}
+                        <div class="no-image"><i class="fa-solid fa-image"></i></div>
+                    {{end}}
+                </div>
                 <div class="article-list-overlay">
-                    <a href="/articles?category_id={{.BlogType.ID}}" class="article-list-type">{{.BlogType.Name}}</a>
+                    <span class="article-list-type">{{.BlogType.Name}}</span>
                     <div class="article-list-text-content">
                         <h3 class="article-list-title">{{.Title}}</h3>
                         <p class="article-list-description">{{.Description}}</p>
@@ -18,109 +28,10 @@
                 </div>
             </a>
         {{else}}
-            <p style="text-align: center; grid-column: 1 / -1;">ยังไม่มีบทความในขณะนี้</p>
+            <div class="empty-article-state">
+                <i class="fa-regular fa-folder-open"></i>
+                <p>ยังไม่มีบทความในขณะนี้</p>
+            </div>
         {{end}}
     </div>
 </div>
-
-<style>
-    /* Basic Grid Layout */
-    .articles-page-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 1.5rem;
-        padding: 1rem 0;
-    }
-
-    /* Article Card Styling */
-    .article-list-card {
-        position: relative;
-        display: block;
-        aspect-ratio: 16 / 9; /* Modern aspect ratio for images */
-        border-radius: 8px;
-        overflow: hidden;
-        text-decoration: none;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .article-list-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-    }
-
-    .article-list-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .article-list-overlay {
-        position: absolute;
-        inset: 0;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        padding: 1rem;
-        background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%);
-    }
-
-    .article-list-type {
-        background-color: rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(3px);
-        color: white;
-        padding: 4px 10px;
-        border-radius: 15px;
-        font-size: 0.75rem;
-        font-weight: 500;
-        align-self: flex-start;
-        margin-bottom: 0.5rem;
-        text-decoration: none;
-    }
-    .article-list-type:hover {
-        text-decoration: underline;
-    }
-
-    .article-list-title {
-        font-size: 1.1rem;
-        margin: 0 0 0.25rem 0;
-        color: white;
-        font-weight: 500;
-        white-space: normal; /* Allow title to wrap */
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 2; /* Limit title to 2 lines */
-        -webkit-box-orient: vertical;
-        text-shadow: 0 1px 3px rgba(0,0,0,0.7);
-    }
-
-    .article-list-description {
-        font-size: 0.85rem;
-        color: #e0e0e0;
-        margin: 0;
-        white-space: normal; /* Allow description to wrap */
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 2; /* Limit description to 2 lines */
-        -webkit-box-orient: vertical;
-        text-shadow: 0 1px 3px rgba(0,0,0,0.7);
-    }
-
-    /* Responsive Adjustments */
-    @media (max-width: 768px) {
-        .articles-page-grid {
-            grid-template-columns: 1fr; /* Single column on mobile */
-            gap: 1rem;
-        }
-        .article-list-card {
-            aspect-ratio: 4 / 3; /* Slightly taller on mobile */
-        }
-        .article-list-title {
-            font-size: 1rem;
-        }
-        .article-list-description {
-            font-size: 0.8rem;
-        }
-    }
-</style>
