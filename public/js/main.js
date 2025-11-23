@@ -1,10 +1,6 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const hamburgerButton = document.getElementById('hamburger-button');
-    const navMenuWrapper = document.getElementById('nav-menu-wrapper');
+// public/js/main.js
+import { initializeNavbar } from './modules/navbar.js';
 
-    if (hamburgerButton && navMenuWrapper) {
-        hamburgerButton.addEventListener('click', function() {
-            navMenuWrapper.classList.toggle('active');
-        });
-    }
+document.addEventListener('DOMContentLoaded', function() {
+    initializeNavbar();
 });

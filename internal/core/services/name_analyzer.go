@@ -5,6 +5,7 @@ import (
 	"api-numberniceic/internal/core/ports"
 	"context"
 	"fmt"
+	"log" // Import the log package
 	"os"
 	"strconv"
 	"strings"
@@ -17,6 +18,7 @@ type analyzerService struct {
 	repo ports.NumberRepository
 }
 
+// Corrected: NewAnalyzerService now accepts ports.NumberRepository
 func NewAnalyzerService(repo ports.NumberRepository) ports.NumberService {
 	return &analyzerService{repo: repo}
 }
@@ -132,6 +134,7 @@ func (s *analyzerService) generatePairs(sum int) []string {
 
 func (s *analyzerService) GetNameLinguistics(name string) (string, error) {
 	apiKey := os.Getenv("GEMINI_API_KEY")
+	log.Printf("Using GEMINI_API_KEY: %s", apiKey) // Log the API key being used
 	if apiKey == "" {
 		return "", fmt.Errorf("API Key configuration error")
 	}
@@ -288,7 +291,6 @@ func (s *analyzerService) UpdateExistingBlog(id uint, userID uint, isAdmin bool,
 		blog.BlogType = *blogType
 		blog.BlogTypeID = typeID
 	}
-
 
 	blog.Title = title
 	blog.ShortTitle = shortTitle
