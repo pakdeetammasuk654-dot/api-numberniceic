@@ -1,141 +1,197 @@
 /* public/css/admin.css */
 
-/* --- General Admin Styles --- */
+/* =================================== */
+/* --- 1. General Admin Styles --- */
+/* =================================== */
+
 .admin-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px; /* Reduced margin */
+    margin-bottom: 15px;
+    gap: 15px;
 }
+
 .admin-header .header-line {
-    font-size: 1.3rem; /* Further reduced font size for the main heading */
-    flex-grow: 1; /* Allow header to take available space */
-    margin-right: 10px; /* Add some space between header and button */
+    font-size: 1.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+    padding: 0;
+    border: none;
     display: flex;
     align-items: center;
     gap: 10px;
 }
+
 .admin-header .btn-success {
-    padding: 4px 10px; /* Even smaller padding */
-    font-size: 0.75rem; /* Even smaller font size */
-    white-space: nowrap; /* Prevent button text from wrapping */
-    flex-shrink: 0; /* Prevent button from shrinking */
-    width: auto; /* Make button fit its content */
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
+
 .table-responsive {
     overflow-x: auto;
 }
+
 .table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px; /* Reduced margin */
-    font-size: 0.9rem; /* Smaller base font size for table */
-    table-layout: fixed; /* Crucial for fixed column widths */
+    margin-top: 10px;
+    font-size: 0.9rem;
 }
+
 .table th, .table td {
-    padding: 8px 10px; /* Reduced padding */
+    padding: 8px 10px;
     text-align: left;
     vertical-align: middle;
     border-bottom: 1px solid #eee;
-    overflow: hidden; /* Hide overflowing content */
-    white-space: nowrap; /* Prevent text wrapping */
-    text-overflow: ellipsis; /* Add ellipsis for overflowing text */
 }
+
 .table th {
     background-color: #f8f9fa;
     font-weight: 600;
     color: #495057;
 }
-/* Column Widths */
-.admin-blog-table th:nth-child(1), .admin-blog-table td:nth-child(1) { width: 45%; } /* Article column */
-.admin-blog-table th:nth-child(2), .admin-blog-table td:nth-child(2) { width: 15%; } /* Status column */
-.admin-blog-table th:nth-child(3), .admin-blog-table td:nth-child(3) { width: 20%; } /* Date column */
-.admin-blog-table th:nth-child(4), .admin-blog-table td:nth-child(4) { width: 20%; } /* Actions column */
 
 .btn-danger { background-color: #dc3545; color: white; }
 .btn-warning { background-color: #ffc107; color: #212529; }
 .btn-sm { padding: 4px 8px; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 5px; }
 
-/* --- Admin Panel --- */
+
+/* =================================== */
+/* --- 2. Admin Panel Page --- */
+/* =================================== */
+
 .admin-panel-content * { box-sizing: border-box; }
-.admin-grid-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Smaller min-width */
-    gap: 15px; /* Reduced gap */
-    width: 100%;
-}
+.admin-grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; width: 100%; }
 .admin-card-link { text-decoration: none; color: inherit; display: block; height: 100%; }
-.admin-card {
-    background: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 10px; /* Slightly smaller radius */
-    padding: 20px 10px; /* Reduced padding */
-    text-align: center;
-    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Smaller shadow */
-    min-height: 150px; /* Reduced min-height */
-}
+.admin-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px 10px; text-align: center; transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); min-height: 150px; }
 .admin-card:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); border-color: #ffca28; z-index: 1; }
-.admin-card .icon { font-size: 2.5rem; margin-bottom: 10px; line-height: 1; /* Smaller icon */ }
-.admin-card h3 { margin: 0 0 8px 0; color: #333; font-size: 1.1rem; font-weight: bold; /* Smaller heading */ }
-.admin-card p { margin: 0; color: #777; font-size: 0.8rem; line-height: 1.3; /* Smaller text */ }
+.admin-card .icon { font-size: 2.5rem; margin-bottom: 10px; line-height: 1; }
+.admin-card h3 { margin: 0 0 8px 0; color: #333; font-size: 1.1rem; font-weight: bold; }
+.admin-card p { margin: 0; color: #777; font-size: 0.8rem; line-height: 1.3; }
 .admin-card.inactive { background-color: #fafafa; opacity: 0.7; cursor: not-allowed; }
-@media (max-width: 500px) { .admin-grid-container { grid-template-columns: 1fr; } }
 
-/* --- Admin Types Page --- */
-.admin-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 15px; margin-top: 15px; } /* Reduced gap and margin */
 
-/* --- Admin Blogs Table --- */
-.admin-blog-table .article-info { display: flex; align-items: center; gap: 10px; /* Reduced gap */ }
+/* =================================== */
+/* --- 3. Admin Blog & Types Pages --- */
+/* =================================== */
+
+.admin-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 15px; margin-top: 15px; }
+
+/* --- Blogs Table --- */
+.admin-blog-table { table-layout: fixed; }
+.col-article { width: 50%; }
+.col-status { width: 25%; }
+.col-actions { width: 25%; }
+
+.article-info { display: flex; align-items: center; gap: 10px; }
 .article-cover { flex-shrink: 0; }
-.article-cover img {
-    width: 50px;  /* Further reduced width */
-    height: 50px; /* Same as width for a square */
-    object-fit: cover;
-    border-radius: 4px; /* Slightly smaller radius */
-    background-color: #f0f0f0;
-    max-width: 50px;
-    max-height: 50px;
-}
-.article-details { display: flex; flex-direction: column; }
-.article-title-link {
-    font-weight: bold;
-    color: #333;
-    text-decoration: none;
-    margin-bottom: 1px; /* Reduced margin */
-    font-size: 0.95rem; /* Slightly smaller font */
-}
+.article-cover img { width: 50px; height: 50px; object-fit: cover; border-radius: 4px; background-color: #f0f0f0; }
+.article-details { display: flex; flex-direction: column; overflow: hidden; }
+.article-title-link, .article-description-admin { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.article-title-link { font-weight: bold; color: #333; text-decoration: none; margin-bottom: 1px; font-size: 0.95rem; }
 .article-title-link:hover { text-decoration: underline; }
-.article-description-admin {
-    font-size: 0.75rem; /* Further reduced font size */
-    color: #6c757d;
-    margin: 0 0 2px 0; /* Reduced margin */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-.article-type-badge {
-    font-size: 0.7rem; /* Further reduced font size */
-    background-color: #eee;
-    color: #555;
-    padding: 1px 6px; /* Reduced padding */
-    border-radius: 8px; /* Smaller radius */
-    align-self: flex-start;
-}
-.status-badge {
-    font-size: 0.75rem; /* Smaller font size */
-    padding: 3px 8px; /* Reduced padding */
-    border-radius: 12px; /* Smaller radius */
-    font-weight: 600;
-}
+.article-description-admin { font-size: 0.75rem; color: #6c757d; margin: 0 0 2px 0; }
+.article-type-badge { font-size: 0.7rem; background-color: #eee; color: #555; padding: 1px 6px; border-radius: 8px; align-self: flex-start; font-weight: 300; /* Adjusted font-weight to be thinner */ }
+
+.status-date-cell { display: flex; flex-direction: column; gap: 4px; }
+.status-badge { font-size: 0.75rem; padding: 3px 8px; border-radius: 12px; font-weight: 600; text-align: center; }
 .status-published { background-color: #e8f5e9; color: #2e7d32; }
 .status-draft { background-color: #fff3e0; color: #e65100; }
-.action-buttons { display: flex; gap: 5px; /* Reduced gap */ }
+.date-text { font-size: 0.75rem; color: #888; }
+
+.action-buttons { display: flex; gap: 5px; }
+
+/* --- Create/Edit Blog Form --- */
+.admin-fix-wrapper {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+.admin-card-fix {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    padding: 25px;
+    margin-bottom: 20px;
+}
+.table-fix {
+    width: 100%;
+    border-collapse: collapse;
+}
+.table-fix th, .table-fix td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+
+
+/* =================================== */
+/* --- 4. Responsive Adjustments --- */
+/* =================================== */
+
+@media (max-width: 768px) {
+    /* --- Admin Panel --- */
+    .admin-grid-container { grid-template-columns: 1fr; }
+
+    /* --- Admin Blogs Table --- */
+    .admin-blog-table {
+        table-layout: auto;
+        font-size: 0.85rem;
+    }
+    .admin-blog-table th, .admin-blog-table td {
+        padding: 6px 8px;
+    }
+    .article-cover img {
+        width: 40px;
+        height: 40px;
+    }
+    .article-title-link {
+        font-size: 0.9rem;
+    }
+    .article-description-admin {
+        display: none; /* Hide description on mobile */
+    }
+    .status-date-cell {
+        align-items: flex-start;
+    }
+    .date-text {
+        display: none; /* Hide date on mobile */
+    }
+    .action-buttons {
+        flex-direction: column;
+    }
+    .btn-sm .fa-fw {
+        margin-right: 0;
+    }
+    .btn-sm span {
+        display: none; /* Hide text, show only icon */
+    }
+
+    /* --- Create/Edit Blog Form --- */
+    .admin-fix-wrapper { padding: 0 !important; margin: 0 !important; width: 100% !important; }
+    .admin-card-fix { padding: 5px !important; margin: 0 !important; border-radius: 0 !important; box-shadow: none !important; width: 100% !important; border: none !important; }
+    .admin-header { padding: 10px 5px !important; margin-bottom: 10px !important; border-bottom: 1px solid #eee; }
+    .table-responsive { display: block !important; width: 100% !important; overflow-x: visible !important; }
+    .table-fix { display: table !important; width: 100% !important; table-layout: fixed !important; }
+    .table-fix thead { display: table-header-group !important; }
+    .table-fix tbody { display: table-row-group !important; }
+    .table-fix tr    { display: table-row !important; }
+    .table-fix th, .table-fix td { display: table-cell !important; padding: 8px 2px !important; }
+    .col-art { width: 50% !important; }
+    .col-sts { width: 15% !important; text-align: center !important; }
+    .col-dat { width: 18% !important; text-align: center !important; }
+    .col-act { width: 17% !important; text-align: right !important; }
+    .table-fix th { font-size: 0.7rem !important; background: #f4f4f4; color: #666; }
+    .img-cover { width: 30px !important; height: 30px !important; margin-right: 5px !important; }
+    .txt-title { font-size: 0.8rem !important; line-height: 1.1; white-space: normal !important; max-height: 2.4em; overflow: hidden; }
+    .txt-desc { display: none !important; }
+    .badge-type { font-size: 0.6rem !important; padding: 1px 4px !important; zoom: 0.9; }
+    .badge-status { font-size: 0.6rem !important; padding: 2px 4px !important; border-radius: 4px !important; white-space: nowrap; }
+    .txt-date { font-size: 0.65rem !important; }
+    .btn-mini { padding: 2px 4px !important; font-size: 0.7rem !important; width: 22px !important; height: 22px !important; }
+}

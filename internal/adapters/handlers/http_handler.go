@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
@@ -113,6 +114,15 @@ func translateDay(day string) string {
 		return day
 	}
 }
+
+func truncate(s string, length int) string {
+	if utf8.RuneCountInString(s) <= length {
+		return s
+	}
+	runes := []rune(s)
+	return string(runes[:length]) + "..."
+}
+
 
 // --- View Handlers (General) ---
 
@@ -344,7 +354,26 @@ func (h *FiberHandler) ViewAdminBlogs(c *fiber.Ctx) error {
 		return c.Redirect("/")
 	}
 	blogs, _ := h.service.GetLatestBlogs(0) // 0 for all
-	return h.RenderWithAuth(c, "admin/blogs", fiber.Map{"Title": "จัดการบทความ", "Blogs": blogs})
+
+	// Create a view model to hold truncated values
+	type BlogView struct {
+		domain.Blog
+		TruncatedTitle       string
+		TruncatedDescription string
+	}
+	var blogViews []BlogView
+	for _, b := range blogs {
+		blogViews = append(blogViews, BlogView{
+			Blog:                 b,
+			TruncatedTitle:       truncate(b.Title, 30),
+			TruncatedDescription: truncate(b.Description, 40),
+		})
+	}
+
+	return h.RenderWithAuth(c, "admin/blogs", fiber.Map{
+		"Title": "จัดการบทความ",
+		"Blogs": blogViews,
+	})
 }
 
 func (h *FiberHandler) ViewEditBlog(c *fiber.Ctx) error {

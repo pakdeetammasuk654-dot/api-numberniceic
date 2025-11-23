@@ -1,53 +1,87 @@
-<div class="card" style="max-width: 800px; margin: 20px auto;">
-    <h2 class="header-line">✍️ เขียนบทความใหม่</h2>
+<link rel="stylesheet" href="/static/css/admin.css">
 
-    {{if .Error}}
-        <div class="alert alert-danger" style="color: red; background: #ffebee; padding: 10px; margin-bottom: 15px;">
-            ⚠️ {{.Error}}
-        </div>
-    {{end}}
+<div class="admin-fix-wrapper">
+    <div class="admin-card-fix">
 
-    <form action="/admin/create-blog" method="POST">
-        <div style="display: flex; gap: 15px; margin-bottom: 15px;">
-            <div style="flex: 2;">
-                <label style="font-weight: bold; display: block; margin-bottom: 5px;">หัวข้อหลัก</label>
-                <input type="text" name="title" class="form-control" placeholder="ชื่อเรื่อง..." required style="width: 100%;">
-            </div>
-            <div style="flex: 1;">
-                <label style="font-weight: bold; display: block; margin-bottom: 5px;">ประเภท</label>
-                <select name="blog_type_id" class="form-control" style="width: 100%; padding: 10px;">
-                    {{range .Types}}
-                        <option value="{{.ID}}">{{.Name}}</option>
-                    {{end}}
-                </select>
-            </div>
+        <div class="admin-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 class="header-line" style="margin:0; font-size: 1.1rem; display:flex; align-items:center; gap:8px;">
+                <i class="fa-solid fa-newspaper" style="color:#007bff;"></i> บทความ
+            </h2>
+            <a href="/admin/create-blog" class="btn btn-success btn-sm" style="border-radius: 20px; font-size: 0.8rem; padding: 5px 12px;">
+                <i class="fa-solid fa-plus"></i> เพิ่ม
+            </a>
         </div>
 
-        <div style="margin-bottom: 15px;">
-            <label style="font-weight: bold; display: block; margin-bottom: 5px;">คำโปรยสั้นๆ (Short Title)</label>
-            <input type="text" name="short_title" class="form-control" placeholder="ข้อความสั้นๆ ดึงดูดใจ..." style="width: 100%;">
-        </div>
+        <div class="table-responsive">
+            <table class="table-fix">
+                <thead>
+                <tr>
+                    <th class="col-art">รายการ</th>
+                    <th class="col-sts">สถานะ</th>
+                    <th class="col-dat">วันที่</th>
+                    <th class="col-act">จัดการ</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{range .Blogs}}
+                    <tr>
+                        <td class="col-art">
+                            <div style="display: flex; align-items: center;">
+                                <div style="flex-shrink: 0;">
+                                    {{if .CoverURL}}
+                                        <img src="{{.CoverURL}}" class="img-cover" style="width: 45px; height: 45px; border-radius: 5px; object-fit: cover; margin-right: 10px;">
+                                    {{else}}
+                                        <div class="img-cover" style="width: 45px; height: 45px; background: #eee; border-radius: 5px; display: flex; align-items: center; justify-content: center; margin-right: 10px; color: #aaa;">
+                                            <i class="fa-solid fa-image"></i>
+                                        </div>
+                                    {{end}}
+                                </div>
+                                <div style="min-width: 0;">
+                                    <a href="/articles/{{.Slug}}" target="_blank" class="txt-title" style="display: block; font-weight: bold; color: #333; text-decoration: none; font-size: 0.95rem;">
+                                        {{.Title}}
+                                    </a>
+                                    <p class="txt-desc" style="margin: 0; font-size: 0.8rem; color: #777; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                        {{.ShortTitle}}
+                                    </p>
+                                    <span class="badge-type" style="background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; color: #666;">
+                                        {{.BlogType.Name}}
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
 
-        <div style="margin-bottom: 15px;">
-            <label style="font-weight: bold; display: block; margin-bottom: 5px;">คำอธิบาย (Description)</label>
-            <textarea name="description" class="form-control" rows="3" placeholder="คำอธิบายสั้นๆ สำหรับ SEO และแสดงผลในหน้าบทความ..." style="width: 100%;"></textarea>
-        </div>
+                        <td class="col-sts">
+                            {{if .Published}}
+                                <span class="badge-status" style="background:#e8f5e9; color:#2e7d32; padding:4px 8px; border-radius:12px; font-size:0.75rem; font-weight:bold;">เผยแพร่</span>
+                            {{else}}
+                                <span class="badge-status" style="background:#fff3e0; color:#e65100; padding:4px 8px; border-radius:12px; font-size:0.75rem; font-weight:bold;">ร่าง</span>
+                            {{end}}
+                        </td>
 
-        <div style="margin-bottom: 15px;">
-            <label style="font-weight: bold; display: block; margin-bottom: 5px;">รูปปก (URL)</label>
-            <input type="text" name="cover_url" class="form-control" placeholder="https://..." style="width: 100%;">
-        </div>
+                        <td class="col-dat">
+                            <span class="txt-date" style="color: #555; font-size: 0.85rem;">{{.CreatedAt.Format "02/01/06"}}</span>
+                        </td>
 
-        <div style="margin-bottom: 20px;">
-            <label style="font-weight: bold; display: block; margin-bottom: 5px;">เนื้อหา</label>
-            <textarea id="blogContent" name="content" style="min-height: 400px;"></textarea>
+                        <td class="col-act">
+                            <div style="display: flex; justify-content: flex-end; gap: 4px;">
+                                <a href="/admin/edit-blog/{{.ID}}" class="btn btn-warning btn-sm btn-mini" title="แก้ไข" style="display: flex; align-items: center; justify-content: center;">
+                                    <i class="fa-solid fa-pencil"></i>
+                                </a>
+                                <a href="/admin/delete-blog/{{.ID}}" class="btn btn-danger btn-sm btn-mini" title="ลบ" onclick="return confirm('ยืนยันการลบ?')" style="display: flex; align-items: center; justify-content: center;">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                {{else}}
+                    <tr>
+                        <td colspan="4" style="text-align: center; padding: 30px 10px; color: #999; font-size: 0.9rem;">
+                            ยังไม่มีบทความ
+                        </td>
+                    </tr>
+                {{end}}
+                </tbody>
+            </table>
         </div>
-
-        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px;">🚀 เผยแพร่บทความ</button>
-    </form>
+    </div>
 </div>
-
-<script src="https://cdn.tiny.cloud/1/cjxisbeytjox72893gsmxnjqybx7z0k02g8qned32t9xx85s/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
-<script>
-    tinymce.init({ selector: '#blogContent', height: 400 });
-</script>

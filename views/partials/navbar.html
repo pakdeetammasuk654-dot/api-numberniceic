@@ -1,39 +1,64 @@
 <nav class="navbar">
     <div class="navbar-container">
-        <a href="/" class="brand">ชื่อดี.com</a>
+        <!-- Top Row: Brand + Main Menu -->
+        <div class="navbar-row navbar-top-row">
+            <a href="/" class="brand">ชื่อดี.com</a>
+            <ul class="nav-menu-main">
+                <li><a href="/" class="nav-link">หน้าแรก</a></li>
+                <li><a href="/analysis" class="nav-link">วิเคราะห์ชื่อ</a></li>
+                <li><a href="/articles" class="nav-link">บทความ</a></li>
+            </ul>
+            <!-- Hamburger button for mobile -->
+            <button class="hamburger" id="hamburger-button" aria-label="เมนู">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+        </div>
 
-        <ul class="nav-menu-main">
-            <li><a href="/" class="nav-link"><i class="fa-solid fa-house fa-fw"></i><span>หน้าแรก</span></a></li>
-            <li><a href="/analysis" class="nav-link"><i class="fa-solid fa-wand-magic-sparkles fa-fw"></i><span>วิเคราะห์ชื่อ</span></a></li>
-            <li><a href="/articles" class="nav-link"><i class="fa-solid fa-newspaper fa-fw"></i><span>บทความ</span></a></li>
-        </ul>
-
-        <!-- Hamburger Menu Button -->
-        <button class="hamburger" id="hamburger-button" aria-label="เมนู">
-            <span class="hamburger-line"></span>
-            <span class="hamburger-line"></span>
-            <span class="hamburger-line"></span>
-        </button>
-
-        <div class="nav-menu-wrapper" id="nav-menu-wrapper">
+        <!-- Bottom Row: Side Menu + User Menu (Desktop/Tablet) -->
+        <div class="navbar-row navbar-bottom-row">
             <ul class="nav-menu-side">
-                <li><a href="/about" class="nav-link"><i class="fa-solid fa-circle-info fa-fw"></i> เกี่ยวกับเรา</a></li>
-                <li><a href="/sitemap" class="nav-link"><i class="fa-solid fa-sitemap fa-fw"></i> แผนที่เว็บไซต์</a></li>
-                <li class="nav-divider"></li>
+                <li><a href="/about" class="nav-link">เกี่ยวกับเรา</a></li>
+                <li><a href="/sitemap" class="nav-link">แผนที่เว็บไซต์</a></li>
+            </ul>
+            <ul class="nav-menu-user">
                 {{if .IsLoggedIn}}
-                    <li><a href="/dashboard" class="nav-link dashboard-link"><i class="fa-solid fa-table-columns fa-fw"></i> แดชบอร์ด</a></li>
+                    <li><a href="/dashboard" class="nav-link dashboard-link">แดชบอร์ด</a></li>
                     {{if .IsAdmin}}
-                        <li><a href="/admin" class="nav-link admin-link"><i class="fa-solid fa-screwdriver-wrench fa-fw"></i> แผงควบคุม</a></li>
+                        <li><a href="/admin" class="nav-link admin-link">แผงควบคุม</a></li>
                     {{end}}
                     <li>
                         <div class="user-info">
                             <span class="user-display-name">👤 {{if .DisplayName}}{{.DisplayName}}{{else}}สมาชิก{{end}}</span>
+                            <a href="/logout" class="btn-logout">ออกจากระบบ</a>
                         </div>
                     </li>
-                     <li><a href="/logout" class="nav-link"><i class="fa-solid fa-right-from-bracket fa-fw"></i> ออกจากระบบ</a></li>
                 {{else}}
-                    <li><a href="/login" class="nav-link login-link"><i class="fa-solid fa-right-to-bracket fa-fw"></i> เข้าสู่ระบบ</a></li>
-                    <li><a href="/register" class="nav-link register-link"><i class="fa-solid fa-user-plus fa-fw"></i> สมัครสมาชิก</a></li>
+                    <li><a href="/login" class="nav-link login-link">เข้าสู่ระบบ</a></li>
+                    <li><a href="/register" class="nav-link register-link">สมัครสมาชิก</a></li>
+                {{end}}
+            </ul>
+        </div>
+
+        <!-- Mobile Menu Wrapper (for hamburger dropdown) -->
+        <div class="nav-menu-wrapper" id="nav-menu-wrapper">
+             <ul class="nav-menu-mobile">
+                <li><a href="/" class="nav-link">หน้าแรก</a></li>
+                <li><a href="/analysis" class="nav-link">วิเคราะห์ชื่อ</a></li>
+                <li><a href="/articles" class="nav-link">บทความ</a></li>
+                <li><a href="/about" class="nav-link">เกี่ยวกับเรา</a></li>
+                <li><a href="/sitemap" class="nav-link">แผนที่เว็บไซต์</a></li>
+                <li class="nav-divider"></li>
+                {{if .IsLoggedIn}}
+                    <li><a href="/dashboard" class="nav-link dashboard-link">แดชบอร์ด</a></li>
+                    {{if .IsAdmin}}
+                        <li><a href="/admin" class="nav-link admin-link">🛠️ แผงควบคุม</a></li>
+                    {{end}}
+                     <li><a href="/logout" class="nav-link">ออกจากระบบ</a></li>
+                {{else}}
+                    <li><a href="/login" class="nav-link login-link">เข้าสู่ระบบ</a></li>
+                    <li><a href="/register" class="nav-link register-link">สมัครสมาชิก</a></li>
                 {{end}}
             </ul>
         </div>

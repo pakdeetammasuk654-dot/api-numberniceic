@@ -10,10 +10,9 @@
         <table class="table admin-blog-table">
             <thead>
                 <tr>
-                    <th>บทความ</th>
-                    <th>สถานะ</th>
-                    <th>วันที่สร้าง</th>
-                    <th>จัดการ</th>
+                    <th class="col-article">บทความ</th>
+                    <th class="col-status">สถานะ / วันที่</th>
+                    <th class="col-actions">จัดการ</th>
                 </tr>
             </thead>
             <tbody>
@@ -25,20 +24,22 @@
                                 <img src="{{.CoverURL}}" alt="{{.Title}}">
                             </div>
                             <div class="article-details">
-                                <a href="/articles/{{.Slug}}" target="_blank" class="article-title-link">{{.Title}}</a>
-                                <p class="article-description-admin">{{.Description}}</p>
+                                <a href="/articles/{{.Slug}}" target="_blank" class="article-title-link" title="{{.Title}}">{{.TruncatedTitle}}</a>
+                                <p class="article-description-admin" title="{{.Description}}">{{.TruncatedDescription}}</p>
                                 <span class="article-type-badge">{{.BlogType.Name}}</span>
                             </div>
                         </div>
                     </td>
                     <td>
-                        {{if .Published}}
-                            <span class="status-badge status-published">เผยแพร่แล้ว</span>
-                        {{else}}
-                            <span class="status-badge status-draft">ฉบับร่าง</span>
-                        {{end}}
+                        <div class="status-date-cell">
+                            {{if .Published}}
+                                <span class="status-badge status-published">เผยแพร่แล้ว</span>
+                            {{else}}
+                                <span class="status-badge status-draft">ฉบับร่าง</span>
+                            {{end}}
+                            <small class="date-text">{{.CreatedAt.Format "02 Jan 2006"}}</small>
+                        </div>
                     </td>
-                    <td>{{.CreatedAt.Format "02 Jan 2006"}}</td>
                     <td>
                         <div class="action-buttons">
                             <a href="/admin/edit-blog/{{.ID}}" class="btn btn-warning btn-sm"><i class="fa-solid fa-pencil fa-fw"></i> แก้ไข</a>
@@ -48,7 +49,7 @@
                 </tr>
             {{else}}
                 <tr>
-                    <td colspan="4" style="text-align: center; padding: 2rem;">ยังไม่มีบทความในระบบ</td>
+                    <td colspan="3" style="text-align: center; padding: 2rem;">ยังไม่มีบทความในระบบ</td>
                 </tr>
             {{end}}
             </tbody>

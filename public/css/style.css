@@ -1,7 +1,7 @@
 /* public/css/style.css */
 
 /* --- Global Styles --- */
-body { font-family: 'Sarabun', sans-serif; margin: 0; padding: 0; background-color: #f9f9f9; color: #333; }
+body { font-family: 'Prompt', sans-serif; /* Set Prompt as default font */ margin: 0; padding: 0; background-color: #f9f9f9; color: #333; }
 a { text-decoration: none; }
 h1, h2, h3 { color: #333; }
 
@@ -14,15 +14,19 @@ main {
 
 /* --- Navbar & Footer --- */
 .navbar { background: #333; color: white; padding: 0.5rem 1rem; }
-.navbar-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; position: relative; }
-.brand { font-size: 1.5rem; font-weight: bold; color: white; z-index: 1001; }
+.navbar-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap; /* Allow rows to wrap */
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
 
-/* Main Menu (Always Visible) */
-.nav-menu-main { list-style: none; display: flex; gap: 20px; margin: 0; padding: 0; align-items: center; }
-
-/* Side Menu (Hamburger) */
-.nav-menu-side { list-style: none; display: flex; gap: 15px; margin: 0; padding: 0; align-items: center; white-space: nowrap; }
-.nav-link { color: white; transition: color 0.3s; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
+/* Default styles for all menus (will be overridden by media queries) */
+.nav-menu-main, .nav-menu-side, .nav-menu-user, .nav-menu-mobile { list-style: none; display: flex; gap: 15px; margin: 0; padding: 0; align-items: center; }
+.nav-link { color: white; transition: color 0.3s; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
 .nav-link i { font-size: 1rem; }
 .nav-link:hover { color: #ddd; }
 .nav-link.active { color: #ffd700; font-weight: bold; }
@@ -31,48 +35,28 @@ main {
 .login-link { color: #90caf9 !important; }
 .register-link { color: #a5d6a7 !important; }
 
-.user-info { display: flex; align-items: center; gap: 10px; margin-left: 10px; }
+.user-info { display: flex; align-items: center; gap: 10px; }
 .user-display-name { color: #fff; font-size: 0.9rem; }
-.btn-logout {
-    padding: 4px 10px;
-    background-color: #ef5350;
-    color: white;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    transition: background 0.3s;
-    text-decoration: none;
-}
+.btn-logout { padding: 4px 10px; background-color: #ef5350; color: white; border-radius: 20px; font-size: 0.8rem; transition: background 0.3s; text-decoration: none; }
 .btn-logout:hover { background-color: #c62828; }
 
-.hamburger { display: none; /* Hidden by default */ }
-.nav-divider {
-    height: 1px;
-    width: 80%;
-    background-color: #555;
-    margin: 1rem 0;
-}
+.nav-divider { height: 1px; width: 80%; background-color: #555; margin: 1rem 0; }
+.nav-divider-desktop { width: 1px; height: 20px; background-color: #555; margin: 0 10px; } /* Vertical divider */
 
-/* --- Responsive Navbar (Hamburger Menu) --- */
+/* --- Specific Navbar Elements --- */
+.brand { font-size: 1.5rem; font-weight: 300; /* Adjusted font-weight to be thinner */ color: white; z-index: 1001; flex-shrink: 0; }
+.hamburger { display: none; } /* Hidden by default */
+.nav-menu-wrapper { display: none; } /* Hidden by default */
+.navbar-row { display: flex; align-items: center; width: 100%; } /* Base for rows */
+
+
+/* =================================== */
+/* --- Responsive Navbar --- */
+/* =================================== */
+
+/* Mobile (up to 768px) */
 @media (max-width: 768px) {
-    .navbar-container {
-        justify-content: space-between;
-    }
-    .brand {
-        flex-grow: 0; /* Do not allow brand to grow */
-    }
-    .nav-menu-main {
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-        gap: 10px; /* Tighter gap on mobile */
-    }
-    .nav-menu-main .nav-link {
-        font-size: 0.85rem; /* Slightly smaller font on mobile */
-    }
-    .nav-menu-main .nav-link span {
-        display: none; /* Hide text on mobile */
-    }
-
+    .nav-desktop-only { display: none; } /* Hide desktop-specific menus */
     .hamburger {
         display: flex;
         flex-direction: column;
@@ -84,40 +68,27 @@ main {
         cursor: pointer;
         padding: 0;
         z-index: 1001;
-        margin-left: 15px;
     }
-    .hamburger-line {
-        width: 2rem;
-        height: 0.25rem;
-        background-color: white;
-        border-radius: 10px;
-        transition: all 0.3s linear;
-    }
+    .hamburger-line { width: 2rem; height: 0.25rem; background-color: white; border-radius: 10px; transition: all 0.3s linear; }
     .nav-menu-wrapper {
-        position: fixed;
-        top: 0;
-        left: -100%; /* Hidden by default */
-        width: 100%;
-        height: 100vh;
-        background-color: rgba(0, 0, 0, 0.95);
-        transition: left 0.3s ease-in-out;
-        z-index: 1000;
-        padding-top: 5rem;
+        display: block; /* Show wrapper for mobile menu */
+        position: fixed; top: 0; left: -100%; width: 100%; height: 100vh; background-color: rgba(0, 0, 0, 0.95); transition: left 0.3s ease-in-out; z-index: 1000; padding-top: 5rem;
     }
-    .nav-menu-wrapper.active {
-        left: 0;
-    }
-    .nav-menu-side {
-        flex-direction: column;
-        align-items: center;
-        gap: 2rem;
-    }
-    .nav-menu-side .nav-link {
-        font-size: 1.5rem;
-    }
-    .nav-menu-side .user-info {
-        display: none; /* Hide desktop user info in side menu */
-    }
+    .nav-menu-wrapper.active { left: 0; }
+    .nav-menu-wrapper .nav-menu-mobile { flex-direction: column; align-items: center; gap: 2rem; }
+    .nav-menu-wrapper .nav-link { font-size: 1.5rem; }
+}
+
+/* Tablet & Desktop (769px and up) */
+@media (min-width: 769px) {
+    .navbar-container { flex-direction: column; align-items: flex-start; } /* Stack rows vertically */
+    .navbar-top-row { justify-content: space-between; width: 100%; }
+    .navbar-bottom-row { justify-content: flex-end; width: 100%; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid #555; }
+    .nav-menu-main { flex-grow: 1; justify-content: center; } /* Center main menu */
+    .nav-menu-main .nav-link i, .nav-menu-side .nav-link i { display: none; } /* Hide icons on desktop */
+    .nav-menu-user { margin-left: 15px; } /* Space between side menu and user menu */
+    .hamburger { display: none; }
+    .nav-menu-wrapper { display: none; }
 }
 
 
