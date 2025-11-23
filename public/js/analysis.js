@@ -91,15 +91,21 @@ document.addEventListener('DOMContentLoaded', function () {
             sunNameDisplay.innerHTML = nameHtml;
         }
 
-        animateValue("totalScore", 0, parseInt(analysisData.dataset.target, 10) || 0, 1000);
-        animateValue("goodScore", 0, parseInt(document.getElementById('goodScore').dataset.target, 10) || 0, 1000);
-        animateValue("badScore", 0, parseInt(document.getElementById('badScore').dataset.target, 10) || 0, 1000);
+        // Simplified and corrected animation calls
+        animateValue("totalScore");
+        animateValue("goodScore");
+        animateValue("badScore");
     }
 
-    function animateValue(id, start, end, duration) {
+    function animateValue(id) {
         const obj = document.getElementById(id);
         if (!obj) return;
+
+        const end = parseInt(obj.dataset.target, 10) || 0;
+        const duration = 1000;
+        const start = 0;
         let startTimestamp = null;
+
         const step = (timestamp) => {
             if (!startTimestamp) startTimestamp = timestamp;
             const progress = Math.min((timestamp - startTimestamp) / duration, 1);

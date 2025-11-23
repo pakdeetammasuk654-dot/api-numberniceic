@@ -3,9 +3,9 @@
         <a href="/" class="brand">ชื่อดี.com</a>
 
         <ul class="nav-menu-main">
-            <li><a href="/" class="nav-link">หน้าแรก</a></li>
-            <li><a href="/analysis" class="nav-link">ชื่อ</a></li>
-            <li><a href="/articles" class="nav-link">บทความ</a></li>
+            <li><a href="/" class="nav-link"><i class="fa-solid fa-house fa-fw"></i><span>หน้าแรก</span></a></li>
+            <li><a href="/analysis" class="nav-link"><i class="fa-solid fa-wand-magic-sparkles fa-fw"></i><span>วิเคราะห์ชื่อ</span></a></li>
+            <li><a href="/articles" class="nav-link"><i class="fa-solid fa-newspaper fa-fw"></i><span>บทความ</span></a></li>
         </ul>
 
         <!-- Hamburger Menu Button -->
@@ -17,23 +17,23 @@
 
         <div class="nav-menu-wrapper" id="nav-menu-wrapper">
             <ul class="nav-menu-side">
-                <li><a href="/about" class="nav-link">เกี่ยวกับเรา</a></li>
-                <li><a href="/sitemap" class="nav-link">แผนที่เว็บไซต์</a></li>
+                <li><a href="/about" class="nav-link"><i class="fa-solid fa-circle-info fa-fw"></i> เกี่ยวกับเรา</a></li>
+                <li><a href="/sitemap" class="nav-link"><i class="fa-solid fa-sitemap fa-fw"></i> แผนที่เว็บไซต์</a></li>
                 <li class="nav-divider"></li>
                 {{if .IsLoggedIn}}
-                    <li><a href="/dashboard" class="nav-link dashboard-link">แดชบอร์ด</a></li>
+                    <li><a href="/dashboard" class="nav-link dashboard-link"><i class="fa-solid fa-table-columns fa-fw"></i> แดชบอร์ด</a></li>
                     {{if .IsAdmin}}
-                        <li><a href="/admin" class="nav-link admin-link">🛠️ แผงควบคุม</a></li>
+                        <li><a href="/admin" class="nav-link admin-link"><i class="fa-solid fa-screwdriver-wrench fa-fw"></i> แผงควบคุม</a></li>
                     {{end}}
                     <li>
                         <div class="user-info">
                             <span class="user-display-name">👤 {{if .DisplayName}}{{.DisplayName}}{{else}}สมาชิก{{end}}</span>
                         </div>
                     </li>
-                     <li><a href="/logout" class="nav-link">ออกจากระบบ</a></li>
+                     <li><a href="/logout" class="nav-link"><i class="fa-solid fa-right-from-bracket fa-fw"></i> ออกจากระบบ</a></li>
                 {{else}}
-                    <li><a href="/login" class="nav-link login-link">เข้าสู่ระบบ</a></li>
-                    <li><a href="/register" class="nav-link register-link">สมัครสมาชิก</a></li>
+                    <li><a href="/login" class="nav-link login-link"><i class="fa-solid fa-right-to-bracket fa-fw"></i> เข้าสู่ระบบ</a></li>
+                    <li><a href="/register" class="nav-link register-link"><i class="fa-solid fa-user-plus fa-fw"></i> สมัครสมาชิก</a></li>
                 {{end}}
             </ul>
         </div>

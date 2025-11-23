@@ -1,20 +1,20 @@
-<link rel="stylesheet" href="/static/analysis.css">
+<link rel="stylesheet" href="/static/css/analysis.css">
 
 <div class="card">
-    <h2 class="header-line">📊 แดชบอร์ดภาพรวม</h2>
+    <h2 class="header-line"><i class="fa-solid fa-table-columns fa-fw"></i> แดชบอร์ดภาพรวม</h2>
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <p style="margin: 0;">ยินดีต้อนรับสู่หน้าแดชบอร์ดส่วนตัว</p>
-        <a href="/analysis" class="btn btn-primary" style="width: auto; padding: 8px 20px; font-size: 0.95rem; border-radius: 20px;">+ วิเคราะห์ชื่อใหม่</a>
+        <a href="/analysis" class="btn btn-primary" style="width: auto; padding: 8px 20px; font-size: 0.95rem; border-radius: 20px;"><i class="fa-solid fa-plus fa-fw"></i> วิเคราะห์ชื่อใหม่</a>
     </div>
 
     <div class="result-container" style="margin-bottom: 30px;">
         <div class="result-col" style="background-color: #fff3e0; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-            <h3 style="margin: 0 0 10px 0; color: #ef6c00;">📝 บันทึกแล้ว</h3>
+            <h3 style="margin: 0 0 10px 0; color: #ef6c00;"><i class="fa-solid fa-list-check"></i> บันทึกแล้ว</h3>
             <p style="font-size: 2.5rem; font-weight: 800; color: #e65100; margin: 0;">{{.TotalCount}}</p>
             <small style="color: #666;">รายชื่อ</small>
         </div>
         <div class="result-col" style="background-color: #e8f5e9; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-            <h3 style="margin: 0 0 10px 0; color: #2e7d32;">⭐ คะแนนบารมีรวม</h3>
+            <h3 style="margin: 0 0 10px 0; color: #2e7d32;"><i class="fa-solid fa-star"></i> คะแนนบารมีรวม</h3>
             <p style="font-size: 2.5rem; font-weight: 800; color: #1b5e20; margin: 0;">{{.TotalScoreSum}}</p>
             <small style="color: #666;">แต้มสะสม (รวมทุกชื่อ)</small>
         </div>
@@ -100,7 +100,7 @@
                                onmouseover="this.style.opacity='1'"
                                onmouseout="this.style.opacity='0.7'"
                                title="ลบชื่อนี้">
-                                🗑️
+                                <i class="fa-solid fa-trash-can"></i>
                             </a>
                         </td>
                     </tr>
@@ -110,7 +110,7 @@
         </div>
     {{else}}
         <div style="text-align: center; padding: 50px 20px; color: #888; background: #f9f9f9; border-radius: 15px; border: 2px dashed #eee;">
-            <div style="font-size: 3rem; margin-bottom: 10px;">📭</div>
+            <div style="font-size: 3rem; margin-bottom: 10px;"><i class="fa-solid fa-folder-open"></i></div>
             <p style="margin: 0;">ยังไม่มีรายชื่อที่บันทึกไว้</p>
             <a href="/analysis" style="color: #007bff; font-weight: bold; margin-top: 10px; display: inline-block;">👉 ไปวิเคราะห์ชื่อเลย!</a>
         </div>

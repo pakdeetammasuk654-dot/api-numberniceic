@@ -11,13 +11,19 @@
     font-size: 1.3rem; /* Further reduced font size for the main heading */
     flex-grow: 1; /* Allow header to take available space */
     margin-right: 10px; /* Add some space between header and button */
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 .admin-header .btn-success {
-    padding: 4px 8px; /* Match btn-sm padding */
-    font-size: 0.75rem; /* Match btn-sm font size */
+    padding: 4px 10px; /* Even smaller padding */
+    font-size: 0.75rem; /* Even smaller font size */
     white-space: nowrap; /* Prevent button text from wrapping */
     flex-shrink: 0; /* Prevent button from shrinking */
     width: auto; /* Make button fit its content */
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
 }
 .table-responsive {
     overflow-x: auto;
@@ -51,7 +57,7 @@
 
 .btn-danger { background-color: #dc3545; color: white; }
 .btn-warning { background-color: #ffc107; color: #212529; }
-.btn-sm { padding: 4px 8px; font-size: 0.75rem; /* Smaller buttons */ }
+.btn-sm { padding: 4px 8px; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 5px; }
 
 /* --- Admin Panel --- */
 .admin-panel-content * { box-sizing: border-box; }

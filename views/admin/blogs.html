@@ -2,8 +2,8 @@
 
 <div class="card">
     <div class="admin-header">
-        <h2 class="header-line">📝 จัดการบทความ</h2>
-        <a href="/admin/create-blog" class="btn btn-success">+ เขียนบทความใหม่</a>
+        <h2 class="header-line"><i class="fa-solid fa-newspaper fa-fw"></i> จัดการบทความ</h2>
+        <a href="/admin/create-blog" class="btn btn-success"><i class="fa-solid fa-plus fa-fw"></i> เขียนบทความใหม่</a>
     </div>
 
     <div class="table-responsive">
@@ -41,8 +41,8 @@
                     <td>{{.CreatedAt.Format "02 Jan 2006"}}</td>
                     <td>
                         <div class="action-buttons">
-                            <a href="/admin/edit-blog/{{.ID}}" class="btn btn-warning btn-sm">แก้ไข</a>
-                            <a href="/admin/delete-blog/{{.ID}}" class="btn btn-danger btn-sm" onclick="return confirm('ยืนยันการลบ?')">ลบ</a>
+                            <a href="/admin/edit-blog/{{.ID}}" class="btn btn-warning btn-sm"><i class="fa-solid fa-pencil fa-fw"></i> แก้ไข</a>
+                            <a href="/admin/delete-blog/{{.ID}}" class="btn btn-danger btn-sm" onclick="return confirm('ยืนยันการลบ?')"><i class="fa-solid fa-trash-can fa-fw"></i> ลบ</a>
                         </div>
                     </td>
                 </tr>

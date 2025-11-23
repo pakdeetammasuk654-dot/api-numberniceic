@@ -5,7 +5,7 @@
     <form action="/analysis" method="POST" class="analysis-form">
         <div style="display: flex; flex-direction: column; gap: 20px; max-width: 600px; margin: 0 auto;">
             <div class="input-wrapper select-wrapper">
-                <span class="input-icon">📅</span>
+                <span class="input-icon"><i class="fa-solid fa-calendar-day"></i></span>
                 <select name="birth_day" id="birthDayInput" class="form-control-custom" required>
                     <option value="" disabled>-- เลือกวันเกิด --</option>
                     <option value="sunday" {{if or (eq .BirthDay "sunday") (not .BirthDay)}}selected{{end}}>วันอาทิตย์</option>
@@ -19,7 +19,7 @@
                 </select>
             </div>
             <div class="input-wrapper">
-                <span class="input-icon">👤</span>
+                <span class="input-icon"><i class="fa-solid fa-user"></i></span>
                 <input type="text" id="nameInput" name="name" class="form-control-custom" placeholder="พิมพ์ชื่อ-นามสกุล (ระบบวิเคราะห์อัตโนมัติ...)" required maxlength="24" autocomplete="off" value="{{if .Name}}{{.Name}}{{else}}ณเดชณ์{{end}}" style="padding-right: 40px;">
                 <button type="button" id="clearInputBtn" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); border: none; background: none; color: #aaa; font-size: 1.2rem; cursor: pointer; padding: 0; line-height: 1; display: none;">&times;</button>
             </div>
@@ -59,7 +59,7 @@
         </div>
 
         <div class="summary-box">
-            <button class="btn-save-solar" id="btnSaveName">💾 เก็บชื่อนี้</button>
+            <button class="btn-save-solar" id="btnSaveName"><i class="fa-solid fa-floppy-disk fa-fw"></i> เก็บชื่อนี้</button>
 
             <div class="summary-row">
                 <div class="score-panel">
@@ -87,13 +87,13 @@
                             </div>
                         {{else}}
                             <div class="speech-bubble-success">
-                                🏆 ชื่อนี้ไม่มีกาลกิณี: {{if eq .Result.BirthDay "sunday"}}วันอาทิตย์{{else if eq .Result.BirthDay "monday"}}วันจันทร์{{else if eq .Result.BirthDay "tuesday"}}วันอังคาร{{else if eq .Result.BirthDay "wednesday1"}}วันพุธ (กลางวัน){{else if eq .Result.BirthDay "wednesday2"}}วันพุธ (กลางคืน){{else if eq .Result.BirthDay "thursday"}}วันพฤหัสบดี{{else if eq .Result.BirthDay "friday"}}วันศุกร์{{else if eq .Result.BirthDay "saturday"}}วันเสาร์{{end}}
+                                <i class="fa-solid fa-shield-halved"></i> ชื่อนี้ไม่มีกาลกิณี: {{if eq .Result.BirthDay "sunday"}}วันอาทิตย์{{else if eq .Result.BirthDay "monday"}}วันจันทร์{{else if eq .Result.BirthDay "tuesday"}}วันอังคาร{{else if eq .Result.BirthDay "wednesday1"}}วันพุธ (กลางวัน){{else if eq .Result.BirthDay "wednesday2"}}วันพุธ (กลางคืน){{else if eq .Result.BirthDay "thursday"}}วันพฤหัสบดี{{else if eq .Result.BirthDay "friday"}}วันศุกร์{{else if eq .Result.BirthDay "saturday"}}วันเสาร์{{end}}
                             </div>
                         {{end}}
                     </div>
                     <div class="action-frame">
-                        <button id="btnShowDetails" class="btn-action btn-sat" style="border:none; font-family:inherit; cursor:pointer;">🧮 เลขศาสตร์</button>
-                        <button id="btnLinguistics" class="btn-action btn-lang" style="border:none; font-family:inherit; cursor:pointer;">📜 ภาษาศาสตร์</button>
+                        <button id="btnShowDetails" class="btn-action btn-sat" style="border:none; font-family:inherit; cursor:pointer;"><i class="fa-solid fa-calculator fa-fw"></i> เลขศาสตร์</button>
+                        <button id="btnLinguistics" class="btn-action btn-lang" style="border:none; font-family:inherit; cursor:pointer;"><i class="fa-solid fa-book-open fa-fw"></i> ภาษาศาสตร์</button>
                         <div class="action-desc">💡 กดปุ่มดูความหมาย</div>
                     </div>
                 </div>
@@ -105,7 +105,7 @@
             <h2 class="header-line">รายละเอียดคำทำนาย: {{.Result.Name}}</h2>
             <div class="result-container">
                 <div class="result-col" id="sat-section">
-                    <h3 style="color: #0277bd;">🧮 เลขศาสตร์</h3>
+                    <h3 style="color: #0277bd;"><i class="fa-solid fa-calculator fa-fw"></i> เลขศาสตร์</h3>
                     <p>ผลรวม: <strong>{{.Result.SatSum}}</strong></p>
                     {{range .Result.SatPairs}}
                         <div class="pair-card {{if .Meaning}}type-{{.Meaning.PairType}}{{end}}">
@@ -117,7 +117,7 @@
                     {{end}}
                 </div>
                 <div class="result-col" id="sha-section">
-                    <h3 style="color: #7b1fa2;">🌑 พลังเงา</h3>
+                    <h3 style="color: #7b1fa2;"><i class="fa-solid fa-moon fa-fw"></i> พลังเงา</h3>
                     <p>ผลรวม: <strong>{{.Result.ShaSum}}</strong></p>
                     {{range .Result.ShaPairs}}
                         <div class="pair-card {{if .Meaning}}type-{{.Meaning.PairType}}{{end}}">
@@ -133,7 +133,7 @@
 
         <div class="card">
             <h3 class="header-line">
-                🌟 ชื่อคล้าย <span id="similarNameDisplay" style="color: #007bff; margin-left: 5px;"></span>
+                <i class="fa-solid fa-star"></i> ชื่อคล้าย <span id="similarNameDisplay" style="color: #007bff; margin-left: 5px;"></span>
                 <span style="font-size: 1rem; color: #555; font-weight: normal;">
                 ({{if eq .Result.BirthDay "sunday"}}วันอาทิตย์{{else if eq .Result.BirthDay "monday"}}วันจันทร์{{else if eq .Result.BirthDay "tuesday"}}วันอังคาร{{else if eq .Result.BirthDay "wednesday1"}}วันพุธ (กลางวัน){{else if eq .Result.BirthDay "wednesday2"}}วันพุธ (กลางคืน){{else if eq .Result.BirthDay "thursday"}}วันพฤหัสบดี{{else if eq .Result.BirthDay "friday"}}วันศุกร์{{else if eq .Result.BirthDay "saturday"}}วันเสาร์{{end}})
             </span>
