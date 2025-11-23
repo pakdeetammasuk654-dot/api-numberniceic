@@ -56,7 +56,22 @@ main {
 
 /* Mobile (up to 768px) */
 @media (max-width: 768px) {
-    .nav-desktop-only { display: none; } /* Hide desktop-specific menus */
+    .navbar-top-row {
+        width: 100%;
+        justify-content: space-between;
+    }
+    .nav-menu-main {
+        flex-grow: 1;
+        justify-content: center;
+        gap: 10px;
+    }
+    .nav-menu-main .nav-link {
+        font-size: 0.8rem;
+    }
+    .nav-menu-main .nav-link i {
+        display: none; /* Hide icons on mobile main menu */
+    }
+    .navbar-bottom-row { display: none; } /* Hide bottom row on mobile */
     .hamburger {
         display: flex;
         flex-direction: column;
@@ -81,11 +96,10 @@ main {
 
 /* Tablet & Desktop (769px and up) */
 @media (min-width: 769px) {
-    .navbar-container { flex-direction: column; align-items: flex-start; } /* Stack rows vertically */
     .navbar-top-row { justify-content: space-between; width: 100%; }
     .navbar-bottom-row { justify-content: flex-end; width: 100%; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid #555; }
     .nav-menu-main { flex-grow: 1; justify-content: center; } /* Center main menu */
-    .nav-menu-main .nav-link i, .nav-menu-side .nav-link i { display: none; } /* Hide icons on desktop */
+    .nav-menu-main .nav-link i, .nav-menu-side .nav-link i, .nav-menu-user .nav-link i { display: none; } /* Hide icons on desktop */
     .nav-menu-user { margin-left: 15px; } /* Space between side menu and user menu */
     .hamburger { display: none; }
     .nav-menu-wrapper { display: none; }
