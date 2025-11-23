@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="951a5162-a3df-49c2-8f74-39a748626aea" name="ubuntu-google">
+        <fileTransfer rootFolder="/home/tayap" accessType="SFTP" host="34.44.200.128" port="22" sshConfigId="c5d82010-f426-4bb5-a7e5-b9700ef5bfbf" sshConfig="tayap@34.44.200.128:22 key" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

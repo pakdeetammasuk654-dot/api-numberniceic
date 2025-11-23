@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SshConfigs">
+    <configs>
+      <sshConfig host="34.44.200.128" id="c5d82010-f426-4bb5-a7e5-b9700ef5bfbf" keyPath="$USER_HOME$/.ssh/google_compute_engine" port="22" nameFormat="DESCRIPTIVE" username="tayap" useOpenSSHConfig="true" />
+    </configs>
+  </component>
+</project>

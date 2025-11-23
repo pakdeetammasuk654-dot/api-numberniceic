@@ -40,7 +40,6 @@ func main() {
 	fmt.Println("✅ Connected to Database successfully")
 
 	// 3. Auto Migrate: สร้าง/อัปเดตตารางใน Database
-	// เพิ่ม &domain.BlogType{} เข้าไปเพื่อสร้างตาราง post_types
 	db.AutoMigrate(&domain.User{}, &domain.SavedName{}, &domain.Blog{}, &domain.BlogType{})
 
 	// 4. Setup Template Engine & Fiber
@@ -53,7 +52,6 @@ func main() {
 	// 5. Init Layers (Repository, Service, Handler)
 	repo := repositories.NewPostgresRepository(db)
 
-	// 🔥 Seed Data: สร้างประเภทบทความเริ่มต้น (ถ้ายังไม่มี)
 	if err := repo.SeedBlogTypes(); err != nil {
 		log.Println("⚠️ Warning: Failed to seed blog types:", err)
 	}
@@ -66,6 +64,13 @@ func main() {
 	authHandler := handlers.NewAuthHandler(authService)
 
 	// 6. Setup Routes
+
+	// --- SEO & Static Files ---
+	app.Get("/robots.txt", func(c *fiber.Ctx) error {
+		return c.SendFile("./public/robots.txt")
+	})
+	app.Get("/sitemap.xml", handler.HandleSitemapXML)
+
 
 	// --- General Pages ---
 	app.Get("/", handler.ViewHome)
@@ -93,7 +98,7 @@ func main() {
 	// --- Admin Routes (Protected + Check Admin) ---
 	admin := app.Group("/admin", middlewares.IsAuthenticated)
 
-	admin.Get("/", handler.ViewAdminPanel) // หน้าหลัก Admin Panel
+	admin.Get("/", handler.ViewAdminPanel)
 
 	// Blog Management
 	admin.Get("/blogs", handler.ViewAdminBlogs)
@@ -121,7 +126,7 @@ func main() {
 	// 7. Start Server
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "9000" // ใช้ Port 9000 ตามที่ต้องการ
+		port = "9000"
 	}
 	fmt.Printf("🚀 Server running at http://localhost:%s\n", port)
 	log.Fatal(app.Listen(":" + port))

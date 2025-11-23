@@ -86,6 +86,7 @@ func (h *FiberHandler) RenderWithAuth(c *fiber.Ctx, template string, data fiber.
 	data["IsLoggedIn"] = isLoggedIn
 	data["DisplayName"] = displayName
 	data["IsAdmin"] = isAdmin
+    data["Path"] = c.Path() // Add current path for SEO
 
 	return c.Render(template, data, "layouts/main")
 }
@@ -116,7 +117,6 @@ func translateDay(day string) string {
 // --- View Handlers (General) ---
 
 func (h *FiberHandler) ViewHome(c *fiber.Ctx) error {
-	// 1 main + 3 secondary images + 3 for link list = 7 total
 	blogs, _ := h.service.GetLatestBlogs(7)
 
 	var mainArticle *domain.Blog
@@ -135,6 +135,8 @@ func (h *FiberHandler) ViewHome(c *fiber.Ctx) error {
 	}
 
 	return h.RenderWithAuth(c, "landing_page", fiber.Map{
+		"Title":             "หน้าแรก",
+		"Description":       "วิเคราะห์ชื่อมงคลตามหลักเลขศาสตร์และพลังเงา ค้นพบความหมายที่ซ่อนอยู่เบื้องหลังชื่อของคุณ",
 		"MainArticle":       mainArticle,
 		"SecondaryArticles": secondaryArticles,
 		"LinkListArticles":  linkListArticles,
@@ -142,12 +144,25 @@ func (h *FiberHandler) ViewHome(c *fiber.Ctx) error {
 }
 
 func (h *FiberHandler) ViewAbout(c *fiber.Ctx) error {
-	return h.RenderWithAuth(c, "about", nil)
+	return h.RenderWithAuth(c, "about", fiber.Map{
+        "Title": "เกี่ยวกับเรา",
+        "Description": "ชื่อดี.com ให้บริการวิเคราะห์ชื่อตามหลักเลขศาสตร์และพลังเงา เพื่อส่งเสริมสิริมงคลและความสำเร็จในชีวิต",
+    })
 }
 
 func (h *FiberHandler) ViewSitemap(c *fiber.Ctx) error {
 	blogs, _ := h.service.GetLatestBlogs(0) // Get all blogs
 	return h.RenderWithAuth(c, "sitemap", fiber.Map{
+		"Title": "แผนที่เว็บไซต์",
+        "Description": "รวมลิงก์ทั้งหมดของเว็บไซต์ ชื่อดี.com เพื่อให้ง่ายต่อการเข้าถึง",
+		"Blogs": blogs,
+	})
+}
+
+func (h *FiberHandler) HandleSitemapXML(c *fiber.Ctx) error {
+	blogs, _ := h.service.GetLatestBlogs(0) // Get all blogs
+	c.Set("Content-Type", "application/xml")
+	return c.Render("sitemap_xml", fiber.Map{
 		"Blogs": blogs,
 	})
 }
@@ -167,6 +182,8 @@ func (h *FiberHandler) ViewAnalysis(c *fiber.Ctx) error {
 	result, err := h.service.AnalyzeName(name, birthDay)
 
 	data := fiber.Map{
+		"Title":       "วิเคราะห์ชื่อ",
+        "Description": "วิเคราะห์ชื่อ " + name + " ตามหลักเลขศาสตร์และพลังเงา ค้นพบความหมายและพลังที่ซ่อนอยู่",
 		"Name":     name,
 		"BirthDay": birthDay,
 	}
@@ -187,6 +204,8 @@ func (h *FiberHandler) HandleAnalysis(c *fiber.Ctx) error {
 	result, err := h.service.AnalyzeName(name, birthDay)
 
 	data := fiber.Map{
+		"Title":       "ผลการวิเคราะห์ชื่อ " + name,
+        "Description": "ผลการวิเคราะห์ชื่อ " + name + " ตามหลักเลขศาสตร์และพลังเงา พร้อมคำทำนายและชื่อที่แนะนำ",
 		"Name":     name,
 		"BirthDay": birthDay,
 	}
@@ -261,6 +280,8 @@ func (h *FiberHandler) ViewDashboard(c *fiber.Ctx) error {
 	}
 
 	return h.RenderWithAuth(c, "dashboard", fiber.Map{
+        "Title": "แดชบอร์ด",
+        "Description": "ดูและจัดการชื่อที่คุณบันทึกไว้ทั้งหมด",
 		"SavedNames":    viewModels,
 		"TotalCount":    totalCount,
 		"TotalScoreSum": totalScoreSum,
@@ -273,6 +294,8 @@ func (h *FiberHandler) ViewArticles(c *fiber.Ctx) error {
 	blogs, _ := h.service.GetLatestBlogs(0) // 0 for all
 	_, isAdmin := getUserInfoFromContext(c)
 	return h.RenderWithAuth(c, "articles", fiber.Map{
+        "Title": "บทความทั้งหมด",
+        "Description": "รวมบทความน่ารู้เกี่ยวกับศาสตร์ตัวเลข พลังเงา และเคล็ดลับการตั้งชื่อ",
 		"Blogs":   blogs,
 		"IsAdmin": isAdmin,
 	})
@@ -285,6 +308,9 @@ func (h *FiberHandler) ViewBlogDetail(c *fiber.Ctx) error {
 		return c.Redirect("/articles")
 	}
 	return h.RenderWithAuth(c, "blog_detail", fiber.Map{
+        "Title":       blog.Title,
+        "Description": blog.Description,
+        "Image":       blog.CoverURL,
 		"Blog":        blog,
 		"ContentHTML": template.HTML(blog.Content),
 	})
@@ -297,7 +323,7 @@ func (h *FiberHandler) ViewAdminPanel(c *fiber.Ctx) error {
 	if !isAdmin {
 		return c.Redirect("/")
 	}
-	return h.RenderWithAuth(c, "admin/panel", nil)
+	return h.RenderWithAuth(c, "admin/panel", fiber.Map{"Title": "แผงควบคุม"})
 }
 
 func (h *FiberHandler) ViewCreateBlog(c *fiber.Ctx) error {
@@ -307,6 +333,7 @@ func (h *FiberHandler) ViewCreateBlog(c *fiber.Ctx) error {
 	}
 	types, _ := h.service.GetBlogTypes()
 	return h.RenderWithAuth(c, "admin/create_blog", fiber.Map{
+        "Title": "เขียนบทความใหม่",
 		"Types": types,
 	})
 }
@@ -317,7 +344,7 @@ func (h *FiberHandler) ViewAdminBlogs(c *fiber.Ctx) error {
 		return c.Redirect("/")
 	}
 	blogs, _ := h.service.GetLatestBlogs(0) // 0 for all
-	return h.RenderWithAuth(c, "admin/blogs", fiber.Map{"Blogs": blogs})
+	return h.RenderWithAuth(c, "admin/blogs", fiber.Map{"Title": "จัดการบทความ", "Blogs": blogs})
 }
 
 func (h *FiberHandler) ViewEditBlog(c *fiber.Ctx) error {
@@ -332,6 +359,7 @@ func (h *FiberHandler) ViewEditBlog(c *fiber.Ctx) error {
 	}
 	types, _ := h.service.GetBlogTypes()
 	return h.RenderWithAuth(c, "admin/edit_blog", fiber.Map{
+        "Title": "แก้ไขบทความ",
 		"Blog":  blog,
 		"Types": types,
 	})
@@ -344,6 +372,7 @@ func (h *FiberHandler) ViewAdminTypes(c *fiber.Ctx) error {
 	}
 	types, _ := h.service.GetBlogTypes()
 	return h.RenderWithAuth(c, "admin/types", fiber.Map{
+        "Title": "จัดการประเภทบทความ",
 		"Types": types,
 	})
 }
@@ -359,6 +388,7 @@ func (h *FiberHandler) ViewEditBlogType(c *fiber.Ctx) error {
 		return c.Redirect("/admin/types")
 	}
 	return h.RenderWithAuth(c, "admin/edit_type", fiber.Map{
+        "Title": "แก้ไขประเภทบทความ",
 		"Type": blogType,
 	})
 }

@@ -3,7 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ชื่อดี.com</title>
+
+    <!-- SEO and Social Sharing -->
+    <title>{{if .Title}}{{.Title}} | {{end}}ชื่อดี.com</title>
+    <meta name="description" content="{{if .Description}}{{.Description}}{{else}}วิเคราะห์ชื่อมงคลตามหลักเลขศาสตร์และพลังเงา ค้นพบความหมายที่ซ่อนอยู่เบื้องหลังชื่อของคุณ พร้อมรับคำทำนายที่แม่นยำ{{end}}">
+    <meta name="keywords" content="วิเคราะห์ชื่อ, ตั้งชื่อ, ชื่อมงคล, เลขศาสตร์, พลังเงา, ทำนายชื่อ, ชื่อดี.com">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://ชื่อดี.com{{.Path}}">
+    <meta property="og:title" content="{{if .Title}}{{.Title}} | {{end}}ชื่อดี.com">
+    <meta property="og:description" content="{{if .Description}}{{.Description}}{{else}}วิเคราะห์ชื่อมงคลตามหลักเลขศาสตร์และพลังเงา ค้นพบความหมายที่ซ่อนอยู่เบื้องหลังชื่อของคุณ พร้อมรับคำทำนายที่แม่นยำ{{end}}">
+    <meta property="og:image" content="{{if .Image}}{{.Image}}{{else}}http://ชื่อดี.com/static/og-image.jpg{{end}}">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="http://ชื่อดี.com{{.Path}}">
+    <meta property="twitter:title" content="{{if .Title}}{{.Title}} | {{end}}ชื่อดี.com">
+    <meta property="twitter:description" content="{{if .Description}}{{.Description}}{{else}}วิเคราะห์ชื่อมงคลตามหลักเลขศาสตร์และพลังเงา ค้นพบความหมายที่ซ่อนอยู่เบื้องหลังชื่อของคุณ พร้อมรับคำทำนายที่แม่นยำ{{end}}">
+    <meta property="twitter:image" content="{{if .Image}}{{.Image}}{{else}}http://ชื่อดี.com/static/og-image.jpg{{end}}">
+
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>

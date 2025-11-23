@@ -59,14 +59,12 @@ func (s *analyzerService) AnalyzeName(name string, birthDay string) (*domain.Nam
 	satPairData := s.enrichPairs(rawSatPairs)
 	shaPairData := s.enrichPairs(rawShaPairs)
 
-	totalScore := 0
 	goodScore := 0
 	badScore := 0
 	calculatePoints := func(pairs []domain.PairData) {
 		for _, p := range pairs {
 			if p.Meaning != nil {
 				score := p.Meaning.PairPoint
-				totalScore += score
 				pType := strings.ToUpper(p.Meaning.PairType)
 				if strings.HasPrefix(pType, "D") {
 					goodScore += score
@@ -78,6 +76,8 @@ func (s *analyzerService) AnalyzeName(name string, birthDay string) (*domain.Nam
 	}
 	calculatePoints(satPairData)
 	calculatePoints(shaPairData)
+
+	totalScore := goodScore + badScore
 
 	similarNames, _ := s.repo.SearchSimilarNames(cleanName, birthDay, 12)
 	for i := range similarNames {

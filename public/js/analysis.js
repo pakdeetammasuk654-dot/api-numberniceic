@@ -61,6 +61,14 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    // --- Similar Names Table ---
+    document.querySelectorAll('.similar-name-row').forEach(row => {
+        row.addEventListener('click', () => {
+            analyzeName(row.dataset.name);
+        });
+        row.style.cursor = 'pointer'; // Add pointer cursor to indicate it's clickable
+    });
+
     window.analyzeName = function(name) {
         const birthDay = birthDayInput.value;
         window.location.href = `/analysis?name=${encodeURIComponent(name)}&birth_day=${birthDay}`;
