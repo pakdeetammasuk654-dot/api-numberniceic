@@ -1,102 +1,186 @@
 /* public/css/articles.css */
 
-/* --- Articles Page Specific Styles --- */
+/* --- Hero Section --- */
+.hero-section {
+    padding: 40px 20px;
+    text-align: center;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+    margin-bottom: 30px;
+    margin-top: 20px;
+}
+
+.hero-section h1 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 2rem;
+}
+
+.hero-section p {
+    color: #666;
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.btn-create-article {
+    margin-top: 15px;
+    display: inline-block;
+    padding: 10px 25px;
+    border-radius: 30px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: transform 0.2s;
+}
+.btn-create-article:hover {
+    transform: translateY(-2px);
+}
+
+/* --- Grid Layout --- */
 .articles-page-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
-    padding: 1rem 0; /* Add padding to the grid itself */
+    gap: 2rem;
+    padding-bottom: 40px;
 }
 
+/* --- Article Card --- */
 .article-list-card {
     position: relative;
     display: block;
-    aspect-ratio: 1 / 1; /* Maintain square aspect ratio */
-    border-radius: 0; /* No rounded corners */
+    border-radius: 15px;
     overflow: hidden;
     text-decoration: none;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: #000;
+    /* 🔥 แก้ไข: ปรับเป็น 1 / 1 เพื่อให้เป็นสี่เหลี่ยมจัตุรัส */
+    aspect-ratio: 1 / 1;
 }
 
 .article-list-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+}
+
+.article-image-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
 }
 
 .article-list-image {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* This will crop the image to fill the frame */
+    object-fit: cover; /* Crop ภาพให้เต็มกรอบจัตุรัส */
+    transition: transform 0.5s ease;
+    opacity: 0.85;
 }
 
+.article-list-card:hover .article-list-image {
+    transform: scale(1.05);
+    opacity: 0.6;
+}
+
+.no-image {
+    width: 100%;
+    height: 100%;
+    background-color: #eee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ccc;
+    font-size: 3rem;
+}
+
+/* --- Overlay Content --- */
 .article-list-overlay {
     position: absolute;
-    inset: 0; /* Cover the entire card */
+    inset: 0;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end; /* Align content to the bottom */
-    padding: 1rem;
-    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%);
+    justify-content: space-between;
+    padding: 1.5rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
+    z-index: 2;
 }
 
 .article-list-type {
     background-color: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(3px);
+    backdrop-filter: blur(5px);
     color: white;
-    padding: 4px 10px;
-    border-radius: 15px;
+    padding: 5px 12px;
+    border-radius: 20px;
     font-size: 0.75rem;
-    font-weight: 500;
-    align-self: flex-start; /* Align to the left within flex container */
-    margin-bottom: 0.5rem;
-    text-decoration: none;
+    font-weight: 600;
+    align-self: flex-start;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.article-list-type:hover {
-    text-decoration: underline;
+.article-list-text-content {
+    margin-top: auto;
 }
 
 .article-list-title {
-    font-size: 1.1rem;
-    margin: 0 0 0.25rem 0;
+    font-size: 1.25rem;
+    margin: 0 0 0.5rem 0;
     color: white;
-    font-weight: 500;
-    white-space: normal; /* Allow title to wrap */
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-weight: 600;
+    line-height: 1.3;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+
     display: -webkit-box;
-    -webkit-line-clamp: 2; /* Limit title to 2 lines */
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+    overflow: hidden;
 }
 
 .article-list-description {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     color: #e0e0e0;
     margin: 0;
-    white-space: normal; /* Allow description to wrap */
-    overflow: hidden;
-    text-overflow: ellipsis;
+    line-height: 1.5;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+
     display: -webkit-box;
-    -webkit-line-clamp: 2; /* Limit description to 2 lines */
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+    overflow: hidden;
 }
 
-/* --- Responsive Adjustments --- */
+/* --- Empty State --- */
+.empty-article-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px;
+    color: #aaa;
+    background: white;
+    border-radius: 12px;
+    border: 2px dashed #eee;
+}
+.empty-article-state i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+/* --- Responsive --- */
 @media (max-width: 768px) {
     .articles-page-grid {
-        grid-template-columns: 1fr; /* Single column on mobile */
-        gap: 1rem;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
     }
+
     .article-list-card {
-        aspect-ratio: 4 / 3; /* Slightly taller on mobile */
+        /* 🔥 แก้ไข: ในมือถือก็ให้เป็นจัตุรัสด้วย */
+        aspect-ratio: 1 / 1;
     }
+
+    .hero-section {
+        padding: 30px 15px;
+    }
+
     .article-list-title {
-        font-size: 1rem;
-    }
-    .article-list-description {
-        font-size: 0.8rem;
+        font-size: 1.1rem;
     }
 }

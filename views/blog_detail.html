@@ -1,22 +1,56 @@
+<style>
+    /* บังคับใช้ฟอนต์ Sarabun กับส่วนเนื้อหาและคำอธิบาย */
+    .blog-content,
+    .blog-description,
+    .blog-meta-info {
+        font-family: 'Sarabun', sans-serif !important;
+    }
+
+    /* ปรับแต่งเนื้อหาให้อ่านง่ายขึ้น */
+    .blog-content {
+        font-size: 1.15rem !important; /* ขยายตัวอักษรเล็กน้อย */
+        line-height: 1.8 !important;    /* เพิ่มระยะห่างบรรทัด */
+        font-weight: 400;
+    }
+
+    /* ปรับหัวข้อในเนื้อหาให้เป็นฟอนต์มีหัวด้วย */
+    .blog-content h1,
+    .blog-content h2,
+    .blog-content h3,
+    .blog-content h4,
+    .blog-content h5,
+    .blog-content h6 {
+        font-family: 'Sarabun', sans-serif !important;
+        font-weight: 700;
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .blog-description {
+        font-size: 1.2rem !important;
+        line-height: 1.6;
+    }
+</style>
+
 <div class="container">
     <div class="card" style="max-width: 800px; margin: 20px auto; padding: 40px;">
         {{if .Blog.CoverURL}}
             <img src="{{.Blog.CoverURL}}" style="width: 100%; height: auto; border-radius: 10px; margin-bottom: 20px;">
         {{end}}
 
-        <h1 style="font-size: 2.5rem; margin-bottom: 10px;">{{.Blog.Title}}</h1>
+        <h1 style="font-size: 2.5rem; margin-bottom: 10px; line-height: 1.3;">{{.Blog.Title}}</h1>
 
-        <div style="color: #666; margin-bottom: 20px;">
+        <div class="blog-meta-info" style="color: #666; margin-bottom: 20px;">
             เขียนโดย: <strong>{{.Blog.Author.DisplayName}}</strong> | เมื่อ: {{.Blog.CreatedAt.Format "02 Jan 2006"}}
         </div>
 
         {{if .Blog.Description}}
-            <p class="blog-description" style="font-size: 1.2rem; color: #555; margin-bottom: 30px; padding-left: 15px; border-left: 3px solid #007bff;">
+            <p class="blog-description" style="color: #555; margin-bottom: 30px; padding-left: 15px; border-left: 4px solid #007bff;">
                 {{.Blog.Description}}
             </p>
         {{end}}
 
-        <div class="blog-content" style="line-height: 1.8; font-size: 1.1rem; color: #333; border-top: 1px solid #eee; padding-top: 20px;">
+        <div class="blog-content" style="color: #333; border-top: 1px solid #eee; padding-top: 20px;">
             {{.ContentHTML}}
         </div>
 
