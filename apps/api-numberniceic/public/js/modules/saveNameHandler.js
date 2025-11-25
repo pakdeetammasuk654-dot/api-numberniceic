@@ -7,7 +7,6 @@ export function initializeSaveNameHandler(btnSaveName, nameInput, birthDayInput)
     const notificationCloseBtn = document.getElementById('notificationCloseBtn');
 
     const showNotification = (isSuccess, message) => {
-        if (!notificationModal) return;
         notificationIcon.innerHTML = isSuccess ? '<i class="fa-solid fa-circle-check"></i>' : '<i class="fa-solid fa-circle-xmark"></i>';
         notificationIcon.className = ''; // Clear previous classes
         notificationIcon.classList.add(isSuccess ? 'success' : 'error');
@@ -16,7 +15,6 @@ export function initializeSaveNameHandler(btnSaveName, nameInput, birthDayInput)
     };
 
     const hideNotification = () => {
-        if (!notificationModal) return;
         notificationModal.classList.remove('show');
     };
 
@@ -43,10 +41,7 @@ export function initializeSaveNameHandler(btnSaveName, nameInput, birthDayInput)
                 if (data.success) {
                     showNotification(true, 'บันทึกชื่อสำเร็จแล้ว!');
                 } else if (data.redirect) {
-                    showNotification(false, 'กรุณาเข้าสู่ระบบเพื่อบันทึกชื่อ');
-                    setTimeout(() => {
-                        window.location.href = data.redirect;
-                    }, 2000);
+                    window.location.href = data.redirect;
                 } else {
                     showNotification(false, 'เกิดข้อผิดพลาด: ' + data.error);
                 }

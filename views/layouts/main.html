@@ -3,45 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- SEO and Social Sharing -->
-    <title>{{if .Title}}{{.Title}} | {{end}}ชื่อดี.com</title>
-    <meta name="description" content="{{if .Description}}{{.Description}}{{else}}วิเคราะห์ชื่อมงคลตามหลักเลขศาสตร์และพลังเงา ค้นพบความหมายที่ซ่อนอยู่เบื้องหลังชื่อของคุณ พร้อมรับคำทำนายที่แม่นยำ{{end}}">
-    <meta name="keywords" content="วิเคราะห์ชื่อ, ตั้งชื่อ, ชื่อมงคล, เลขศาสตร์, พลังเงา, ทำนายชื่อ, ชื่อดี.com">
+    <title>{{.Title}} - ชื่อดี.com</title>
+    <meta name="description" content="{{.Description}}">
     
-    <!-- Open Graph / Facebook -->
+    <!-- SEO Meta Tags -->
+    <meta property="og:title" content="{{.Title}} - ชื่อดี.com">
+    <meta property="og:description" content="{{.Description}}">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="http://ชื่อดี.com{{.Path}}">
-    <meta property="og:title" content="{{if .Title}}{{.Title}} | {{end}}ชื่อดี.com">
-    <meta property="og:description" content="{{if .Description}}{{.Description}}{{else}}วิเคราะห์ชื่อมงคลตามหลักเลขศาสตร์และพลังเงา ค้นพบความหมายที่ซ่อนอยู่เบื้องหลังชื่อของคุณ พร้อมรับคำทำนายที่แม่นยำ{{end}}">
-    <meta property="og:image" content="{{if .Image}}{{.Image}}{{else}}http://ชื่อดี.com/static/og-image.jpg{{end}}">
+    <meta property="og:url" content="https://www.xn--42c6baa2g1b.com{{.Path}}">
+    {{if .Image}}
+    <meta property="og:image" content="{{.Image}}">
+    {{else}}
+    <meta property="og:image" content="https://www.xn--42c6baa2g1b.com/public/images/og-image.png">
+    {{end}}
+    <meta name="twitter:card" content="summary_large_image">
 
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="http://ชื่อดี.com{{.Path}}">
-    <meta property="twitter:title" content="{{if .Title}}{{.Title}} | {{end}}ชื่อดี.com">
-    <meta property="twitter:description" content="{{if .Description}}{{.Description}}{{else}}วิเคราะห์ชื่อมงคลตามหลักเลขศาสตร์และพลังเงา ค้นพบความหมายที่ซ่อนอยู่เบื้องหลังชื่อของคุณ พร้อมรับคำทำนายที่แม่นยำ{{end}}">
-    <meta property="twitter:image" content="{{if .Image}}{{.Image}}{{else}}http://ชื่อดี.com/static/og-image.jpg{{end}}">
+    <!-- Favicon -->
+    <link rel="icon" href="/public/favicon.ico" sizes="any">
+    <link rel="icon" href="/public/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/public/apple-touch-icon.png">
+    <link rel="manifest" href="/public/manifest.webmanifest">
 
-    <link rel="stylesheet" href="/static/css/style.css">
-    <!-- Font Awesome CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <!-- Google Font: Prompt -->
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;700&family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Articles Page Specific CSS -->
-    <link rel="stylesheet" href="/static/css/articles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;700&family=Sarabun:wght@300;400&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Main Stylesheet -->
+    {{block "head" .}}{{end}}
 </head>
 <body>
-{{template "partials/navbar" .}}
-
-<main>
-    {{embed}}
-</main>
-
-{{template "partials/footer" .}}
-
-<script type="module" src="/static/js/main.js"></script>
+    {{template "partials/navbar" .}}
+    <main>
+        {{embed}}
+    </main>
+    {{template "partials/footer" .}}
 </body>
 </html>
