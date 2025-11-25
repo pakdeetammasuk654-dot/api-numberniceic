@@ -1,36 +1,25 @@
-<div class="container">
-    <div class="hero-section">
-        <h1>📚 บทความน่ารู้</h1>
-        <p>เกร็ดความรู้เกี่ยวกับศาสตร์ตัวเลขและพลังเงา</p>
-        {{if .IsAdmin}}
-            <a href="/admin/create-blog" class="btn btn-success btn-create-article">
-                <i class="fa-solid fa-plus"></i> เขียนบทความใหม่
-            </a>
-        {{end}}
-    </div>
+<link rel="stylesheet" href="/static/css/articles.css">
 
-    <div class="articles-page-grid">
+<div class="articles-grid-container-fullscreen">
+    <div class="articles-grid">
         {{range .Blogs}}
-            <a href="/articles/{{.Slug}}" class="article-list-card">
-                <div class="article-image-wrapper">
-                    {{if .CoverURL}}
-                        <img src="{{.CoverURL}}" alt="{{.Title}}" class="article-list-image">
-                    {{else}}
-                        <div class="no-image"><i class="fa-solid fa-image"></i></div>
-                    {{end}}
-                </div>
-                <div class="article-list-overlay">
-                    <span class="article-list-type">{{.BlogType.Name}}</span>
-                    <div class="article-list-text-content">
-                        <h3 class="article-list-title">{{.Title}}</h3>
-                        <p class="article-list-description">{{.Description}}</p>
-                    </div>
+            <a href="/articles/{{.Slug}}" class="article-card-link">
+                <div class="article-card-image" style="background-image: url('{{.CoverURL}}');"></div>
+                <div class="article-card-content">
+                    <span class="article-card-type">{{.BlogType.Name}}</span>
+                    <h3 class="article-card-title">{{.Title}}</h3>
+                    <p class="article-card-description">{{.Description}}</p>
                 </div>
             </a>
         {{else}}
-            <div class="empty-article-state">
-                <i class="fa-regular fa-folder-open"></i>
+            <div class="empty-state" style="grid-column: 1 / -1; padding: 5rem 1rem;">
+                <div class="empty-state-icon"><i class="fa-regular fa-folder-open"></i></div>
                 <p>ยังไม่มีบทความในขณะนี้</p>
+                {{if .IsAdmin}}
+                    <a href="/admin/create-blog" class="btn btn-success" style="margin-top: 1rem;">
+                        <i class="fa-solid fa-plus"></i> เขียนบทความแรก
+                    </a>
+                {{end}}
             </div>
         {{end}}
     </div>

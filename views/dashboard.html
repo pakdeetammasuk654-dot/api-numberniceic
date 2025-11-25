@@ -3,28 +3,23 @@
 
 <div class="card">
     <div class="admin-header">
-        <h2 class="header-line"><i class="fa-solid fa-table-columns fa-fw"></i> แดชบอร์ดภาพรวม</h2>
+        <div class="header-left">
+            <h2 class="header-title"><i class="fa-solid fa-table-columns fa-fw"></i> แดชบอร์ด</h2>
+            <div class="stat-card stat-card-inline">
+                <h3 class="stat-title"><i class="fa-solid fa-list-check"></i> บันทึกแล้ว</h3>
+                <p class="stat-value">{{.TotalCount}}</p>
+                <small class="stat-label">รายชื่อ</small>
+            </div>
+        </div>
         <a href="/analysis" class="btn btn-primary btn-sm-custom"><i class="fa-solid fa-plus fa-fw"></i> วิเคราะห์ชื่อใหม่</a>
-    </div>
-
-    <div class="dashboard-stats-grid">
-        <div class="stat-card stat-card-saved">
-            <h3 class="stat-title"><i class="fa-solid fa-list-check"></i> บันทึกแล้ว</h3>
-            <p class="stat-value">{{.TotalCount}}</p>
-            <small class="stat-label">รายชื่อ</small>
-        </div>
-        <div class="stat-card stat-card-score">
-            <h3 class="stat-title"><i class="fa-solid fa-star"></i> คะแนนบารมีรวม</h3>
-            <p class="stat-value">{{.TotalScoreSum}}</p>
-            <small class="stat-label">แต้มสะสม (รวมทุกชื่อ)</small>
-        </div>
     </div>
 
     <h3 class="header-line">📂 รายชื่อที่บันทึกไว้</h3>
 
     {{if .SavedNames}}
-        <div class="table-responsive">
-            <table class="table table-hover align-middle dashboard-table">
+        <!-- Desktop View: Table -->
+        <div class="table-responsive dashboard-desktop-view">
+            <table class="table table-hover align-middle">
                 <thead>
                 <tr>
                     <th>ชื่อ-นามสกุล</th>
@@ -45,20 +40,24 @@
                             <span class="birthday-badge">{{.BirthDayTH}}</span>
                         </td>
                         <td class="text-center">
-                            <div class="pair-group">
-                                {{range .SatPairs}}
-                                    <div class="mini-star-table {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sat{{end}}">{{.Pair}}</div>
-                                {{end}}
+                            <div class="pair-score-group">
+                                <div class="pair-group">
+                                    {{range .SatPairs}}
+                                        <div class="mini-star-table {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sat{{end}}">{{.Pair}}</div>
+                                    {{end}}
+                                </div>
+                                <div class="sum-label">(คะแนน: {{.SatScore}})</div>
                             </div>
-                            <div class="sum-label">(รวม: {{.SatSum}})</div>
                         </td>
                         <td class="text-center">
-                            <div class="pair-group">
-                                {{range .ShaPairs}}
-                                    <div class="mini-star-table {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sha{{end}}">{{.Pair}}</div>
-                                {{end}}
+                             <div class="pair-score-group">
+                                <div class="pair-group">
+                                    {{range .ShaPairs}}
+                                        <div class="mini-star-table {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sha{{end}}">{{.Pair}}</div>
+                                    {{end}}
+                                </div>
+                                <div class="sum-label">(คะแนน: {{.ShaScore}})</div>
                             </div>
-                            <div class="sum-label">(รวม: {{.ShaSum}})</div>
                         </td>
                         <td class="text-center">
                             <div class="total-score-badge {{if lt .TotalScore 0}}score-bad{{else}}score-good{{end}}">
@@ -75,6 +74,55 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Mobile View: Cards -->
+        <div class="dashboard-mobile-view">
+            {{range .SavedNames}}
+            <div class="mobile-card clickable-row" data-href="/analysis?name={{.Name}}&birth_day={{.BirthDay}}">
+                <div class="mobile-card-header">
+                    <span class="name-cell">{{.NameHTML}}</span>
+                    <a href="/api/delete-name/{{.ID}}" class="btn-delete" title="ลบชื่อนี้">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </a>
+                </div>
+                <div class="mobile-card-body">
+                    <div class="mobile-card-row">
+                        <span class="mobile-card-label">วันเกิด:</span>
+                        <span class="birthday-badge">{{.BirthDayTH}}</span>
+                    </div>
+                    <div class="mobile-card-row">
+                        <span class="mobile-card-label">เลขศาสตร์:</span>
+                        <div class="pair-score-group-mobile">
+                            <div class="pair-group">
+                                {{range .SatPairs}}
+                                    <div class="mini-star-table {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sat{{end}}">{{.Pair}}</div>
+                                {{end}}
+                            </div>
+                            <span class="sum-label-mobile">(คะแนน: {{.SatScore}})</span>
+                        </div>
+                    </div>
+                    <div class="mobile-card-row">
+                        <span class="mobile-card-label">พลังเงา:</span>
+                        <div class="pair-score-group-mobile">
+                            <div class="pair-group">
+                                {{range .ShaPairs}}
+                                    <div class="mini-star-table {{if .Meaning}}type-{{.Meaning.PairType}}{{else}}star-sha{{end}}">{{.Pair}}</div>
+                                {{end}}
+                            </div>
+                            <span class="sum-label-mobile">(คะแนน: {{.ShaScore}})</span>
+                        </div>
+                    </div>
+                    <div class="mobile-card-row">
+                        <span class="mobile-card-label">คะแนนรวม:</span>
+                        <div class="total-score-badge {{if lt .TotalScore 0}}score-bad{{else}}score-good{{end}}">
+                            {{.TotalScore}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{end}}
+        </div>
+
     {{else}}
         <div class="empty-state">
             <div class="empty-state-icon"><i class="fa-solid fa-folder-open"></i></div>

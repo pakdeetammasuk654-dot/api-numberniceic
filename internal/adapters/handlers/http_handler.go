@@ -246,8 +246,10 @@ func (h *FiberHandler) ViewDashboard(c *fiber.Ctx) error {
 		TotalScore int
 		SatSum     int
 		SatPairs   []domain.PairData
+		SatScore   int // Added for Sat score
 		ShaSum     int
 		ShaPairs   []domain.PairData
+		ShaScore   int // Added for Sha score
 	}
 
 	var viewModels []SavedNameView
@@ -275,6 +277,20 @@ func (h *FiberHandler) ViewDashboard(c *fiber.Ctx) error {
 		satPairs := h.service.GetEnrichedPairs(n.SatSum)
 		shaPairs := h.service.GetEnrichedPairs(n.ShaSum)
 
+		// Calculate individual scores
+		satScore := 0
+		for _, p := range satPairs {
+			if p.Meaning != nil {
+				satScore += p.Meaning.PairPoint
+			}
+		}
+		shaScore := 0
+		for _, p := range shaPairs {
+			if p.Meaning != nil {
+				shaScore += p.Meaning.PairPoint
+			}
+		}
+
 		viewModels = append(viewModels, SavedNameView{
 			ID:         n.ID,
 			Name:       n.Name,
@@ -284,8 +300,10 @@ func (h *FiberHandler) ViewDashboard(c *fiber.Ctx) error {
 			TotalScore: n.TotalScore,
 			SatSum:     n.SatSum,
 			SatPairs:   satPairs,
+			SatScore:   satScore, // Assign calculated score
 			ShaSum:     n.ShaSum,
 			ShaPairs:   shaPairs,
+			ShaScore:   shaScore, // Assign calculated score
 		})
 	}
 

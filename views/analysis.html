@@ -1,9 +1,9 @@
 <link rel="stylesheet" href="/static/css/analysis.css">
 <link rel="stylesheet" href="/static/css/style.css"> <!-- Also include main style -->
 
-<div class="card" style="padding-top: 30px; padding-bottom: 30px;">
+<div class="card" style="padding-top: 20px; padding-bottom: 20px;">
     <form action="/analysis" method="POST" class="analysis-form">
-        <div style="display: flex; flex-direction: column; gap: 20px; max-width: 600px; margin: 0 auto;">
+        <div style="display: flex; flex-direction: column; gap: 10px; max-width: 600px; margin: 0 auto;">
             <div class="input-wrapper select-wrapper">
                 <span class="input-icon"><i class="fa-solid fa-calendar-day"></i></span>
                 <select name="birth_day" id="birthDayInput" class="form-control-custom" required>
@@ -23,13 +23,13 @@
                 <input type="text" id="nameInput" name="name" class="form-control-custom" placeholder="พิมพ์ชื่อ-นามสกุล (ระบบวิเคราะห์อัตโนมัติ...)" required maxlength="24" autocomplete="off" value="{{if .Name}}{{.Name}}{{else}}ณเดชณ์{{end}}" style="padding-right: 40px;">
                 <button type="button" id="clearInputBtn" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); border: none; background: none; color: #aaa; font-size: 1.2rem; cursor: pointer; padding: 0; line-height: 1; display: none;">&times;</button>
             </div>
-            <div id="typingStatus" style="text-align: center; color: #888; font-size: 0.9rem; display: none; margin-top: -10px;">⏳ กำลังรอพิมพ์เสร็จ...</div>
+            <div id="typingStatus" style="text-align: center; color: #888; font-size: 0.9rem; display: none; margin-top: -5px;">⏳ กำลังรอพิมพ์เสร็จ...</div>
         </div>
     </form>
 </div>
 
-<div class="sample-section" style="margin-bottom: 30px;">
-    <p class="sample-title" style="text-align: center; margin-top: 0;">💡 ไอเดียชื่อน่าสนใจ</p>
+<div class="sample-section">
+    <p class="sample-title">เลือกวันเกิด พิมพ์ชื่อ หรือเลือกชื่อบุคคลที่มีชื่อเสียง</p>
     <div class="sample-grid">
         <div class="sample-item" data-name="ณเดชน์"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Nadech"><span>ณเดชน์</span></div>
         <div class="sample-item" data-name="ภูดิท"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Phudit"><span>ภูดิท</span></div>

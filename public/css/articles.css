@@ -1,186 +1,98 @@
-/* public/css/articles.css */
+/* /public/css/articles.css */
 
-/* --- Hero Section --- */
-.hero-section {
-    padding: 40px 20px;
-    text-align: center;
+.articles-grid-container-fullscreen {
+    width: 100%;
+    padding: 0;
     background-color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-    margin-bottom: 30px;
-    margin-top: 20px;
 }
 
-.hero-section h1 {
-    margin: 0 0 10px 0;
-    color: #333;
-    font-size: 2rem;
-}
-
-.hero-section p {
-    color: #666;
-    margin: 0;
-    font-size: 1.1rem;
-}
-
-.btn-create-article {
-    margin-top: 15px;
-    display: inline-block;
-    padding: 10px 25px;
-    border-radius: 30px;
-    font-weight: 500;
-    text-decoration: none;
-    transition: transform 0.2s;
-}
-.btn-create-article:hover {
-    transform: translateY(-2px);
-}
-
-/* --- Grid Layout --- */
-.articles-page-grid {
+.articles-grid {
     display: grid;
+    /* Creates a responsive grid that fills the width. 
+       Each item is at least 300px wide, but can grow. */
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 2rem;
-    padding-bottom: 40px;
+    gap: 0; /* No gap between items */
 }
 
-/* --- Article Card --- */
-.article-list-card {
-    position: relative;
+.article-card-link {
     display: block;
-    border-radius: 15px;
+    position: relative;
     overflow: hidden;
     text-decoration: none;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    background: #000;
-    /* 🔥 แก้ไข: ปรับเป็น 1 / 1 เพื่อให้เป็นสี่เหลี่ยมจัตุรัส */
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 1 / 1; /* This makes the item a perfect square */
 }
 
-.article-list-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 30px rgba(0,0,0,0.15);
-}
-
-.article-image-wrapper {
-    width: 100%;
-    height: 100%;
-    position: relative;
-}
-
-.article-list-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Crop ภาพให้เต็มกรอบจัตุรัส */
-    transition: transform 0.5s ease;
-    opacity: 0.85;
-}
-
-.article-list-card:hover .article-list-image {
-    transform: scale(1.05);
-    opacity: 0.6;
-}
-
-.no-image {
-    width: 100%;
-    height: 100%;
-    background-color: #eee;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #ccc;
-    font-size: 3rem;
-}
-
-/* --- Overlay Content --- */
-.article-list-overlay {
+.article-card-image {
     position: absolute;
-    inset: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.5s ease;
+}
+
+.article-card-link:hover .article-card-image {
+    transform: scale(1.05); /* Zoom effect on hover */
+}
+
+.article-card-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1.5rem;
+    color: white;
+    background: linear-gradient(to top, rgba(0,0,0,0.9) 20%, rgba(0,0,0,0.5) 70%, transparent 100%);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    padding: 1.5rem;
-    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
-    z-index: 2;
+    justify-content: flex-end;
+    height: 100%;
+    box-sizing: border-box;
 }
 
-.article-list-type {
-    background-color: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(5px);
+.article-card-type {
+    background-color: rgba(217, 119, 6, 0.8); /* Accent color with some transparency */
     color: white;
-    padding: 5px 12px;
-    border-radius: 20px;
+    padding: 0.2rem 0.6rem;
+    border-radius: 15px;
     font-size: 0.75rem;
-    font-weight: 600;
-    align-self: flex-start;
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    align-self: flex-start; /* Don't stretch */
+    margin-bottom: 0.5rem;
 }
 
-.article-list-text-content {
-    margin-top: auto;
-}
-
-.article-list-title {
-    font-size: 1.25rem;
-    margin: 0 0 0.5rem 0;
+.article-card-title {
+    font-family: 'Prompt', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin: 0 0 0.3rem 0;
+    line-height: 1.2;
     color: white;
-    font-weight: 600;
-    line-height: 1.3;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-
+    /* Limit to 2 lines */
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
 
-.article-list-description {
+.article-card-description {
+    font-family: 'Sarabun', sans-serif;
     font-size: 0.9rem;
+    font-weight: 300;
+    line-height: 1.5;
     color: #e0e0e0;
     margin: 0;
-    line-height: 1.5;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-
+    /* Limit to 2 lines */
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
 
-/* --- Empty State --- */
-.empty-article-state {
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: 60px;
-    color: #aaa;
-    background: white;
-    border-radius: 12px;
-    border: 2px dashed #eee;
-}
-.empty-article-state i {
-    font-size: 3rem;
-    margin-bottom: 15px;
-}
-
-/* --- Responsive --- */
-@media (max-width: 768px) {
-    .articles-page-grid {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
-
-    .article-list-card {
-        /* 🔥 แก้ไข: ในมือถือก็ให้เป็นจัตุรัสด้วย */
-        aspect-ratio: 1 / 1;
-    }
-
-    .hero-section {
-        padding: 30px 15px;
-    }
-
-    .article-list-title {
-        font-size: 1.1rem;
-    }
+.article-card-footer {
+    display: none; /* Hide footer in this view to keep it clean */
 }
