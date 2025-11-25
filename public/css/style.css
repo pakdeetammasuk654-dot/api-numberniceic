@@ -43,9 +43,9 @@
     --color-btn-light-text: #6a11cb;
 
     /* Colors - Footer */
-    --color-footer-bg: #f4f4f9;
-    --color-footer-text: #666;
-    --color-footer-border: #eee;
+    --color-footer-bg: var(--color-navbar-bg); /* Match navbar background */
+    --color-footer-text: var(--color-gray-light); /* Lighter text for dark background */
+    --color-footer-border: var(--color-navbar-divider); /* Match navbar divider */
 
     /* Colors - Forms & Cards */
     --color-card-bg: white;
@@ -171,7 +171,7 @@ main {
 }
 
 
-.footer { text-align: center; padding: 20px; background: var(--color-footer-bg); margin-top: 40px; color: var(--color-footer-text); border-top: 1px solid var(--color-footer-border); }
+.footer { text-align: center; padding: 20px; background: var(--color-footer-bg); color: var(--color-footer-text); border-top: 1px solid var(--color-footer-border); }
 
 /* --- Forms & Cards --- */
 .card { background: var(--color-card-bg); padding: 30px; border-radius: 10px; box-shadow: var(--color-card-shadow); margin-bottom: 20px; }

@@ -19,7 +19,7 @@ import (
 
 func main() {
 	// 1. โหลด Environment Variables
-	if err := godotenv.Load(); err != nil {
+	if err := godotenv.Overload(); err != nil {
 		log.Println("⚠️  Warning: No .env file found")
 	}
 
@@ -71,7 +71,6 @@ func main() {
 	})
 	app.Get("/sitemap.xml", handler.HandleSitemapXML)
 
-
 	// --- General Pages ---
 	app.Get("/", handler.ViewHome)
 	app.Get("/about", handler.ViewAbout)
@@ -114,7 +113,6 @@ func main() {
 	admin.Get("/edit-type/:id", handler.ViewEditBlogType)
 	admin.Post("/edit-type/:id", handler.HandleEditBlogType)
 	admin.Get("/delete-type/:id", handler.HandleDeleteBlogType)
-
 
 	// --- API Routes ---
 	api := app.Group("/api")

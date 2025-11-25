@@ -82,6 +82,9 @@
     z-index: 5;
     color: var(--color-text-light);
     text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    display: flex; /* Use flexbox for ordering */
+    flex-direction: column;
+    justify-content: flex-end;
 }
 
 .main-article-type-badge {
@@ -92,18 +95,21 @@
     font-size: 0.8rem;
     font-weight: 500;
     border-radius: 20px;
-    margin-bottom: 10px;
     text-transform: uppercase;
     letter-spacing: 0;
+    order: 1; /* Display first */
+    margin-bottom: 0.2rem; /* Reduced space */
+    align-self: flex-start; /* Prevent stretching */
 }
 
 .main-article-title {
     font-family: var(--font-primary);
     font-size: 2.2rem;
     font-weight: 300; /* Thinner font */
-    margin: 0 0 0.8rem 0;
+    margin: 0; /* Removed all margin */
     line-height: 1.2;
     color: var(--color-text-light);
+    order: 2; /* Display second */
 
     /* Limit to 1 line */
     display: -webkit-box;
@@ -120,6 +126,7 @@
     line-height: 1.6;
     margin: 0;
     color: var(--color-gray-faint);
+    order: 3; /* Display last */
 
     /* Limit to 2 lines */
     display: -webkit-box;
@@ -165,7 +172,7 @@
 /* 🔥 SHORT NAME STYLE (Card Grid) */
 .secondary-article-title {
     font-family: var(--font-primary);
-    font-size: 2rem;
+    font-size: 1.8rem; /* Reduced from 2rem */
     font-weight: 300; /* 🔥 Adjusted to be thinner (was 400) */
     margin: 0;
     line-height: 1.3;
@@ -272,11 +279,9 @@
 
     .main-article-title {
         font-size: 1.8rem;
-        /* 🔥 Fixed: Limit to 1 line on mobile as well */
         -webkit-line-clamp: 1;
     }
 
-    /* Description on Mobile */
     .main-article-description {
         font-size: 1.15rem;
         line-height: 1.5;
@@ -287,7 +292,7 @@
     .secondary-grid-container {
         grid-column: 1 / -1;
         grid-row: auto;
-        grid-template-columns: 1fr 1fr; /* Keep side-by-side for secondary */
+        grid-template-columns: 1fr 1fr;
         grid-template-rows: auto;
     }
 
@@ -300,18 +305,36 @@
         padding: 0.5rem;
     }
 
-    /* Short Title on Mobile */
     .secondary-article-title {
-        font-size: 1.6rem;
+        font-size: 1.4rem; /* Reduced from 1.6rem */
     }
 
+    /* --- Mobile Centering for Links List --- */
     .secondary-links-list {
         padding: 1rem;
+        justify-content: center; /* Vertically center the content (the UL) */
     }
 
-    /* List Font on Mobile */
+    .secondary-links-list ul {
+        height: auto; /* Override desktop height */
+        display: block; /* Override desktop flex */
+        width: 100%;
+    }
+
+    .secondary-links-list li {
+        text-align: center; /* Center text for all li elements */
+    }
+
     .secondary-links-list a {
         font-size: 1.1rem;
         padding: 0.6rem 0;
+    }
+
+    .secondary-links-list .arrow {
+        display: none; /* Hide arrow for cleaner centering */
+    }
+
+    .secondary-links-list a:hover {
+        padding-left: 0; /* Disable hover effect on mobile */
     }
 }
